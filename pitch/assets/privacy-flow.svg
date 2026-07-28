@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-labelledby="title desc">
+  <title id="title">Proposed privacy state machine</title>
+  <desc id="desc">An original diagram showing locked, active, candidate, confirmed, and cleared states, with raw retention off and emotion inference prohibited.</desc>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5cd3bd"/></marker></defs>
+  <rect width="900" height="520" rx="26" fill="#101816" stroke="#53665f"/>
+  <text x="46" y="55" fill="#5cd3bd" font-family="monospace" font-size="18" font-weight="700">ORIGINAL DIAGRAM / PROPOSED PRIVACY STATE</text>
+  <g font-family="sans-serif" text-anchor="middle">
+    <g transform="translate(55 125)"><circle cx="80" cy="80" r="78" fill="#1d2925" stroke="#ddeb79" stroke-width="3"/><text x="80" y="75" fill="#f4f0e6" font-size="22" font-weight="800">LOCKED</text><text x="80" y="103" fill="#adb9b4" font-size="13">no decode</text></g>
+    <g transform="translate(245 125)"><circle cx="80" cy="80" r="78" fill="#1d2925" stroke="#5cd3bd" stroke-width="3"/><text x="80" y="75" fill="#f4f0e6" font-size="22" font-weight="800">ACTIVE</text><text x="80" y="103" fill="#adb9b4" font-size="13">contact + quality</text></g>
+    <g transform="translate(435 125)"><circle cx="80" cy="80" r="78" fill="#1d2925" stroke="#5cd3bd" stroke-width="3"/><text x="80" y="75" fill="#f4f0e6" font-size="22" font-weight="800">CANDIDATE</text><text x="80" y="103" fill="#adb9b4" font-size="13">abstain / preview</text></g>
+    <g transform="translate(625 125)"><circle cx="80" cy="80" r="78" fill="#29251d" stroke="#ff8b5c" stroke-width="3"/><text x="80" y="75" fill="#f4f0e6" font-size="22" font-weight="800">CONFIRM</text><text x="80" y="103" fill="#d7bdb0" font-size="13">human action</text></g>
+  </g>
+  <g stroke="#5cd3bd" stroke-width="4" marker-end="url(#a)"><path d="M215 205H238"/><path d="M405 205H428"/><path d="M595 205H618"/></g>
+  <path d="M704 296C704 390 135 390 135 295" fill="none" stroke="#ddeb79" stroke-width="3" marker-end="url(#a)" stroke-dasharray="7 7"/>
+  <text x="420" y="381" fill="#ddeb79" text-anchor="middle" font-family="monospace" font-size="14">CLEAR / TIMEOUT / MANUAL LOCK → RETURN TO LOCKED</text>
+  <g transform="translate(55 420)" font-family="sans-serif">
+    <rect width="790" height="62" rx="10" fill="#251b1b" stroke="#9d504b"/>
+    <text x="24" y="26" fill="#ff9e97" font-size="14" font-weight="800">PROHIBITED BRANCHES</text>
+    <text x="24" y="47" fill="#d4aaa7" font-size="13">emotion / stress / engagement · covert sensing · performance scoring · unrelated model training</text>
+  </g>
+</svg>

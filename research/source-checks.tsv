@@ -1,0 +1,22 @@
+id	checked_utc	curl_exit	http	effective_url	content_type	note
+R01	2026-07-28T18:10:00Z	0	200	https://linkinghub.elsevier.com/retrieve/pii/S0167639309001307	text/html;charset=UTF-8	bounded direct HTTPS; status is reachability, not content proof
+R02	2026-07-28T18:10:00Z	1	302	http://ieeexplore.ieee.org/document/8114358/	text/html;charset=utf-8	bounded direct HTTPS; status is reachability, not content proof
+R03	2026-07-28T18:10:00Z	0	200	https://aclanthology.org/2020.emnlp-main.445/	text/html; charset=utf-8	bounded direct HTTPS; status is reachability, not content proof
+R04	2026-07-28T18:10:00Z	0	200	https://aclanthology.org/2021.acl-short.23/	text/html; charset=utf-8	bounded direct HTTPS; status is reachability, not content proof
+R06	2026-07-28T18:10:00Z	0	200	https://linkinghub.elsevier.com/retrieve/pii/S0167639309001733	text/html;charset=UTF-8	bounded direct HTTPS; status is reachability, not content proof
+R07	2026-07-28T18:10:00Z	0	200	https://datashare.ed.ac.uk/items/9aa8ea17-1326-40ad-a660-f7c5c276c2fc	text/html; charset=utf-8	bounded direct HTTPS; status is reachability, not content proof
+R10	2026-07-28T18:10:00Z	0	200	https://linkinghub.elsevier.com/retrieve/pii/S2589004218301512	text/html;charset=UTF-8	bounded direct HTTPS; status is reachability, not content proof
+R11	2026-07-28T18:10:00Z	0	200	https://www.nature.com/articles/s41586-023-06377-x?error=cookies_not_supported&code=4c3b7859-b7fd-4c80-b5cb-19a39d7bd815	text/html; charset="UTF-8"	bounded direct HTTPS; status is reachability, not content proof
+R14	2026-07-28T18:10:00Z	0	200	https://clinicaltrials.gov/study/NCT00912041	text/html	bounded direct HTTPS; status is reachability, not content proof
+R15	2026-07-28T18:10:00Z	0	200	https://clinicaltrials.gov/study/NCT03698149	text/html	bounded direct HTTPS; status is reachability, not content proof
+R18	2026-07-28T18:10:00Z	0	200	https://www.nist.gov/privacy-framework	text/html; charset=UTF-8	bounded direct HTTPS; status is reachability, not content proof
+R20	2026-07-28T18:10:00Z	0	200	https://www.who.int/publications/i/item/9789240049451	text/html; charset=utf-8	bounded direct HTTPS; status is reachability, not content proof
+R21	2026-07-28T18:10:00Z	0	200	https://www.media.mit.edu/projects/alterego/overview/	text/html; charset=utf-8	bounded direct HTTPS; status is reachability, not content proof
+R26	2026-07-28T18:10:00Z	0	200	https://arxiv.org/abs/2603.02847	text/html; charset=utf-8	bounded direct HTTPS; status is reachability, not content proof
+R27	2026-07-28T18:10:00Z	0	200	https://arxiv.org/abs/2403.05583	text/html; charset=utf-8	bounded direct HTTPS; status is reachability, not content proof
+R28	2026-07-28T18:10:00Z	0	200	https://about.fb.com/news/2025/09/meta-ray-ban-display-ai-glasses-emg-wristband/	text/html; charset=UTF-8	bounded direct HTTPS; status is reachability, not content proof
+R29	2026-07-28T18:10:00Z	0	200	https://www.nature.com/articles/s41586-025-09255-w?error=cookies_not_supported&code=18666dbf-fb72-4c3c-94ba-4fbd27a33441	text/html; charset="UTF-8"	bounded direct HTTPS; status is reachability, not content proof
+R30	2026-07-28T18:10:00Z	63	200	https://patents.google.com/patent/US20240119938A1/en	text/html	bounded direct HTTPS; status is reachability, not content proof
+R32	2026-07-28T18:10:00Z	0	200	https://u.ae/en/about-the-uae/digital-uae/data/data-protection-laws	text/html; charset=utf-8	bounded direct HTTPS; status is reachability, not content proof
+R33	2026-07-28T18:10:00Z	63	200	https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng	text/html; charset=UTF-8	bounded direct HTTPS; status is reachability, not content proof
+R34	2026-07-28T18:10:00Z	0	200	https://zenodo.org/records/4064409	text/html; charset=utf-8	bounded direct HTTPS; status is reachability, not content proof

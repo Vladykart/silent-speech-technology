@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="title desc">
+  <title id="title">SilentWear cross-session evidence gap</title>
+  <desc id="desc">An original evidence graphic showing 77.5 percent average cross-validated silent command accuracy and 59.3 percent average held-out-session accuracy, a decrease of 18.2 percentage points, under a four-participant eight-command-plus-rest preprint study.</desc>
+  <rect width="960" height="500" rx="26" fill="#101816" stroke="#53665f"/>
+  <text x="46" y="55" fill="#5cd3bd" font-family="monospace" font-size="18" font-weight="700">EXTERNAL EVIDENCE / SILENTWEAR v2 PREPRINT (2026)</text>
+  <text x="46" y="86" fill="#9ba8a2" font-family="sans-serif" font-size="15">n=4 · 14 differential neck sEMG channels · 8 commands + rest · top-1 accuracy</text>
+  <g transform="translate(75 135)">
+    <line x1="0" y1="260" x2="800" y2="260" stroke="#64756f" stroke-width="2"/>
+    <line x1="0" y1="0" x2="0" y2="260" stroke="#64756f" stroke-width="2"/>
+    <g fill="#7f8e88" font-family="monospace" font-size="12"><text x="-42" y="264">0%</text><text x="-48" y="199">25%</text><text x="-48" y="134">50%</text><text x="-48" y="69">75%</text><text x="-55" y="7">100%</text></g>
+    <g stroke="#344640" stroke-width="1"><path d="M0 195H800M0 130H800M0 65H800"/></g>
+    <rect x="115" y="58.5" width="205" height="201.5" rx="10" fill="#5cd3bd" opacity=".86"/>
+    <rect x="480" y="105.8" width="205" height="154.2" rx="10" fill="#ff8b5c" opacity=".88"/>
+    <text x="217" y="45" fill="#d8fff7" text-anchor="middle" font-family="sans-serif" font-size="34" font-weight="800">77.5±6.6%</text>
+    <text x="582" y="92" fill="#ffd6c5" text-anchor="middle" font-family="sans-serif" font-size="34" font-weight="800">59.3±2.2%</text>
+    <text x="217" y="292" fill="#d9e2dd" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="700">CROSS-VALIDATED</text>
+    <text x="582" y="292" fill="#d9e2dd" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="700">HELD-OUT SESSION</text>
+    <path d="M335 145C385 120 420 120 468 145" fill="none" stroke="#ddeb79" stroke-width="3" stroke-dasharray="7 7"/>
+    <text x="402" y="108" fill="#ddeb79" text-anchor="middle" font-family="monospace" font-size="15">−18.2 POINTS</text>
+  </g>
+  <rect x="46" y="446" width="868" height="32" rx="8" fill="#251f1a" stroke="#88533f"/>
+  <text x="480" y="467" fill="#e9c2b2" text-anchor="middle" font-family="sans-serif" font-size="13">External study—not this project. Global cross-validation is not the same claim as unseen-session performance.</text>
+</svg>
