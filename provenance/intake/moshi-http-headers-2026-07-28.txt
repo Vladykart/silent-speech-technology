@@ -1,0 +1,12 @@
+HTTP/2 200
+date: Tue, 28 Jul 2026 17:23:01 GMT
+content-type: application/vnd.openxmlformats-officedocument.presentationml.presentation
+content-length: 201785
+cache-control: public, max-age=85576
+content-disposition: attachment; filename="Quiet%20Channel%20Presentation.pptx"
+x-expires-at: 2026-07-29T17:09:17.493Z
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=nxAW7ht6znH4qK%2BOkoEb7vIMmG0SfrQ66Hz2fwgyryz57EzW%2BgUSP9mVhOSfYq%2FVhmRv19Q%2BP8eDzX%2FPfGRFyuNsw48mqXJk7KmGBy%2Beo2oPoespJlLpb3mh4DWWcng0u%2FvakAAcSDwV1yx77A%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: a22591b7fe7b7fa0-FRA
+alt-svc: h3=":443"; ma=86400

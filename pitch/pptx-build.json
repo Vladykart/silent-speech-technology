@@ -1,0 +1,19 @@
+{
+  "artifact": "quiet-channel-evidence-deck.pptx",
+  "builder": "pitch/build_pptx.py",
+  "builder_sha256": "06df84754ad898eb688c33bd321150c7cdfda0a8ff5db5b229279c45844d3d6d",
+  "bytes": 63891,
+  "deterministic_zip_timestamp": "1980-01-01T00:00:00",
+  "media": [
+    "ppt/media/concept-research-rig.svg",
+    "ppt/media/evidence-gap.svg",
+    "ppt/media/pipeline-gates.svg",
+    "ppt/media/privacy-flow.svg"
+  ],
+  "notes_slides": 13,
+  "runtime_dependencies": "Python standard library only",
+  "sha256": "48ccde3da66aaac5c834f20691930e2b996d2c58e418ee590548908670e0647c",
+  "slides": 13,
+  "source_markdown_sha256": "9cd038ffe8a32b6d5a82397175a553e35338f1681abf9127a3a94ba49452d346",
+  "zip_parts": 72
+}

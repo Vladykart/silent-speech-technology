@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Offline simulated silent-speech pipeline demonstration. No sensors, recording, or model are used.">
+  <title>Quiet Channel Lab — simulated pipeline</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to demo workspace</a>
+  <header class="masthead">
+    <div class="wordmark" aria-label="Quiet Channel Lab">
+      <span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>QUIET CHANNEL <b>LAB</b></span>
+    </div>
+    <div class="truth-badge"><span aria-hidden="true">●</span> CONCEPT / SIMULATED PIPELINE</div>
+  </header>
+
+  <main id="workspace">
+    <section class="hero" aria-labelledby="demo-title">
+      <div>
+        <p class="kicker">Tomorrow demo · offline · deterministic</p>
+        <h1 id="demo-title">See the decision path.<br><em>Not a performance claim.</em></h1>
+      </div>
+      <p class="hero-copy">This experience replays <strong>authored fixture values</strong> through a realistic interaction: neuromuscular signal → features → candidates → rejection or confirmation → staged output. It uses no hardware, model, microphone, camera, biometrics, account, or network.</p>
+    </section>
+
+    <section class="truth-strip" aria-label="Demonstration evidence boundary">
+      <strong>What you are seeing</strong>
+      <span>illustrative normalized traces</span><span>scripted candidates</span><span>designed confidence behavior</span>
+      <strong>What you are not seeing</strong>
+      <span>measured accuracy</span><span>live decoding</span><span>clinical or product validation</span>
+    </section>
+
+    <section class="demo-grid">
+      <aside class="operator-panel" aria-labelledby="operator-title">
+        <div class="panel-heading">
+          <div><p class="panel-index">OPERATOR / 01</p><h2 id="operator-title">Choose a scenario</h2></div>
+          <span class="offline-pill">Offline</span>
+        </div>
+        <div class="lock-card">
+          <div><span>DECODER STATE</span><strong id="lock-state">LOCKED</strong></div>
+          <button id="lock-toggle" type="button">Unlock concept</button>
+        </div>
+        <label for="fixture-select">Authored fixture</label>
+        <select id="fixture-select">
+          <option value="inventory">Clear command · confirmation path</option>
+          <option value="ambiguous">Ambiguous input · failure + repair path</option>
+          <option value="cancel">Safety command · confirmation path</option>
+        </select>
+        <div class="grammar" aria-labelledby="grammar-title">
+          <strong id="grammar-title">Illustrative fixed grammar · 12 commands</strong>
+          <div><span>check stock</span><span>open work order</span><span>next step</span><span>repeat instruction</span><span>hold</span><span>resume</span><span>show parts list</span><span>note issue</span><span>request supervisor</span><span>cancel request</span><span>yes</span><span>no</span></div>
+          <p>Authored product copy—not a decoded or validated vocabulary.</p>
+        </div>
+        <div class="authored-copy">
+          <span>Fixture label — not observed speech</span>
+          <q id="authored-phrase">check stock for router model seven</q>
+        </div>
+        <div class="button-stack">
+          <button class="primary" id="advance" type="button"><span>Run next stage</span><kbd>Space</kbd></button>
+          <button id="auto-run" type="button">Auto-run fixture</button>
+          <button class="quiet-button" id="reset" type="button">Reset demo</button>
+        </div>
+        <div class="keyboard-card">
+          <strong>Keyboard</strong>
+          <span><kbd>Space</kbd> advance</span><span><kbd>R</kbd> reset</span><span><kbd>1–3</kbd> scenario</span><span><kbd>L</kbd> lock / unlock</span>
+        </div>
+      </aside>
+
+      <section class="pipeline-panel" aria-labelledby="pipeline-title">
+        <div class="panel-heading">
+          <div><p class="panel-index">PIPELINE / 02</p><h2 id="pipeline-title">Inspectable signal path</h2></div>
+          <p id="stage-status" class="stage-status" role="status" aria-live="polite">Ready · authored sensor fixture loaded</p>
+        </div>
+
+        <ol class="stage-rail" aria-label="Pipeline progress">
+          <li data-stage="0" class="current"><b>01</b><span>Fixture signal</span></li>
+          <li data-stage="1"><b>02</b><span>Preprocess</span></li>
+          <li data-stage="2"><b>03</b><span>Decode</span></li>
+          <li data-stage="3"><b>04</b><span>Confidence gate</span></li>
+          <li data-stage="4"><b>05</b><span>Output</span></li>
+        </ol>
+
+        <div class="signal-card">
+          <div class="signal-meta"><span>3 authored normalized channels</span><span>not volts · not time-calibrated</span></div>
+          <svg id="signal-chart" viewBox="0 0 760 190" role="img" aria-label="Authored normalized signal fixture with three channels"></svg>
+        </div>
+
+        <div class="evidence-row">
+          <article id="feature-card" class="data-card locked" aria-labelledby="feature-title">
+            <span class="card-state">WAITING</span>
+            <h3 id="feature-title">Feature snapshot</h3>
+            <dl><div><dt>Envelope</dt><dd id="feature-envelope">—</dd></div><div><dt>Timing</dt><dd id="feature-timing">—</dd></div><div><dt>Stability</dt><dd id="feature-stability">—</dd></div></dl>
+            <p>Illustrative normalized values, authored for this interaction.</p>
+          </article>
+          <article id="candidate-card" class="data-card locked" aria-labelledby="candidate-title">
+            <span class="card-state">WAITING</span>
+            <h3 id="candidate-title">Candidate decoder</h3>
+            <div id="candidate-list" class="candidate-list"><p>No candidates yet.</p></div>
+          </article>
+        </div>
+      </section>
+
+      <aside class="decision-panel" aria-labelledby="decision-title">
+        <div class="panel-heading">
+          <div><p class="panel-index">HUMAN GATE / 03</p><h2 id="decision-title">Confirm or reject</h2></div>
+        </div>
+        <div id="decision-state" class="decision-state waiting">
+          <span class="decision-icon" aria-hidden="true">···</span>
+          <strong>Waiting for candidate</strong>
+          <p>The output channel stays closed until the confidence rule and human gate resolve.</p>
+        </div>
+        <div class="threshold"><span>Illustrative reject threshold</span><strong>0.72</strong></div>
+        <div class="decision-actions">
+          <button class="confirm" id="confirm" type="button" disabled>Confirm candidate</button>
+          <button class="repair" id="repair" type="button" disabled>Choose authored repair</button>
+          <button class="reject" id="reject" type="button" disabled>Reject candidate</button>
+        </div>
+        <div class="output-card" aria-labelledby="output-title">
+          <span>STAGED OUTPUT</span>
+          <h3 id="output-title">Nothing leaves the gate</h3>
+          <p id="output-copy">No command has been emitted.</p>
+        </div>
+        <div class="egress-log" aria-labelledby="egress-title">
+          <span id="egress-title">WHAT LEFT THE CONCEPT DEVICE</span>
+          <dl><div><dt>raw fixture</dt><dd id="raw-egress">0</dd></div><div><dt>confirmed text</dt><dd id="text-egress">0</dd></div></dl>
+          <p id="egress-event" aria-live="polite">Nothing transmitted. This log is simulated page state.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="privacy-panel" aria-labelledby="privacy-title">
+      <div><p class="panel-index">DESIGN CONTROLS / 04</p><h2 id="privacy-title">Make privacy state visible</h2><p>These switches demonstrate proposed control behavior; they are not a security certification.</p></div>
+      <label class="switch-row"><input id="ephemeral-control" type="checkbox" checked><span class="switch" aria-hidden="true"></span><span><strong>Ephemeral raw-signal handling</strong><small>Clear the in-memory fixture view at reset. The demo never stores biometric input.</small></span></label>
+      <label class="switch-row"><input id="confirmation-control" type="checkbox" checked><span class="switch" aria-hidden="true"></span><span><strong>Human confirmation required</strong><small>Keep staged text from the output path until explicitly confirmed.</small></span></label>
+      <div class="privacy-facts"><span>No media APIs</span><span>No network requests</span><span>No local storage</span><span>No telemetry</span></div>
+    </section>
+  </main>
+
+  <footer>
+    <p><strong>Scope:</strong> interaction prototype for low-consequence command/control research. Not assistive AAC, a medical device, covert inference, or evidence of silent-speech accuracy.</p>
+    <p>Operator materials: <a href="README.md">runbook</a> · <a href="PRESENTER.md">3–5 minute script</a> · <a href="../research/claim-boundary.md">claim boundary</a></p>
+  </footer>
+
+  <script src="core.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
