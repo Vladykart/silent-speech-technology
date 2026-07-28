@@ -17,10 +17,11 @@ A matched 13-slide HTML and editable PowerPoint decision deck with presenter not
 - [`styles.css`](styles.css), [`script.js`](script.js) — local presentation assets.
 - [`assets/`](assets/) — project-authored SVG schematics; rights/provenance in [`../provenance/media-catalogue.md`](../provenance/media-catalogue.md).
 - [`validate.py`](validate.py) — HTML structure/claim/media checks.
-- [`quiet-channel-evidence-deck.pptx`](quiet-channel-evidence-deck.pptx) — committed editable PowerPoint artifact.
-- [`build_pptx.py`](build_pptx.py) — deterministic Python standard-library OOXML builder.
-- [`validate_pptx.py`](validate_pptx.py) — ZIP/XML/relationship/content/notes/determinism validator.
-- [`pptx-build.json`](pptx-build.json) — committed artifact hash and source/build fingerprint.
+- [`quiet-channel-evidence-deck.pptx`](quiet-channel-evidence-deck.pptx) — committed editable 13-slide PowerPoint artifact.
+- [`quiet-channel-4-slide-deck.pptx`](quiet-channel-4-slide-deck.pptx) — focused editable four-slide PowerPoint artifact.
+- [`build_pptx.py`](build_pptx.py) / [`build_4_slide_pptx.py`](build_4_slide_pptx.py) — deterministic Python standard-library OOXML builders.
+- [`validate_pptx.py`](validate_pptx.py) / [`validate_4_slide_pptx.py`](validate_4_slide_pptx.py) — ZIP/XML/relationship/content/notes/determinism validators.
+- [`pptx-build.json`](pptx-build.json) / [`quiet-channel-4-slide-build.json`](quiet-channel-4-slide-build.json) — committed artifact hashes and build fingerprints.
 
 ## Present
 
@@ -51,6 +52,8 @@ Rebuild from repository source without installing anything:
 ```bash
 python3 pitch/build_pptx.py
 python3 pitch/validate_pptx.py
+python3 pitch/build_4_slide_pptx.py
+python3 pitch/validate_4_slide_pptx.py
 ```
 
 The validator performs a second temporary rebuild and requires byte-for-byte equality with the committed artifact. It also checks ZIP CRC/integrity, deterministic timestamps/order, XML well-formedness, required OPC parts and relationships, 13-slide order, 13 speaker-note parts, approved decision text, editable DrawingML shape count, four embedded project-authored SVGs, required evidence qualifiers, artifact/source hashes, and absence of remote relationships or macros.

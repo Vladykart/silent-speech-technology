@@ -13,6 +13,7 @@ REQUIRED=[
  "README.md","AGENTS.md","demo/index.html","demo/README.md","demo/PRESENTER.md","demo/validate.py",
  "pitch/index.html","pitch/deck.md","pitch/styles.css","pitch/script.js","pitch/README.md","pitch/validate.py",
  "pitch/quiet-channel-evidence-deck.pptx","pitch/build_pptx.py","pitch/validate_pptx.py","pitch/pptx-build.json",
+ "pitch/quiet-channel-4-slide-deck.pptx","pitch/build_4_slide_pptx.py","pitch/validate_4_slide_pptx.py","pitch/quiet-channel-4-slide-build.json",
  "research/landscape.md","research/evidence-matrix.md","research/claim-boundary.md","research/claim-ledger.md",
  "research/references.md","research/presentation-review.md","research/scout-review.md",
  "provenance/source-record.md","provenance/decisions.md","provenance/media-catalogue.md"
@@ -37,7 +38,8 @@ def main():
  files=[p for p in ROOT.rglob("*") if p.is_file() and not any(part in SKIP for part in p.parts)]
  for p in files:
   rel=p.relative_to(ROOT)
-  if p.suffix.lower() in {".ppt",".pptx",".pdf",".doc",".docx"} and rel.as_posix() != "pitch/quiet-channel-evidence-deck.pptx": errors.append(f"unapproved/vendored binary document prohibited: {rel}")
+  approved_documents={"pitch/quiet-channel-evidence-deck.pptx","pitch/quiet-channel-4-slide-deck.pptx"}
+  if p.suffix.lower() in {".ppt",".pptx",".pdf",".doc",".docx"} and rel.as_posix() not in approved_documents: errors.append(f"unapproved/vendored binary document prohibited: {rel}")
   if p.stat().st_size>1_000_000:errors.append(f"unexpected file over 1 MB: {rel}")
   if "__pycache__" in p.parts or p.suffix==".pyc":errors.append(f"generated Python artifact: {rel}")
   if p.suffix.lower()==".md":
