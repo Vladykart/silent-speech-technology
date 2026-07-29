@@ -7,7 +7,8 @@
 - Critically consumed the parallel 651-line evidence scout and independently checked load-bearing SilentWear, MONA/LISA, Meta, repository licence, patent, UAE-law and EU-law findings.
 - Built an offline deterministic demo with explicit lock, 12-command illustrative grammar, authored clear/ambiguous/safety fixtures, candidate alternatives, automatic rejection, manual authored repair, human confirmation, output/egress log and visible control intent.
 - Built matched professional 13-slide HTML and editable PPTX decks with notes, citations, original SVG device/architecture/evidence/privacy diagrams, approved commercial decisions and offline validators.
-- Added a deterministic Python standard-library OOXML builder and committed PPTX/hash evidence; validation covers ZIP/XML integrity, package relationships, order/count, required claims, editable DrawingML shapes, notes, local media, no remote relationships/macros and byte-identical rebuild.
+- Replaced the rejected four-slide artifact with a source-driven editorial executive deck: assertion headlines, strict word/type limits, native connectors and evidence chart, dominant AED 1,000,000 ask, no device hero, media or logo, and representative 1920×1080 Chromium geometry QA.
+- Added deterministic Python standard-library OOXML builders and committed PPTX/hash evidence; validation covers ZIP/XML integrity, package relationships, order/count, required claims, editable DrawingML shapes, notes, local media, no remote relationships/macros and byte-identical rebuild.
 
 ## Approved pitch decisions
 
@@ -19,7 +20,7 @@
 ## Open gates
 
 - PowerPoint/Keynote/LibreOffice opening and rendered layout/notes/SVG/editability checks; those applications are unavailable in the build environment.
-- Browser-rendered desktop/narrow/print/PDF review.
+- Exact PowerPoint review of both PPTX decks and desktop/narrow/print/PDF review of the 13-slide HTML; four-slide Chromium previews are representative only.
 - Exact first workflow, owner, governance owner, participant protocol, statistics, thresholds, safety/ethics, hardware and sandbox.
 - Annual seat pricing, fund allocation, strategic funding, IP/data contract terms, team and every acquisition/exit amount.
 - UAE counsel, regulatory/intended-use and FTO reviews before relevant claims/actions.

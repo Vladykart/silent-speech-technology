@@ -1,16 +1,16 @@
 {
   "artifact": "quiet-channel-4-slide-deck.pptx",
   "builder": "pitch/build_4_slide_pptx.py",
-  "builder_sha256": "4b4c6b777043456241d717be0921cad541df8c4f842bb963b5d00123315cc870",
-  "bytes": 25406,
+  "builder_sha256": "280683356e80a90276bf25a5578d4b0435ef13798cab80747da75634ae7c8e86",
+  "bytes": 24906,
   "deterministic_zip_timestamp": "1980-01-01T00:00:00",
-  "media": [
-    "ppt/media/concept-research-rig.svg"
-  ],
+  "media": [],
   "notes_slides": 4,
   "runtime_dependencies": "Python standard library only",
-  "sha256": "3ecb81602d6528d63406eeecb99ce6fd55d8bcd4576ffc19decc7d270d9c30dd",
+  "sha256": "60810db66994a34dc6a7962c8866eb2e149abb70e99a522940d177a5766c5fd1",
   "slides": 4,
-  "source_markdown_sha256": "9cd038ffe8a32b6d5a82397175a553e35338f1681abf9127a3a94ba49452d346",
-  "zip_parts": 33
+  "source": "pitch/deck-4-slide.md",
+  "source_markdown_sha256": "4f9679d905318d67bef35dcc230e9281492c7e6e0d8cbb6e0f6f7a0f9ef0871e",
+  "visual_qa": "Representative SVG/Chromium preview only; exact PowerPoint rehearsal still required",
+  "zip_parts": 32
 }
