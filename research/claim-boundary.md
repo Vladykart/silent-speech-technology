@@ -51,11 +51,11 @@ Do not state or imply:
 
 The following must be visible before the traces or candidate values:
 
-> **CONCEPT / SIMULATED PIPELINE — authored fixture data; no sensor, recording, model, or measured accuracy.**
+> **CONCEPT / SIMULATED — authored synthetic fixture data; no sensor, recording, biometric input, model, live inference, or measured accuracy.**
 
-Start locked. The illustrative 12-command grammar, egress counters, scores, threshold, delay, miss and manual repair are all authored interaction behavior.
+Start locked. The eight synthetic traces, explanatory architecture labels, token stream, candidates, egress counters, scores, threshold, timing, abstention and manual repair are all authored interaction behavior. Every result state retains the concept/simulated label.
 
-If the demo fails, use the static five-stage rail and presenter script. Never describe a broken interaction as live sensing.
+If the demo fails, use the static six-stage rail and presenter script. Never describe a broken interaction as live sensing.
 
 ## Research-performance citation rule
 

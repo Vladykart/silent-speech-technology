@@ -18,7 +18,7 @@ Boundary: facial sEMG research and paper-specific ASR transcription WER; not a g
 Boundary: same research line; an absolute improvement is not an accuracy claim for this project.
 
 **R05 · REPO · Checked via `gh-axi`.** Gaddy, D. `dgaddy/silent_speech`, commit `a89357c2086609b432919b9d14ffc0be5d8983d5` (commit date 2023-12-11). https://github.com/dgaddy/silent_speech/tree/a89357c2086609b432919b9d14ffc0be5d8983d5
-Repository reports MIT for code. README points to separate data/models and legacy DeepSpeech 0.7 assets. No clone, data, model, or dependency was downloaded; code reproducibility was not exercised.
+Repository reports MIT for code. README points to separate data/models and legacy DeepSpeech/CTC-language-model assets. Exact files, blob SHAs, commit metadata, architecture summary and retained notice: [`../provenance/upstream-reference.md`](../provenance/upstream-reference.md). No clone, submodule, data, model, sample, or dependency was downloaded; code reproducibility was not exercised.
 
 **R06 · PR · DOI metadata checked.** Hueber, T.; Benaroya, E.-L.; Chollet, G.; Denby, B.; Dreyfus, G.; Stone, M. “Development of a Silent Speech Interface Driven by Ultrasound and Optical Images of the Tongue and Lips.” *Speech Communication* 52(4), 288–300 (2010). https://doi.org/10.1016/j.specom.2009.11.004
 Boundary: laboratory UTI/lip imaging; does not support miniaturized or behind-ear sensing.
