@@ -1,70 +1,73 @@
-# Tomorrow demo runbook
+# Silent-speech recognition console runbook
 
-## Truth label
+## Truth boundary
 
-This is an **offline concept / simulated pipeline**. Every trace, feature value, candidate, and confidence is authored fixture data. The experience does not measure silent-speech accuracy and uses no hardware, model, microphone, camera, biometric input, account, credential, storage API, or network request.
+This is a static **CONCEPT / SIMULATED** interaction demo. Eight-channel traces, feature values, token frames, candidates, scores, threshold, and timing are bundled synthetic/authored fixtures. The repository has no electrodes, capture hardware, biometric samples, trained model, live EMG inference, project accuracy, calibrated confidence, complete latency, user study, production system, or deployment evidence.
 
-## Quick start
+The page uses no microphone, camera, WebAudio, WebRTC, media capture, file upload, account, form, storage, cookie, analytics, telemetry, or runtime request. It works offline from `file://`. The visible upstream links navigate only if an operator explicitly opens them; they are not runtime dependencies.
 
-Direct file use works: open [`index.html`](index.html) in a current browser. For a local static server, from the repository root:
+## Verify and run
+
+From the repository root:
 
 ```bash
-python3 -m http.server 8000 --directory demo
+python3 demo/generate_manifest.py
+python3 demo/validate.py
+node demo/tests/core.test.js
 ```
 
-Then open `http://127.0.0.1:8000/`. This binds Python's default server on all interfaces; for a loopback-only rehearsal use:
+Open [`index.html`](index.html) directly, or rehearse on loopback:
 
 ```bash
 python3 -m http.server 8000 --bind 127.0.0.1 --directory demo
 ```
 
-No installation is required. Do not expose this server beyond the rehearsal machine.
+Then open `http://127.0.0.1:8000/`. No install or build is required. Python’s development server is not approved for a public preview; use [`DEPLOYMENT.md`](DEPLOYMENT.md) for bounded static-host controls.
 
-## Preflight (2 minutes)
+## 60-second operator path
 
-1. Run `python3 demo/validate.py` and `node demo/tests/core.test.js`.
-2. Disconnect networking if desired; reload and confirm the page still works.
-3. Confirm the page starts **LOCKED**, then choose **Unlock concept**.
-4. Open scenario **Clear command**, press **Run next stage** three times, confirm the human gate appears, then confirm it; the simulated text-egress counter becomes `1` while raw fixture stays `0`.
-5. Select **Ambiguous input**, advance to the confidence gate, choose the authored repair, and confirm that repair still requires confirmation.
-6. Reset, lock the concept, set browser zoom to 100%, and leave the clear scenario selected.
-7. Keep [`PRESENTER.md`](PRESENTER.md) available in a text editor as the fallback talk track.
+1. Point to **CONCEPT / SIMULATED**, the temporary-demo banner, and “Not project evidence” before touching a control.
+2. Choose **Unlock concept**, then **Play to human gate**. The clear lookup pauses after its authored score clears the fixture rule. Choose **Confirm candidate** and show staged text `1`, raw fixture `0`, and “no network transmission.”
+3. Press `2`, then **Play to human gate**. The ambiguous fixture abstains at `0.54` below authored threshold `0.72`. Choose **Choose authored repair**; show that repair is still blocked. Confirm it.
+4. Press `3`, then play to the gate. The state-changing cancellation cannot resolve without explicit confirmation even though its scripted top score is `0.91`. Reject it when emphasizing safe fallback; confirm only when demonstrating the mandatory human gate.
+5. Close on the source-lineage panel: the upstream architecture inspired explanatory stage labels, but none of its code, data, weights, samples, or model outputs runs here.
 
-Rendered cross-browser QA was not available during this release. Rehearsal in the exact presentation browser/display remains a gate.
+Do not silently mouth a phrase during the walkthrough; that could imply sensing. Do not call playback “live inference.”
 
-## Controls and expected output
+## Controls and deterministic outcomes
 
-| Action | Keyboard | Expected deterministic result |
+| Action | Keyboard | Deterministic page behavior |
 |---|---|---|
-| Lock / unlock | `L` or button | Locked state closes the output gate; unlock is deliberate |
-| Advance | `Space` or button | Advances one stage until the human gate; confirmation or rejection resolves the output gate |
-| Auto-run | button | Pauses at the confidence/human gate for an explicit operator decision |
-| Choose scenario | `1`, `2`, `3` or selector | Demo resets with selected authored trace |
-| Reset | `R` or button | Returns to stage 1 with output closed and counters cleared |
-| Clear command | Scenario 1 | top scripted candidate `0.84`; asks for confirmation |
-| Ambiguous input | Scenario 2 | top scripted candidate `0.54`; rejects below `0.72`; manual authored repair remains gated |
-| Safety command | Scenario 3 | top scripted candidate `0.91`; asks for confirmation |
+| Lock / unlock | `L` | Starts locked; locking clears progress and closes staged output |
+| Advance | `Space` | Moves through six explanatory stages; candidate paths pause at the human gate |
+| Play to human gate | button | Local timer advances fixture stages, then always pauses for operator action |
+| Select scenario | `1`, `2`, `3` | Resets to that bundled synthetic fixture |
+| Reset | `R` | Reconstructs authored constants and clears counters |
+| Clear lookup | scenario 1 | top scripted score `0.84`; output remains blocked until confirmation |
+| Ambiguous + repair | scenario 2 | top scripted score `0.54`; abstains below `0.72`; manual repair remains gated |
+| Safety-sensitive | scenario 3 | top scripted score `0.91`; state change cannot pass without confirmation |
 
-Confidence values demonstrate interaction policy; they are **not probabilities calibrated on people, accuracy measurements, or model results**.
+Authored elapsed values (`612–646 ms` at resolution, depending on scenario) exist only to design information hierarchy and presentation pacing. They are not measured inference, endpointing, human-response, device, or end-to-end latency. Fixture scores are not probabilities, accuracy, or model output.
 
-## Presenter operating sequence
+## Upstream technical lineage
 
-Use the 3–5 minute script in [`PRESENTER.md`](PRESENTER.md). The strongest path is:
+Primary reference: David Gaddy’s [`dgaddy/silent_speech`](https://github.com/dgaddy/silent_speech/tree/a89357c2086609b432919b9d14ffc0be5d8983d5), exact inspected commit `a89357c2086609b432919b9d14ffc0be5d8983d5`. Exact files and commit metadata are summarized in [`SOURCE_LINEAGE.md`](SOURCE_LINEAGE.md) and recorded authoritatively in `provenance/upstream-reference.md`; the MIT notice is preserved in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
-1. Point to the simulation boundary before touching the controls.
-2. Unlock, then advance scenario 1 through features and candidates; confirm it and show the egress log.
-3. Switch to scenario 2 and show automatic uncertainty rejection.
-4. Choose the clearly labelled manual authored repair, then confirm it.
-5. Close on the visible privacy controls and evidence gates.
+The upstream README’s approximate 36% open-vocabulary WER is a historical upstream research result, not reproduced project performance. Real recognition requires consented EMG hardware/data, trained weights, alignment/language-model assets, substantial Python/PyTorch/CTC tooling, calibration, and evaluation. None is bundled.
 
-## Reset and fallback
+## Rehearsal and fallback
 
-- **Normal reset:** press `R`; use `L` to restore the opening locked state.
-- **Unexpected state:** reload `index.html`; no state is persisted.
-- **JavaScript failure:** do not improvise a live capability. Show the static page and narrate the five-stage rail using `PRESENTER.md`.
-- **Display/layout issue:** use browser zoom out once or use the narrow responsive layout; do not claim rendered QA was completed.
-- **Server issue:** open `demo/index.html` directly with `file://`.
+Rendered QA was attempted with `chrome-devtools-axi` on 2026-07-29. Both `open` and `newpage` reached the exact `file://` URL but returned `Protocol error (Target.setDiscoverTargets): Target closed`; `pages` reported zero open pages. Therefore this release is **not browser-render certified**. Dependency-free DOM/CSS checks cover narrow breakpoints, focus, keyboard hooks, reduced motion and print structure, but exact-browser desktop/narrow/print rehearsal remains a release gate.
 
-## Safety and privacy boundary
+- Test desktop, narrow/mobile, keyboard-only, reduced-motion, 200% zoom, and print/PDF in the exact presentation browser.
+- **Unexpected state:** reload; no state persists.
+- **JavaScript disabled/fails:** use the static six-stage rail and [`PRESENTER.md`](PRESENTER.md). Never improvise a sensing claim.
+- **Server issue:** open `index.html` from `file://`.
+- **Network disconnected:** normal playback is unchanged. Do not open the optional external citations.
+- **Layout issue:** use narrow layout or one zoom-out step; disclose any unrehearsed rendering limitation.
 
-The switches demonstrate proposed product controls only. They do not establish encryption, isolation, legal compliance, or device security. The intended research beachhead is opt-in, low-consequence command/control. Assistive AAC, medical use, covert inference, workplace scoring, authentication, and safety-critical actions are outside tomorrow's claim boundary.
+## Deployment boundary
+
+[`artifact-manifest.json`](artifact-manifest.json) records SHA-256 and byte length for every other committed file under `demo/`; verify it with `python3 demo/generate_manifest.py`. `robots.txt`, page metadata, and required host headers request non-indexing, but do not make a public URL confidential. A public preview must use a no-write static allowlist, true 404, correct MIME, no directory listing, no credentials/tracking, and the exact security headers in [`DEPLOYMENT.md`](DEPLOYMENT.md).
+
+This worktree does not deploy or alter a host, service, listener, firewall, DNS, Pages setting, or project visibility.

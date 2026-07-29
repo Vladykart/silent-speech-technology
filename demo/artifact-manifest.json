@@ -1,0 +1,88 @@
+{
+  "schema": "quiet-channel-static-artifact/v1",
+  "algorithm": "sha256",
+  "base": "demo/",
+  "selfHashExcluded": "artifact-manifest.json",
+  "files": [
+    {
+      "path": "404.html",
+      "bytes": 1491,
+      "sha256": "21f42d02b61a84f51f692239a85474190b0af34eeabc49a4efca257d20721b5e"
+    },
+    {
+      "path": "CLAIM_BOUNDARY.md",
+      "bytes": 1512,
+      "sha256": "86d4fdee2738483e6c59dd3e0f862e773202fb84f16c4156edbb65e53d108d84"
+    },
+    {
+      "path": "DEPLOYMENT.md",
+      "bytes": 3658,
+      "sha256": "d31b5514e03e53b34b15b045df3323509b45c822eca788b6eedf37af3bf749fc"
+    },
+    {
+      "path": "LAB_FOUNDATION.md",
+      "bytes": 1549,
+      "sha256": "aa071c79e17b5e567002423bf4fd88321fdd12d39fdda0c869cc65517851bf6a"
+    },
+    {
+      "path": "PRESENTER.md",
+      "bytes": 4742,
+      "sha256": "f68a15220758d98199e449d740060bd835b85c33714bef145cd1c960045bf5dd"
+    },
+    {
+      "path": "README.md",
+      "bytes": 6159,
+      "sha256": "a7188bf1c25da8d02324c61876c30779bfac8b82c23ca0e0d6a5f02dcd73b4ae"
+    },
+    {
+      "path": "SOURCE_LINEAGE.md",
+      "bytes": 1693,
+      "sha256": "e4ab7c870e50dc9bd30f2814c2f79ad0014795d96d31b2d69dd5c27be5620a9c"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 1965,
+      "sha256": "4a2361880695147290533fa96a612c9033a988577678626605c9e178a9ca3bcb"
+    },
+    {
+      "path": "core.js",
+      "bytes": 7009,
+      "sha256": "89edde3f90e63a88a7a88b371dfd6ca18d5113cac98810af3baa1c6d9ee5f128"
+    },
+    {
+      "path": "generate_manifest.py",
+      "bytes": 2427,
+      "sha256": "d472016bc2ef261e95488f4066d4e5cda6f1c0cb8cd8bbb773f6ee77dd56819f"
+    },
+    {
+      "path": "index.html",
+      "bytes": 15993,
+      "sha256": "6e347238595d6b7a18b3385c6a3687307ac833b78eabbb8951aa1f03f6b4913d"
+    },
+    {
+      "path": "robots.txt",
+      "bytes": 96,
+      "sha256": "269d9e0262a6127701bc0af88c3cd7feb5a649903227d883453c56cedbede713"
+    },
+    {
+      "path": "script.js",
+      "bytes": 13934,
+      "sha256": "d935cb1f9a50001e17b03beee69c204548814f6dc8f9c1d75cb9aa236490ac63"
+    },
+    {
+      "path": "styles.css",
+      "bytes": 24664,
+      "sha256": "65d90ca91ea2eacdbac2d52fcc72c44fa13c4a62e933c73cff8f711df5f14562"
+    },
+    {
+      "path": "tests/core.test.js",
+      "bytes": 4160,
+      "sha256": "60dfabbe28dd8ecf479bd723a688dece2d7323211dc168121094453979b3c10d"
+    },
+    {
+      "path": "validate.py",
+      "bytes": 9582,
+      "sha256": "d24bc07f95048886828453c74664e2982f55585a8f8db0fbaa1baed59dbb6a7c"
+    }
+  ]
+}
