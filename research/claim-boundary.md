@@ -1,21 +1,21 @@
 # Claim boundary
 
-**Release status:** local research and tomorrow-demo package, 2026-07-28.
+**Release status:** local research package, locked static concept, and separate synthetic-signal/real-model bench, updated 2026-07-31.
 **Authority:** this file governs README, demo, deck, scripts, and spoken narrative. When wording conflicts, use the more conservative statement.
 
 ## One-sentence safe claim
 
-> We have built an offline **concept / simulated pipeline** that makes a proposed silent-speech command interaction inspectable; we have not built or validated a silent-speech sensor, decoder, wearable, clinical system, or product.
+> We have a locked authored-fixture **concept / simulated pipeline** and a separate local bench where noisy **simulated sensor signals** pass through a genuine synthetic-trained CTC decoder; we have not built or validated a physical silent-speech sensor, real-EMG decoder, wearable, clinical system, or product.
 
 ## Current capability ledger
 
 | Status | Supportable statement |
 |---|---|
-| Exercised locally | Authored fixture signals deterministically produce scripted candidate/uncertainty behavior; a user can confirm or reject; static validators and pure pipeline tests run without installs. |
+| Exercised locally | The locked static demo deterministically replays authored candidate/uncertainty fixtures. Separately, `realtime/` generates noisy eight-channel signals, performs real preprocessing/features and a forward pass through 185,820 learned PyTorch parameters, CTC-decodes emissions, abstains/repairs/confirms, and exposes/tests a loopback API. This establishes executable synthetic-bench software only. |
 | Design decision | The captain-selected beachhead is e& frontline retail advisors and field technicians. A first research track would evaluate opt-in multi-channel surface EMG for one low-consequence workflow, with a fixed command grammar, calibration, abstention, repair and confirmation. |
 | Research support | Peer-reviewed work shows several articulatory/neuromuscular and implanted-neural approaches can decode or synthesize speech under specific study conditions. Those results do not transfer to this project. |
 | Unknown | User demand, electrode placement, signal quality, calibration burden, vocabulary, within/cross-session performance, subject transfer, latency, comfort, power, compute, cost, security, regulatory status, pricing, team, partners, and funding. |
-| Not present | Hardware, model, weights, collected data, raw biometrics, prototype enclosure, customer discovery, users, trial, approval, certification, patent opinion, production integration, remote service, or deployment. |
+| Not present | Physical hardware/capture, real-EMG- or participant-trained weights, collected/human/biometric data, measured silent-speech performance, prototype enclosure, customer discovery, users, trial, approval, certification, patent opinion, production integration, remote service, or deployment. |
 
 ## Approved wording
 
@@ -26,7 +26,8 @@ Use these phrases with their qualifiers intact:
 - “small command vocabulary **to be defined with users**” — not open vocabulary;
 - “local processing **design target**” — not an implemented security guarantee;
 - “confirmation-first **interaction prototype**” — what the demo actually supports;
-- “confidence **fixture value**” or “scripted candidate score” — never accuracy or calibrated probability;
+- static demo: “confidence **fixture value**” or “scripted candidate score”; real-model bench: “**uncalibrated decoder score**”—neither is accuracy or a calibrated probability;
+- “**simulated signal with injected noise; real synthetic-trained model and inference**” — keep every qualifier and do not shorten this to a hardware capability;
 - “assistive AAC **future participatory research track**” — not an indicated use;
 - “e& frontline retail advisors and field technicians” — captain-selected beachhead, not traction or validated demand;
 - “AED 1,000,000 fixed-fee 90-day pilot” — captain-approved ask only; per-seat annual pricing, strategic funding and acquisition/exit amounts remain **TBD**.
@@ -37,7 +38,7 @@ Do not state or imply:
 
 - reads thoughts, hears inner speech, telepathy, mind reading, or imagined-speech capability;
 - “works,” “reads words,” “decodes speech,” “real time,” “open vocabulary,” “speaker independent,” or “on device” about this project;
-- measured accuracy, WER, CER, information-transfer rate, latency, words/minute, confidence calibration, or transfer performance for this project;
+- measured accuracy, WER, CER, information-transfer rate, end-to-end hardware latency, words/minute, confidence calibration, or transfer performance for this project; backend forward-pass timing may be shown only as a per-run local software diagnostic and not a hardware/product guarantee;
 - behind-the-ear, invisible, wireless, bone-conduction-only, safe, comfortable, all-day, or manufacturable form factor;
 - no audio means anonymous/private; “only text leaves”; compliant, secure, encrypted, certified, or privacy-preserving by default;
 - laryngectomy, ALS, dysarthria, dysphonia, aphasia, stroke, locked-in syndrome, or other diagnosis as a supported user indication;
@@ -49,13 +50,19 @@ Do not state or imply:
 
 ## Demo labels
 
-The following must be visible before the traces or candidate values:
+The locked static `demo/` must show before traces or candidate values:
 
 > **CONCEPT / SIMULATED PIPELINE — authored fixture data; no sensor, recording, model, or measured accuracy.**
 
-Start locked. The illustrative 12-command grammar, egress counters, scores, threshold, delay, miss and manual repair are all authored interaction behavior.
+Its illustrative 12-command grammar, egress counters, scores, threshold, delay, miss and manual repair remain authored interaction behavior.
 
-If the demo fails, use the static five-stage rail and presenter script. Never describe a broken interaction as live sensing.
+The separate `realtime/` client must keep this visible throughout:
+
+> **SIMULATED SIGNAL + NOISE / REAL MODEL + REAL INFERENCE.**
+
+It must explain that weights were trained only on generated signals, model/decoder scores are uncalibrated and no physical/participant data or measured real-world accuracy exists. A “live” label describes browser-to-local-service execution, never live sensing.
+
+If either demo fails, never describe the broken interaction as sensing. The static five-stage rail and presenter script remain the fallback for the locked concept experience.
 
 ## Research-performance citation rule
 

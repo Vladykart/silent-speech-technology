@@ -1,14 +1,16 @@
 # Explicit claim ledger
 
-**Release:** 2026-07-28. `C` IDs appear in the deck notes. **Green** means safe only with the wording/conditions shown. **Amber** is a hypothesis or external result requiring its qualifier. **Red** is prohibited for this project. `H` rows are captain holds and must not be silently decided.
+**Release:** updated 2026-07-31. `C` IDs appear in the deck notes. **Green** means safe only with the wording/conditions shown. **Amber** is a hypothesis or external result requiring its qualifier. **Red** is prohibited for this project. `H` rows are captain holds and must not be silently decided.
 
 ## Project and demo
 
 | ID | Verdict | Exact safe claim | Evidence / non-transfer boundary |
 |---|---|---|---|
-| C01 | Green | This repository has a runnable offline interaction demo. | `demo/`; local validators/tests. |
-| C02 | Green | The demo uses authored fixtures and no sensor, model, microphone, camera, biometric input, account, or network service. | Static code; browser network instrumentation remains a future gate. |
-| C03 | Green | The demo exposes lock state, candidate alternatives, rejection, repair, confirmation, output, and a privacy log. | Interaction behavior only—not sensing performance. |
+| C01 | Green | This repository has a runnable offline authored-fixture interaction demo. | `demo/`; local validators/tests. Keep distinct from `realtime/`. |
+| C02 | Green | The locked static demo uses authored fixtures and no sensor, model, microphone, camera, biometric input, account, or network service. | `demo/` only; the separate `realtime/` client intentionally uses a loopback backend. |
+| C03 | Green | The static demo exposes lock state, candidate alternatives, rejection, repair, confirmation, output, and a privacy log. | Interaction behavior only—not sensing performance. |
+| C33 | Green | The separate local real-model bench runs genuine preprocessing, feature extraction and PyTorch forward passes through 185,820 synthetic-trained parameters, followed by CTC decoding, abstention, repair and confirmation. | `realtime/` checkpoint hash/manifest, tests and API. The sensor signal and all training data are generated; this proves software execution only, not physical silent-speech performance. |
+| C34 | Green | Only the real-model bench's acquisition source is simulated, with baseline drift, Gaussian noise, mains pickup and sparse artifacts; a `SignalSource` contract isolates the physical-driver seam. | No physical driver/device, electrical-safety review, calibration, participant recording or real-EMG evidence exists. “Live” means browser-to-local-service execution, not live sensing. |
 | C04 | Green | Facial/neck surface EMG is a plausible silent-speech research modality. | Peer-reviewed R01–R04; placement/task/participant specific. |
 | C05 | Amber | Surface EMG is the proposed first feasibility modality. | Product decision for a transparent research rig; no hardware exists and form factor stays open. |
 | C06 | Amber | The captain-selected beachhead is e& frontline retail advisors and field technicians, using fixed low-consequence commands with fallback. | Product decision, not demand evidence. Stage 0 must select/validate one workflow and compare current alternatives. |
@@ -39,11 +41,11 @@
 | C19 | Amber | Explicit lock, contact-required sensing, raw retention/egress off, and confirmation are design targets. | Demo/product architecture; not implemented device security or certification. |
 | C20 | Green | The project prohibits covert/bystander sensing, workplace emotion/productivity scoring, authentication, and unrelated secondary model training. | Project policy. EU AI Act official text confirms workplace/education emotion-inference prohibition with medical/safety exception. |
 | C21 | Green | Current scope is not AAC, medical, clinical, emergency, payment, access-control, employment or safety use. | No participatory/clinical/intended-use/regulatory evidence; conventional fallback required. |
-| C22 | Green | The project has no silent-speech accuracy, WER, latency, power, calibration, participant, comfort or hardware number. | No hardware/model/data. External numbers remain attributed. |
-| C23 | Green | Demo values 0.84, 0.54, 0.91 and threshold 0.72 are authored interaction fixtures. | Never translate them into accuracy/probability calibration. |
+| C22 | Green | The project has no measured silent-speech accuracy, WER, end-to-end hardware latency, power, calibration, participant, comfort or hardware number. | `realtime/` may expose per-run local model-forward latency only as a software diagnostic; it is not a hardware/product guarantee. External numbers remain attributed. |
+| C23 | Green | Static-demo values 0.84, 0.54, 0.91 and threshold 0.72 are authored interaction fixtures. `realtime/` scores are computed but uncalibrated model/decoder diagnostics. | Never translate either kind into accuracy or calibrated probability. |
 | C24 | Amber | No public Arabic surface-EMG silent-speech corpus was identified in this bounded review; cited sEMG performance exemplars are English. | Negative search, not proof of non-existence. Refresh before external use. |
 | C25 | Amber | A bilingual/Gulf corpus could be a research asset only if purpose, consent, withdrawal, representation, labor separation, deletion, security and reuse rights are governed. | Hypothesis; no corpus, rights or owner exists. |
-| C26 | Green | Repository/data/model licenses are separate and commercially decisive. | Exact commits/records: Gaddy code MIT, dataset record CC BY 4.0; SilentWear code Apache-2.0; Meta assets checked are CC BY-NC / BY-NC-SA; named BCI repos lack LICENSE. No artifacts downloaded. |
+| C26 | Green | Repository/data/model licenses are separate and commercially decisive. | Exact commits/records: Gaddy code MIT, dataset record CC BY 4.0; SilentWear code Apache-2.0; Meta assets checked are CC BY-NC / BY-NC-SA; named BCI repos lack LICENSE. No upstream code/data/model artifact is retained or vendored; `realtime/` weights are project-generated from synthetic signals. |
 | C27 | Amber | In-use and calibration data claims must be separated. | A future study may require explicitly consented paired audio; current project captures none. No “audio is never recorded” blanket promise for future calibration. |
 | C28 | Green | UAE’s official portal confirms Federal Decree-Law No.45 of 2021 and an in-force date of 2022-01-02. | No compliance claim; Executive Regulations status and legal interpretation remain counsel TBD. |
 

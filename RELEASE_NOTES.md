@@ -1,6 +1,13 @@
-# Release notes — 2026-07-28
+# Release notes
 
-## First professional local release
+## 2026-07-31 — separate real-model bench
+
+- Added `realtime/` without changing the locked authored-fixture demo: an eight-channel simulated acquisition source with baseline drift, Gaussian noise, mains pickup and artifacts feeds real preprocessing, features, a trained residual-Transformer character-CTC model, CTC decoding, abstention, repair and confirmation.
+- Added a checksum-bound 185,820-parameter PyTorch checkpoint deterministically trained only on generated signals, plus its regeneration script and MIT reference attribution to `dgaddy/silent_speech` at exact commit.
+- Added a loopback-only FastAPI/Uvicorn NDJSON service, live local client, physical-driver acquisition seam, one-command runner and tests for signal/noise, features, forward pass, decode/policy, API workflow and visible claim boundaries.
+- This executable synthetic bench is not physical sensing, measured silent-speech accuracy, participant evidence or medical/AAC/product validation.
+
+## 2026-07-28 — first professional local release
 
 - Recovered and critically reviewed the captain-supplied four-slide PPTX by bounded direct HTTPS; recorded exact metadata, SHA-256 and confidential/rights boundary; raw file not retained.
 - Added deep modality, pipeline, evaluation, reproducibility/licence, clinical-status, privacy/security, competitor and staged-roadmap research.

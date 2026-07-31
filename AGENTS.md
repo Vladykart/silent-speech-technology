@@ -3,8 +3,9 @@
 This file is the project's committed home for project-intrinsic agent knowledge: build, test, release, architecture, and sharp-edge notes that should travel with the code.
 
 - Claim authority: [`research/claim-boundary.md`](research/claim-boundary.md) and [`research/claim-ledger.md`](research/claim-ledger.md). External evidence never becomes project performance.
-- Quick validation: `python3 tools/validate_project.py && python3 demo/validate.py && node demo/tests/core.test.js && python3 pitch/validate.py && python3 pitch/validate_pptx.py && python3 pitch/validate_4_slide_pptx.py`.
+- Quick validation: `python3 tools/validate_project.py && python3 demo/validate.py && node demo/tests/core.test.js && python3 pitch/validate.py && python3 pitch/validate_pptx.py && python3 pitch/validate_4_slide_pptx.py && python3 realtime/validate.py`; after local dependencies exist, add `realtime/.venv/bin/python -m unittest discover -s realtime/tests -v`.
 - Editable PPTX authority: rebuild with `python3 pitch/build_pptx.py` / `python3 pitch/build_4_slide_pptx.py`; validate byte-deterministically with the matching validator. Commit each `.pptx` and build JSON together.
+- Keep `demo/` as the locked authored-fixture/no-model experience. The separate `realtime/` loopback service has simulated noisy acquisition plus a real synthetic-trained CTC model; model/manifest rebuild together via `realtime/train.py`, and its outputs are never hardware or accuracy evidence.
 - Demo/deck are local/offline and must keep the concept/simulated label, authored failure/repair, no media capture/network dependency, and source conditions.
 - Captain decisions and exact commercial boundaries are in [`provenance/decisions.md`](provenance/decisions.md); do not repurpose the AED 1,000,000 pilot fee for later pricing/funding/exit.
 - Do not vendor third-party slides, figures, fonts, papers, datasets, models, screenshots, logos, video or audio. Catalogue all local media in [`provenance/media-catalogue.md`](provenance/media-catalogue.md).

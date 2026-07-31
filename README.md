@@ -1,12 +1,20 @@
 # Silent Speech Technology — first local release
 
-An evidence-gated research package, offline concept demo, and professional 13-slide decision deck for a tomorrow demonstration.
+An evidence-gated research package, an offline concept demo, a separate local real-model bench, and a professional 13-slide decision deck.
 
-> **Claim boundary:** This repository does **not** contain a silent-speech device, sensor capture, model, biometric data, measured project accuracy, customer, deployment, or medical/AAC product. The demo is a deterministic **CONCEPT / SIMULATED PIPELINE** using authored fixtures.
+> **Claim boundary:** No silent-speech device, physical sensor capture, participant/biometric data, measured project accuracy, customer, deployment, or medical/AAC product is present. The locked [`demo/`](demo/) remains a deterministic **CONCEPT / SIMULATED PIPELINE** with authored fixtures. Separately, [`realtime/`](realtime/) feeds a **simulated noisy sensor signal** through real preprocessing and a genuine synthetic-trained CTC model; that proves executable software only—not real-EMG performance.
 
-## Tomorrow quick start
+## Quick start
 
-From this repository:
+### Real backend + simulated noisy signal
+
+```bash
+./realtime/run-local.sh
+```
+
+Open `http://127.0.0.1:8765/`. The first run creates `realtime/.venv`; the service binds to loopback only. See [`realtime/README.md`](realtime/README.md) for architecture, model provenance, hardware seam and tests.
+
+### Static concept and decks
 
 ```bash
 python3 tools/validate_project.py
@@ -19,7 +27,7 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 Open:
 
-- demo: `http://127.0.0.1:8000/demo/`
+- locked authored-fixture demo: `http://127.0.0.1:8000/demo/`
 - HTML deck: `http://127.0.0.1:8000/pitch/`
 - editable 13-slide evidence deck: [`pitch/quiet-channel-evidence-deck.pptx`](pitch/quiet-channel-evidence-deck.pptx)
 - editable four-slide executive deck: [`pitch/quiet-channel-4-slide-deck.pptx`](pitch/quiet-channel-4-slide-deck.pptx)
@@ -37,7 +45,8 @@ Authority and boundaries: [`provenance/decisions.md`](provenance/decisions.md), 
 
 ## Project map
 
-- [`demo/`](demo/) — locked, failure-and-repair offline interaction; runbook, script, deterministic test and validator.
+- [`demo/`](demo/) — locked authored-fixture, no-model interaction; runbook, script, deterministic test and validator.
+- [`realtime/`](realtime/) — separate loopback FastAPI service and live client: noisy simulated acquisition, real preprocessing, 185,820-parameter trained residual-Transformer CTC model, decoding, abstention, confirmation, repair, tests and a physical-driver seam.
 - [`pitch/`](pitch/) — matched 13-slide HTML/PPTX evidence deck plus a source-driven four-slide executive PPTX, notes, original SVGs, representative geometry QA and validators.
 - [`research/`](research/) — landscape, evidence matrix, definitions, metrics, competitors, references, critical scout reconciliation and claim boundaries.
 - [`provenance/`](provenance/) — captain-source retrieval/checksum, decision authority, and media-rights catalogue.
@@ -49,6 +58,6 @@ SilentWear v2 (arXiv preprint, 2026) reports n=4, 14 differential neck sEMG chan
 
 ## Quality status
 
-Static HTML/SVG/OOXML parsing, JavaScript syntax, deterministic fixtures and PPTX rebuild, local references, claim decisions, source records and offline dependency guards are validated without installs. The four-slide deck also passed representative 1920×1080 headless-Chromium geometry review from the same layout scene graph. This is not exact PowerPoint rendering: target-application opening plus desktop/narrow/print visual rehearsal remain gates before external circulation. No site is deployed.
+Static HTML/SVG/OOXML parsing, JavaScript syntax, deterministic fixtures and PPTX rebuild, local references, claim decisions, source records and offline dependency guards are validated without installs. The real-model bench adds checkpoint-integrity, noisy-source, feature, forward-pass, CTC/policy and API tests in a project-local environment; its synthetic-regime behavior is not measured silent-speech accuracy. The four-slide deck also passed representative 1920×1080 headless-Chromium geometry review from the same layout scene graph. This is not exact PowerPoint rendering: target-application opening plus desktop/narrow/print visual rehearsal remain gates before external circulation. No site is deployed.
 
 This private local repository carries no general third-party or external-publication permission. See [`provenance/media-catalogue.md`](provenance/media-catalogue.md).

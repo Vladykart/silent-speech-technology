@@ -1,0 +1,42 @@
+{
+  "artifact": "silent_ctc_v1.pt",
+  "sha256": "8ca68c0627fd68bc26ff8ad68d607255c7e39b74dc49c2440a608687492f305c",
+  "format": "PyTorch state_dict",
+  "model_kind": "residual temporal convolution + Transformer encoder + character CTC",
+  "architecture": {
+    "feature_count": 32,
+    "hidden_size": 64,
+    "layers": 2,
+    "dropout": 0.1
+  },
+  "parameter_count": 185820,
+  "training": {
+    "seed": 24082020,
+    "epochs": 42,
+    "examples_per_epoch": 60,
+    "commands": [
+      "check stock",
+      "open work order",
+      "next step",
+      "repeat instruction",
+      "hold",
+      "resume",
+      "show parts list",
+      "note issue",
+      "request supervisor",
+      "cancel request",
+      "yes",
+      "no"
+    ],
+    "source": "project-generated eight-channel signals with drift, Gaussian noise, mains pickup and sparse artifacts",
+    "human_or_biometric_data": false,
+    "final_synthetic_ctc_loss": 0.000634
+  },
+  "claim_boundary": "Synthetic-regime training metadata is not measured silent-speech accuracy or evidence of hardware performance.",
+  "reference": {
+    "repository": "https://github.com/dgaddy/silent_speech",
+    "commit": "a89357c2086609b432919b9d14ffc0be5d8983d5",
+    "license": "MIT",
+    "adaptation": "Residual raw-EMG front end and Transformer/CTC recognition pattern; implementation and weights are project-authored."
+  }
+}
