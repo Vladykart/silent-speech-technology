@@ -13,6 +13,7 @@
   const candidates = $("#candidates");
   const rawCtc = $("#raw-ctc");
   const confidence = $("#confidence");
+  const recordReference = $("#record-reference");
   const decisionBox = $("#decision-box");
   const decisionLabel = $("#decision-label");
   const decisionTitle = $("#decision-title");
@@ -64,10 +65,10 @@
     points = [[], [], [], []]; totalSamples = 0; drawSignal();
     sampleCount.textContent = "0 samples";
     featureShape.textContent = "—";
-    featureBars.innerHTML = "<p>Waiting for real preprocessing…</p>";
+    featureBars.innerHTML = "<p>Waiting for source-faithful preprocessing…</p>";
     latency.textContent = "— ms";
-    candidates.innerHTML = "<p>Forward pass pending…</p>";
-    rawCtc.textContent = "—"; confidence.textContent = "—";
+    candidates.innerHTML = "<p>Official-weight forward pass pending…</p>";
+    rawCtc.textContent = "—"; confidence.textContent = "—"; recordReference.textContent = "shown after inference";
     stagedOutput.textContent = "—"; outputStatus.textContent = "Nothing committed";
     safetyRow.classList.add("hidden"); safetyAck.checked = false;
     safetySensitive = false;
@@ -76,7 +77,7 @@
     decisionBox.className = "decision-box idle";
     decisionLabel.textContent = "CAPTURING";
     decisionTitle.textContent = "Pipeline in progress";
-    decisionReason.textContent = "Raw frames are volatile and remain local.";
+    decisionReason.textContent = "Recorded research frames are read-only, volatile and remain local.";
     document.querySelectorAll(".rail li").forEach(item => item.classList.remove("active", "done"));
   }
 
@@ -92,10 +93,12 @@
     const colors = ["#c8ff3d", "#63d5b8", "#68a7ff", "#f0a254"];
     points.forEach((channel, row) => {
       if (channel.length < 2) return;
+      const mean = channel.reduce((sum, value) => sum + value, 0) / channel.length;
+      const scale = Math.max(...channel.map(value => Math.abs(value - mean)), 1);
       context.strokeStyle = colors[row]; context.lineWidth = 2; context.beginPath();
       channel.forEach((value, index) => {
         const x = index / (channel.length - 1) * width;
-        const y = (row + .5) * height / 4 - Math.max(-1.8, Math.min(1.8, value)) * 21;
+        const y = (row + .5) * height / 4 - (value - mean) / scale * 22;
         if (index === 0) context.moveTo(x, y); else context.lineTo(x, y);
       });
       context.stroke();
@@ -119,12 +122,12 @@
 
   function showInference(event) {
     latency.textContent = `${Number(event.latency_ms).toFixed(1)} ms`;
-    rawCtc.textContent = event.raw_ctc || "∅";
+    rawCtc.textContent = event.raw_phonemes?.join(" · ") || "∅";
     confidence.textContent = Number(event.confidence).toFixed(3);
     candidates.innerHTML = event.candidates.map((candidate, index) =>
       `<div class="candidate"><i>${index + 1}</i><b>${escapeHtml(candidate.text)}</b><span>${Number(candidate.score).toFixed(3)}</span></div>`
     ).join("");
-    log(`Real forward pass: ${event.parameter_count.toLocaleString()} trained parameters / ${Number(event.latency_ms).toFixed(1)} ms.`);
+    log(`Official-weight forward pass: ${event.parameter_count.toLocaleString()} parameters / ${Number(event.latency_ms).toFixed(1)} ms.`);
   }
 
   function showDecision(event) {
@@ -159,11 +162,12 @@
   async function handleEvent(event) {
     if (event.stage) stage(event.stage);
     switch (event.event) {
-      case "acquisition_started": setState("running", "CAPTURING"); log("Simulated noisy acquisition started; no sensor is connected."); break;
+      case "acquisition_started": setState("running", "REPLAYING"); log("Official recorded sEMG replay started; no live sensor is connected."); break;
       case "raw_frame": addRawFrame(event); break;
-      case "preprocessing": log("Real high-pass, normalization and feature extraction running."); break;
+      case "preprocessing": log("Source-faithful notch/high-pass, dual resampling and features running."); break;
       case "features": showFeatures(event); break;
       case "inference": showInference(event); break;
+      case "record_reference": recordReference.textContent = event.prompt; log("Dataset metadata prompt revealed after inference; it was not model input."); break;
       case "decision": showDecision(event); stopButton.disabled = true; startButton.disabled = false; clearInterval(ticker); break;
       case "stopped": setState("stopped"); log("Capture stopped; no output committed."); break;
       case "error": setState("error"); log(event.detail || "Local pipeline error."); startButton.disabled = false; stopButton.disabled = true; break;
@@ -203,7 +207,7 @@
     if (!sessionId) return;
     await fetch(`/api/sessions/${sessionId}/stop`, {method: "POST"});
     if (streamAbort) streamAbort.abort();
-    clearInterval(ticker); setState("stopped"); startButton.disabled = false; stopButton.disabled = true; log("Operator stopped simulated capture.");
+    clearInterval(ticker); setState("stopped"); startButton.disabled = false; stopButton.disabled = true; log("Operator stopped recorded replay.");
   });
   confirmButton.addEventListener("click", async () => {
     const response = await fetch(`/api/sessions/${sessionId}/decision`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({action: "confirm", safety_acknowledged: safetyAck.checked})});
@@ -221,7 +225,7 @@
     const response = await fetch(`/api/sessions/${sessionId}/repair`, {method: "POST"});
     const result = await response.json();
     if (!response.ok) { log(result.detail); return; }
-    resetDisplay(); setState("running", "REPAIR"); startButton.disabled = true; stopButton.disabled = false; startedAt = performance.now(); ticker = setInterval(() => elapsed.textContent = `${((performance.now() - startedAt) / 1000).toFixed(1)} S`, 100); log("Repair: new lower-noise simulated acquisition; downstream code is unchanged.");
+    resetDisplay(); setState("running", "SECOND TAKE"); startButton.disabled = true; stopButton.disabled = false; startedAt = performance.now(); ticker = setInterval(() => elapsed.textContent = `${((performance.now() - startedAt) / 1000).toFixed(1)} S`, 100); log("Repair: second real recorded take of the same prompt; downstream code is unchanged.");
     consume(result.stream).catch(error => { setState("error"); log(error.message); });
   });
   safetyAck.addEventListener("change", () => { if (safetySensitive) confirmButton.disabled = !safetyAck.checked; });

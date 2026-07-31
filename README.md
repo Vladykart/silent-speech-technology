@@ -2,17 +2,17 @@
 
 An evidence-gated research package, an offline concept demo, a separate local real-model bench, and a professional 13-slide decision deck.
 
-> **Claim boundary:** No silent-speech device, physical sensor capture, participant/biometric data, measured project accuracy, customer, deployment, or medical/AAC product is present. The locked [`demo/`](demo/) remains a deterministic **CONCEPT / SIMULATED PIPELINE** with authored fixtures. Separately, [`realtime/`](realtime/) feeds a **simulated noisy sensor signal** through real preprocessing and a genuine synthetic-trained CTC model; that proves executable software only—not real-EMG performance.
+> **Claim boundary:** No silent-speech device, live sensor capture, newly collected participant data, measured project accuracy, customer, deployment, or medical/AAC product is present. The locked [`demo/`](demo/) remains a deterministic **CONCEPT / SIMULATED PIPELINE** with authored fixtures. Separately, [`realtime/`](realtime/) replays official single-speaker recorded sEMG through source-faithful preprocessing and David Gaddy's official released 54M-parameter model. That is real research-data/model execution—not live hardware or project performance.
 
 ## Quick start
 
-### Real backend + simulated noisy signal
+### Real released backend + real recorded-data replay
 
 ```bash
 ./realtime/run-local.sh
 ```
 
-Open `http://127.0.0.1:8765/`. The first run creates `realtime/.venv`; the service binds to loopback only. See [`realtime/README.md`](realtime/README.md) for architecture, model provenance, hardware seam and tests.
+Open `http://127.0.0.1:8765/`. The first run creates `realtime/.venv`, verifies the official assets from the captain-provided shared lab (or fetches missing Zenodo files into ignored local storage), and binds to loopback only. No checkpoint or recorded sample is committed. See [`realtime/README.md`](realtime/README.md) for sizes, licenses, architecture, hardware seam and tests.
 
 ### Static concept and decks
 
@@ -46,7 +46,7 @@ Authority and boundaries: [`provenance/decisions.md`](provenance/decisions.md), 
 ## Project map
 
 - [`demo/`](demo/) — locked authored-fixture, no-model interaction; runbook, script, deterministic test and validator.
-- [`realtime/`](realtime/) — separate loopback FastAPI service and live client: noisy simulated acquisition, real preprocessing, 185,820-parameter trained residual-Transformer CTC model, decoding, abstention, confirmation, repair, tests and a physical-driver seam.
+- [`realtime/`](realtime/) — separate loopback FastAPI service and live client: official CC BY 4.0 recorded sEMG replay, source-faithful preprocessing, official 54,187,136-parameter residual/relative-Transformer weights, trained phoneme decoding, abstention, second-take repair, confirmation, tests and a physical-driver seam. Large assets are fetched locally and never committed.
 - [`pitch/`](pitch/) — matched 13-slide HTML/PPTX evidence deck plus a source-driven four-slide executive PPTX, notes, original SVGs, representative geometry QA and validators.
 - [`research/`](research/) — landscape, evidence matrix, definitions, metrics, competitors, references, critical scout reconciliation and claim boundaries.
 - [`provenance/`](provenance/) — captain-source retrieval/checksum, decision authority, and media-rights catalogue.
@@ -58,6 +58,6 @@ SilentWear v2 (arXiv preprint, 2026) reports n=4, 14 differential neck sEMG chan
 
 ## Quality status
 
-Static HTML/SVG/OOXML parsing, JavaScript syntax, deterministic fixtures and PPTX rebuild, local references, claim decisions, source records and offline dependency guards are validated without installs. The real-model bench adds checkpoint-integrity, noisy-source, feature, forward-pass, CTC/policy and API tests in a project-local environment; its synthetic-regime behavior is not measured silent-speech accuracy. The four-slide deck also passed representative 1920×1080 headless-Chromium geometry review from the same layout scene graph. This is not exact PowerPoint rendering: target-application opening plus desktop/narrow/print visual rehearsal remain gates before external circulation. No site is deployed.
+Static HTML/SVG/OOXML parsing, JavaScript syntax, deterministic fixtures and PPTX rebuild, local references, claim decisions, source records and offline dependency guards are validated without installs. With official local assets present, the replay bench adds checksum/right checks, untouched-recording replay, upstream preprocessing, strict checkpoint load, real mel/phoneme forward output and API/policy tests; selected single-speaker replays are not measured project accuracy. The four-slide deck also passed representative 1920×1080 headless-Chromium geometry review from the same layout scene graph. This is not exact PowerPoint rendering: target-application opening plus desktop/narrow/print visual rehearsal remain gates before external circulation. No site is deployed.
 
 This private local repository carries no general third-party or external-publication permission. See [`provenance/media-catalogue.md`](provenance/media-catalogue.md).

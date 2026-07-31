@@ -1,11 +1,11 @@
 # Release notes
 
-## 2026-07-31 — separate real-model bench
+## 2026-07-31 — separate official-model / recorded-data replay bench
 
-- Added `realtime/` without changing the locked authored-fixture demo: an eight-channel simulated acquisition source with baseline drift, Gaussian noise, mains pickup and artifacts feeds real preprocessing, features, a trained residual-Transformer character-CTC model, CTC decoding, abstention, repair and confirmation.
-- Added a checksum-bound 185,820-parameter PyTorch checkpoint deterministically trained only on generated signals, plus its regeneration script and MIT reference attribution to `dgaddy/silent_speech` at exact commit.
-- Added a loopback-only FastAPI/Uvicorn NDJSON service, live local client, physical-driver acquisition seam, one-command runner and tests for signal/noise, features, forward pass, decode/policy, API workflow and visible claim boundaries.
-- This executable synthetic bench is not physical sensing, measured silent-speech accuracy, participant evidence or medical/AAC/product validation.
+- Added `realtime/` without changing the locked authored-fixture demo: official single-speaker silent facial-sEMG records replay through source-faithful filtering/features, David Gaddy's released 54,187,136-parameter residual/relative-Transformer checkpoint, its real mel/phoneme heads, bounded modern phoneme decoding, abstention, second-take repair and confirmation.
+- Added exact Zenodo DOI/license/size/hash provenance plus a fetch/verify/extract script. The 207 MB CC BY 4.0 checkpoint, 3.92 GB CC BY 4.0 dataset archive and selected arrays remain ignored local assets and are not committed.
+- Added a loopback-only FastAPI/Uvicorn NDJSON service, live local replay client, physical-driver acquisition seam, one-command runner and tests for untouched recordings, upstream preprocessing, strict released-weight loading, real forward output, policy/API workflow and visible claim boundaries.
+- Legacy DeepSpeech 0.7 is unavailable on Python 3.12, so the service decodes the released model's trained phoneme emissions directly with CMUdict/edit distance—no synthetic replacement model. This replay is not live sensing, measured project accuracy, identity/medical/AAC/product evidence or a representative source evaluation.
 
 ## 2026-07-28 — first professional local release
 

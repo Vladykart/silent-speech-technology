@@ -8,7 +8,7 @@ import re
 import sys
 
 ROOT=Path(__file__).resolve().parents[1]
-SKIP={".git",".venv","__pycache__"}
+SKIP={".git",".venv","local_assets","__pycache__"}
 REQUIRED=[
  "README.md","AGENTS.md","demo/index.html","demo/README.md","demo/PRESENTER.md","demo/validate.py",
  "pitch/index.html","pitch/deck.md","pitch/styles.css","pitch/script.js","pitch/README.md","pitch/validate.py",
@@ -17,7 +17,7 @@ REQUIRED=[
  "research/landscape.md","research/evidence-matrix.md","research/claim-boundary.md","research/claim-ledger.md",
  "research/references.md","research/presentation-review.md","research/scout-review.md",
  "provenance/source-record.md","provenance/decisions.md","provenance/media-catalogue.md",
- "realtime/README.md","realtime/validate.py","realtime/run-local.sh","realtime/app/service.py","realtime/client/index.html","realtime/models/silent_ctc_v1.pt","realtime/models/silent_ctc_v1.json"
+ "realtime/README.md","realtime/validate.py","realtime/run-local.sh","realtime/fetch_assets.py","realtime/assets-manifest.json","realtime/app/service.py","realtime/client/index.html"
 ]
 
 class Links(HTMLParser):
@@ -54,7 +54,7 @@ def main():
     target=local_target(p,ref)
     if target is not None and not target.exists():errors.append(f"broken HTML ref in {rel}: {ref}")
  all_text="\n".join(p.read_text(errors="ignore") for p in files if p.suffix.lower() in {".md",".html",".js",".css",".py",".svg",".tsv"})
- for phrase in ("dcf87f08345a942d5cb84113d0e76a2cbb12050f335c5d54585c3b27143dff0b","AED 1,000,000","CONCEPT / SIMULATED","Browser-rendered","SIMULATED SIGNAL + NOISE","REAL MODEL / REAL INFERENCE"):
+ for phrase in ("dcf87f08345a942d5cb84113d0e76a2cbb12050f335c5d54585c3b27143dff0b","AED 1,000,000","CONCEPT / SIMULATED","Browser-rendered","REAL RECORDED sEMG","REAL RELEASED","NOT LIVE CAPTURE"):
   if phrase.lower() not in all_text.lower():errors.append(f"release invariant missing: {phrase}")
  for secret in (r'AKIA[0-9A-Z]{16}',r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----',r'gh[pousr]_[A-Za-z0-9_]{30,}',r'https?://i\.getmoshi\.app/[A-Za-z0-9_-]+'):
   if re.search(secret,all_text):errors.append(f"possible secret pattern: {secret}")

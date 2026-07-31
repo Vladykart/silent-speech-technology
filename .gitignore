@@ -6,5 +6,6 @@ __pycache__/
 
 # Project-local runtime environment
 realtime/.venv/
-# Local service artifacts
+# Local service artifacts and fetched research assets
 realtime/*.log
+realtime/local_assets/

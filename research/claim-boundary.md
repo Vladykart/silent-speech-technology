@@ -1,21 +1,21 @@
 # Claim boundary
 
-**Release status:** local research package, locked static concept, and separate synthetic-signal/real-model bench, updated 2026-07-31.
+**Release status:** local research package, locked static concept, and separate official-model/recorded-data replay bench, updated 2026-07-31.
 **Authority:** this file governs README, demo, deck, scripts, and spoken narrative. When wording conflicts, use the more conservative statement.
 
 ## One-sentence safe claim
 
-> We have a locked authored-fixture **concept / simulated pipeline** and a separate local bench where noisy **simulated sensor signals** pass through a genuine synthetic-trained CTC decoder; we have not built or validated a physical silent-speech sensor, real-EMG decoder, wearable, clinical system, or product.
+> We have a locked authored-fixture **concept / simulated pipeline** and a separate local bench that replays official CC BY 4.0 single-speaker sEMG through David Gaddy's official released pretrained model; we have not built or validated a physical silent-speech sensor, live/generalizable decoder, wearable, clinical system, or product.
 
 ## Current capability ledger
 
 | Status | Supportable statement |
 |---|---|
-| Exercised locally | The locked static demo deterministically replays authored candidate/uncertainty fixtures. Separately, `realtime/` generates noisy eight-channel signals, performs real preprocessing/features and a forward pass through 185,820 learned PyTorch parameters, CTC-decodes emissions, abstains/repairs/confirms, and exposes/tests a loopback API. This establishes executable synthetic-bench software only. |
+| Exercised locally | The locked static demo deterministically replays authored candidate/uncertainty fixtures. Separately, `realtime/` replays selected official 1 kHz eight-channel records, runs source-faithful preprocessing and strict forward passes through 54,187,136 official released parameters, decodes the trained phoneme head, abstains/second-take repairs/confirms, and exposes/tests a loopback API. This establishes faithful local replay only. |
 | Design decision | The captain-selected beachhead is e& frontline retail advisors and field technicians. A first research track would evaluate opt-in multi-channel surface EMG for one low-consequence workflow, with a fixed command grammar, calibration, abstention, repair and confirmation. |
 | Research support | Peer-reviewed work shows several articulatory/neuromuscular and implanted-neural approaches can decode or synthesize speech under specific study conditions. Those results do not transfer to this project. |
 | Unknown | User demand, electrode placement, signal quality, calibration burden, vocabulary, within/cross-session performance, subject transfer, latency, comfort, power, compute, cost, security, regulatory status, pricing, team, partners, and funding. |
-| Not present | Physical hardware/capture, real-EMG- or participant-trained weights, collected/human/biometric data, measured silent-speech performance, prototype enclosure, customer discovery, users, trial, approval, certification, patent opinion, production integration, remote service, or deployment. |
+| Not present | Physical hardware/live capture, newly collected project human/biometric data, project-trained weights, measured project silent-speech performance, cross-speaker/session validation, prototype enclosure, customer discovery, users, trial, approval, certification, patent opinion, production integration, remote service, or deployment. Official single-speaker records/weights are fetched outside git for replay under CC BY 4.0. |
 
 ## Approved wording
 
@@ -26,8 +26,8 @@ Use these phrases with their qualifiers intact:
 - “small command vocabulary **to be defined with users**” — not open vocabulary;
 - “local processing **design target**” — not an implemented security guarantee;
 - “confirmation-first **interaction prototype**” — what the demo actually supports;
-- static demo: “confidence **fixture value**” or “scripted candidate score”; real-model bench: “**uncalibrated decoder score**”—neither is accuracy or a calibrated probability;
-- “**simulated signal with injected noise; real synthetic-trained model and inference**” — keep every qualifier and do not shorten this to a hardware capability;
+- static demo: “confidence **fixture value**” or “scripted candidate score”; recorded-replay bench: “**uncalibrated phoneme-alignment score**”—neither is accuracy or a calibrated probability;
+- “**replay of official single-speaker recorded sEMG through the official released pretrained model; not live capture**” — keep every qualifier and do not shorten this to a hardware/generalization capability;
 - “assistive AAC **future participatory research track**” — not an indicated use;
 - “e& frontline retail advisors and field technicians” — captain-selected beachhead, not traction or validated demand;
 - “AED 1,000,000 fixed-fee 90-day pilot” — captain-approved ask only; per-seat annual pricing, strategic funding and acquisition/exit amounts remain **TBD**.
@@ -58,9 +58,9 @@ Its illustrative 12-command grammar, egress counters, scores, threshold, delay, 
 
 The separate `realtime/` client must keep this visible throughout:
 
-> **SIMULATED SIGNAL + NOISE / REAL MODEL + REAL INFERENCE.**
+> **REAL RECORDED sEMG REPLAY / REAL RELEASED PRETRAINED MODEL / NOT LIVE CAPTURE.**
 
-It must explain that weights were trained only on generated signals, model/decoder scores are uncalibrated and no physical/participant data or measured real-world accuracy exists. A “live” label describes browser-to-local-service execution, never live sensing.
+It must name David Gaddy, both official Zenodo model/data records, CC BY 4.0, single-speaker scope, decoder adaptation and non-commercial local-demo boundary. Model/decoder scores are uncalibrated; selected replay behavior is neither measured project accuracy nor a representative source evaluation. “Live” describes browser-to-local-service execution, never live sensing.
 
 If either demo fails, never describe the broken interaction as sensing. The static five-stage rail and presenter script remain the fallback for the locked concept experience.
 

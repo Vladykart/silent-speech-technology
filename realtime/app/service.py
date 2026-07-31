@@ -1,4 +1,4 @@
-"""FastAPI service for live acquisition-to-decision streaming."""
+"""FastAPI service for real recorded-sEMG replay through released weights."""
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
@@ -17,14 +17,14 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
-from .config import CONFIDENCE_THRESHOLD, MANIFEST_PATH, MODEL_PATH, SCENARIOS
+from .config import CONFIDENCE_THRESHOLD, MODEL_PATH, REPLAY_ROOT, SCENARIOS
 from .pipeline import InferencePipeline
-from .signal_source import SignalSource, SimulatedSignalSource, profile_for_quality
+from .signal_source import RecordedEMGReplaySource, SignalSource
 
 logger = logging.getLogger("quiet_channel.realtime")
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"), format="%(asctime)s %(levelname)s %(name)s %(message)s")
 CLIENT = Path(__file__).resolve().parents[1] / "client"
-TRUTH = "Sensor signal is simulated with injected noise; model weights and inference pipeline are real."
+TRUTH = "Replay of real recorded sEMG through the real released pretrained model; not live capture."
 
 
 class CreateSession(BaseModel):
@@ -50,13 +50,13 @@ class Session:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.pipeline = InferencePipeline(MODEL_PATH, MANIFEST_PATH)
+    app.state.pipeline = InferencePipeline(MODEL_PATH)
     app.state.sessions = {}
     logger.info(
-        "model_loaded path=%s sha256=%s parameters=%s acquisition=simulated",
+        "released_model_loaded path=%s sha256=%s parameters=%s acquisition=recorded_replay",
         MODEL_PATH,
-        app.state.pipeline.manifest["sha256"],
-        app.state.pipeline.manifest["parameter_count"],
+        app.state.pipeline.asset_manifest["model"]["checkpoint"]["sha256"],
+        app.state.pipeline.parameter_count,
     )
     yield
     for session in app.state.sessions.values():
@@ -65,8 +65,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Quiet Channel real-model local service",
-    version="1.0.0",
+    title="Quiet Channel real recorded-sEMG replay service",
+    version="2.0.0",
     description=TRUTH,
     lifespan=lifespan,
     docs_url="/api/docs",
@@ -91,16 +91,25 @@ async def local_security_headers(request: Request, call_next):
 @app.get("/api/health")
 def health(request: Request):
     pipeline: InferencePipeline = request.app.state.pipeline
+    checkpoint = pipeline.asset_manifest["model"]["checkpoint"]
     return {
         "status": "ok",
-        "service": "local-only",
-        "acquisition": "simulated_signal_with_noise",
-        "inference": "real_trained_model",
+        "service": "local-only_non-commercial_research_demo",
+        "acquisition": "official_recorded_semg_replay",
+        "live_capture": False,
+        "inference": "official_released_pretrained_model",
         "model": {
-            "kind": pipeline.manifest["model_kind"],
-            "parameters": pipeline.manifest["parameter_count"],
-            "sha256": pipeline.manifest["sha256"],
-            "training_data": "synthetic_only",
+            "kind": "released residual CNN + relative-position Transformer transduction model",
+            "parameters": pipeline.parameter_count,
+            "sha256": checkpoint["sha256"],
+            "license": "CC BY 4.0",
+            "creator": "David Gaddy",
+        },
+        "dataset": {
+            "name": "Silent Speech EMG v1.0",
+            "doi": "10.5281/zenodo.4064409",
+            "license": "CC BY 4.0",
+            "single_speaker": True,
         },
         "truth": TRUTH,
         "telemetry": False,
@@ -111,13 +120,14 @@ def health(request: Request):
 def scenarios():
     return {
         "truth": TRUTH,
-        "confidence": "Uncalibrated decoder score; not accuracy or a probability of correctness.",
+        "confidence": "Uncalibrated phoneme-alignment score; not accuracy or probability of correctness.",
         "items": [
             {
                 "id": scenario.id,
                 "title": scenario.title,
                 "description": scenario.description,
-                "safety_sensitive": scenario.id == "safety",
+                "source_split": scenario.evaluation_split,
+                "safety_sensitive": scenario.safety_sensitive,
             }
             for scenario in SCENARIOS.values()
         ],
@@ -148,21 +158,15 @@ def _event(kind: str, **payload) -> bytes:
     return (json.dumps({"event": kind, **payload}, separators=(",", ":")) + "\n").encode()
 
 
-def _source_for(session: Session) -> SimulatedSignalSource:
+def _source_for(session: Session) -> RecordedEMGReplaySource:
     scenario = SCENARIOS[session.scenario_id]
+    group = scenario.sample_group
+    index = scenario.sample_index
     if session.attempt == "repair":
-        return SimulatedSignalSource(
-            scenario.repair_utterance or scenario.utterance,
-            profile=profile_for_quality("repair"),
-            seed=71,
-        )
-    seeds = {"clear": 31, "ambiguous": 47, "safety": 59}
-    return SimulatedSignalSource(
-        scenario.utterance,
-        profile=profile_for_quality(scenario.quality),
-        seed=seeds[scenario.id],
-        alternate=scenario.alternate,
-    )
+        if scenario.repair_group is None or scenario.repair_index is None:
+            raise RuntimeError("scenario has no recorded repair take")
+        group, index = scenario.repair_group, scenario.repair_index
+    return RecordedEMGReplaySource(REPLAY_ROOT / group, index)
 
 
 def _stream_events(session: Session, pipeline: InferencePipeline, pace: bool):
@@ -174,12 +178,15 @@ def _stream_events(session: Session, pipeline: InferencePipeline, pace: bool):
     source = _source_for(session)
     session.active_source = source
     samples: list[np.ndarray] = []
+    scenario = SCENARIOS[session.scenario_id]
     yield _event(
         "acquisition_started",
         stage="raw_signal",
-        source="SimulatedSignalSource",
-        simulated=True,
-        noise=["baseline drift", "Gaussian sensor noise", "50 Hz pickup", "occasional artifacts"],
+        source="RecordedEMGReplaySource",
+        provenance="official Zenodo 4064409 single-speaker research recording",
+        simulated=False,
+        live_capture=False,
+        license="CC BY 4.0",
         sample_rate=source.sample_rate,
         channels=source.channels,
         attempt=session.attempt,
@@ -192,25 +199,31 @@ def _stream_events(session: Session, pipeline: InferencePipeline, pace: bool):
                 yield _event("stopped", stage="raw_signal", state="stopped")
                 return
             samples.append(frame.samples)
-            # Browser payload is a display subsample; full frames continue downstream.
-            preview = frame.samples[::4, :4]
+            preview = frame.samples[::8, :4]
             yield _event(
                 "raw_frame",
                 stage="raw_signal",
                 first_sample=frame.first_sample,
                 sample_count=len(frame.samples),
-                preview=np.round(preview, 4).tolist(),
+                preview=np.round(preview, 2).tolist(),
+                provenance=frame.provenance,
             )
             if pace:
-                time.sleep(len(frame.samples) / source.sample_rate * 0.45)
-        signal = np.concatenate(samples, axis=0)
+                time.sleep(len(frame.samples) / source.sample_rate * 0.35)
+        recording = np.concatenate(samples, axis=0)
+        before, after = source.filter_context()
         yield _event(
             "preprocessing",
             stage="features",
-            operations=["8 Hz high-pass", "fixed calibration scale", "clipping", "16-sample / 8-hop windows"],
-            input_shape=list(signal.shape),
+            operations=[
+                "60 Hz notch + harmonics (upstream)",
+                "2 Hz high-pass (upstream)",
+                "689.06 Hz raw-model resample",
+                "516.79 Hz / 112-value upstream features",
+            ],
+            input_shape=list(recording.shape),
         )
-        result = pipeline.infer(signal)
+        result = pipeline.infer(recording, before, after, source.alignment_frames)
         feature_preview = result.preprocessed.features
         yield _event(
             "features",
@@ -218,51 +231,63 @@ def _stream_events(session: Session, pipeline: InferencePipeline, pace: bool):
             shape=list(feature_preview.shape),
             names=list(result.preprocessed.feature_names[:8]),
             preview=np.round(feature_preview[:: max(1, len(feature_preview) // 20), :8], 4).tolist(),
+            model_note="Released architecture consumes the identically preprocessed raw branch; explicit features are inspectable but unused by architecture.py.",
         )
         decoded = result.decoded
         candidates = [asdict(candidate) for candidate in decoded.candidates]
         yield _event(
             "inference",
             stage="model",
-            architecture=pipeline.manifest["model_kind"],
-            parameter_count=pipeline.manifest["parameter_count"],
+            architecture="Official 54M-parameter residual CNN + relative Transformer (Gaddy release)",
+            parameter_count=pipeline.parameter_count,
+            model_license="CC BY 4.0",
+            model_sha256=pipeline.asset_manifest["model"]["checkpoint"]["sha256"],
             output_steps=result.output_steps,
+            mel_shape=list(result.mel_features.shape),
             latency_ms=result.latency_ms,
-            raw_ctc=decoded.raw_ctc,
+            raw_phonemes=list(decoded.raw_phonemes),
             candidates=candidates,
             confidence=decoded.confidence,
             frame_certainty=decoded.frame_certainty,
             decoder_agreement=decoded.decoder_agreement,
-            confidence_label="uncalibrated decoder score — not accuracy",
+            confidence_label="uncalibrated phoneme-alignment score — not accuracy",
         )
         session.prediction = candidates[0]["text"]
-        session.safety_sensitive = decoded.safety_sensitive
+        session.safety_sensitive = scenario.safety_sensitive or decoded.safety_sensitive
         session.state = decoded.status
+        reason = decoded.reason
+        if scenario.safety_sensitive and session.state != "abstain":
+            reason = "Safety-sensitive research replay: explicit confirmation is mandatory; no actuation is connected."
+        yield _event(
+            "record_reference",
+            stage="model",
+            prompt=source.metadata["text"],
+            label="dataset metadata shown after inference; never passed to the model or decoder",
+            book=source.metadata["book"],
+            sentence_index=source.metadata["sentence_index"],
+            source_split=scenario.evaluation_split,
+        )
         yield _event(
             "decision",
             stage="decision",
             state=decoded.status,
-            reason=decoded.reason,
+            reason=reason,
             prediction=session.prediction,
-            safety_sensitive=decoded.safety_sensitive,
+            safety_sensitive=session.safety_sensitive,
             threshold=CONFIDENCE_THRESHOLD,
             output_committed=False,
         )
     except Exception:
         logger.exception("stream_failed session=%s", session.id)
         session.state = "error"
-        yield _event("error", detail="pipeline failed; see local service log", state="error")
+        yield _event("error", detail="real replay pipeline failed; see local service log", state="error")
     finally:
         source.stop()
         session.active_source = None
 
 
 @app.get("/api/sessions/{session_id}/stream")
-def stream_session(
-    session_id: str,
-    request: Request,
-    pace: bool = Query(default=True),
-):
+def stream_session(session_id: str, request: Request, pace: bool = Query(default=True)):
     session = _session(request, session_id)
     return StreamingResponse(
         _stream_events(session, request.app.state.pipeline, pace),
@@ -291,7 +316,7 @@ def decide(session_id: str, payload: DecisionRequest, request: Request):
             "id": session.id,
             "state": "rejected",
             "output_committed": False,
-            "repair_available": SCENARIOS[session.scenario_id].repair_utterance is not None,
+            "repair_available": SCENARIOS[session.scenario_id].repair_group is not None,
         }
     if session.safety_sensitive and not payload.safety_acknowledged:
         raise HTTPException(409, "safety acknowledgement is required")
@@ -311,8 +336,8 @@ def repair(session_id: str, request: Request):
     if session.state not in {"abstain", "rejected"}:
         raise HTTPException(409, f"repair unavailable in state {session.state}")
     scenario = SCENARIOS[session.scenario_id]
-    if not scenario.repair_utterance:
-        raise HTTPException(409, "this scenario has no authored acquisition repair")
+    if scenario.repair_group is None:
+        raise HTTPException(409, "this scenario has no second recorded take")
     session.attempt = "repair"
     session.state = "repair_ready"
     session.prediction = None
@@ -320,7 +345,7 @@ def repair(session_id: str, request: Request):
         "id": session.id,
         "state": session.state,
         "stream": f"/api/sessions/{session.id}/stream",
-        "repair": "new lower-noise simulated acquisition; downstream pipeline is unchanged",
+        "repair": "second real recorded take of the same source prompt; downstream pipeline is unchanged",
     }
 
 
