@@ -1,6 +1,13 @@
-# Release notes — 2026-07-28
+# Release notes
 
-## First professional local release
+## 2026-07-31 — separate official-model / recorded-data replay bench
+
+- Added `realtime/` without changing the locked authored-fixture demo: official single-speaker silent facial-sEMG records replay through source-faithful filtering/features, David Gaddy's released 54,187,136-parameter residual/relative-Transformer checkpoint, its real mel/phoneme heads, bounded modern phoneme decoding, abstention, second-take repair and confirmation.
+- Added exact Zenodo DOI/license/size/hash provenance plus a fetch/verify/extract script. The 207 MB CC BY 4.0 checkpoint, 3.92 GB CC BY 4.0 dataset archive and selected arrays remain ignored local assets and are not committed.
+- Added a loopback-only FastAPI/Uvicorn NDJSON service, live local replay client, physical-driver acquisition seam, one-command runner and tests for untouched recordings, upstream preprocessing, strict released-weight loading, real forward output, policy/API workflow and visible claim boundaries.
+- Legacy DeepSpeech 0.7 is unavailable on Python 3.12, so the service decodes the released model's trained phoneme emissions directly with CMUdict/edit distance—no synthetic replacement model. This replay is not live sensing, measured project accuracy, identity/medical/AAC/product evidence or a representative source evaluation.
+
+## 2026-07-28 — first professional local release
 
 - Recovered and critically reviewed the captain-supplied four-slide PPTX by bounded direct HTTPS; recorded exact metadata, SHA-256 and confidential/rights boundary; raw file not retained.
 - Added deep modality, pipeline, evaluation, reproducibility/licence, clinical-status, privacy/security, competitor and staged-roadmap research.

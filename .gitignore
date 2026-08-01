@@ -3,3 +3,9 @@ __pycache__/
 .DS_Store
 *.swp
 *.tmp
+
+# Project-local runtime environment
+realtime/.venv/
+# Local service artifacts and fetched research assets
+realtime/*.log
+realtime/local_assets/
