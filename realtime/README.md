@@ -98,7 +98,7 @@ MIT and CC BY 4.0 notices are in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.
 - `RealHardwareSignalSource` is the unimplemented reviewed-device seam. A future driver must map units/channels/timestamps to the same contract; preprocessing/model/decoder code remains unchanged.
 - `SimulatedSignalSource` remains an explicit acquisition-only fallback for hardware plumbing, as directed, but no default scenario or service path instantiates it and it supports no model/performance claim.
 
-A real device requires electrical-safety, placement, calibration, consent/ethics, retention/deletion, security, withdrawal, labor/jurisdiction and intended-use review. None is present.
+A real device requires electrical-safety, placement, calibration, consent/ethics, retention/deletion, security, withdrawal, labor/jurisdiction and intended-use review. None is present. See the purchase-ready [`Live facial-sEMG prototype hardware and procurement guide`](../docs/LIVE_SEMG_PROTOTYPE_HARDWARE.md) for reviewed routes, integration contracts and pre-participant gates; it is sourcing guidance, not approval or evidence that hardware has been acquired.
 
 ## API
 
