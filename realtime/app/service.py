@@ -83,7 +83,11 @@ async def local_security_headers(request: Request, call_next):
     response.headers["Referrer-Policy"] = "no-referrer"
     response.headers["Content-Security-Policy"] = (
         "default-src 'self'; script-src 'self'; style-src 'self'; "
-        "img-src 'self' data:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'"
+        "img-src 'self' data:; connect-src 'self'; object-src 'none'; "
+        "base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+    )
+    response.headers["Permissions-Policy"] = (
+        "camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=()"
     )
     return response
 
@@ -121,9 +125,14 @@ def scenarios():
     return {
         "truth": TRUTH,
         "confidence": "Uncalibrated phoneme-alignment score; not accuracy or probability of correctness.",
+        "reference_visibility": "Dataset command labels are omitted here and emitted only after inference.",
         "items": [
             {
                 "id": scenario.id,
+                "example_id": scenario.example_id,
+                "classification": "official_recorded_example",
+                "executable": True,
+                "recorded_takes": scenario.recorded_takes,
                 "title": scenario.title,
                 "description": scenario.description,
                 "source_split": scenario.evaluation_split,
@@ -141,6 +150,7 @@ def create_session(payload: CreateSession, request: Request):
     return {
         "id": session.id,
         "scenario": payload.scenario,
+        "example_id": SCENARIOS[payload.scenario].example_id,
         "state": session.state,
         "stream": f"/api/sessions/{session.id}/stream",
         "truth": TRUTH,
@@ -183,6 +193,8 @@ def _stream_events(session: Session, pipeline: InferencePipeline, pace: bool):
         "acquisition_started",
         stage="raw_signal",
         source="RecordedEMGReplaySource",
+        replay_example_id=scenario.example_id,
+        model_input="recorded sEMG tensor only",
         provenance="official Zenodo 4064409 single-speaker research recording",
         simulated=False,
         live_capture=False,
@@ -357,6 +369,11 @@ def index():
 @app.get("/styles.css", include_in_schema=False)
 def styles():
     return FileResponse(CLIENT / "styles.css", media_type="text/css")
+
+
+@app.get("/replay-contract.js", include_in_schema=False)
+def replay_contract_script():
+    return FileResponse(CLIENT / "replay-contract.js", media_type="text/javascript")
 
 
 @app.get("/app.js", include_in_schema=False)

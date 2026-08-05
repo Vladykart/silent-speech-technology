@@ -19,6 +19,7 @@ CONFIDENCE_THRESHOLD = 0.60
 @dataclass(frozen=True)
 class Scenario:
     id: str
+    example_id: str
     title: str
     description: str
     sample_group: str
@@ -30,10 +31,15 @@ class Scenario:
     repair_group: str | None = None
     repair_index: int | None = None
 
+    @property
+    def recorded_takes(self) -> int:
+        return 2 if self.repair_group is not None else 1
+
 
 SCENARIOS = {
     "clear": Scenario(
         "clear",
+        "QC-R01",
         "Held-out research replay",
         "Real silent facial-sEMG recording from the source's large development split.",
         "clear",
@@ -44,6 +50,7 @@ SCENARIOS = {
     ),
     "ambiguous": Scenario(
         "ambiguous",
+        "QC-R02",
         "Recorded replay → abstain → repair",
         "A real closed-vocabulary recording; repair replays a second real take of the same prompt.",
         "ambiguous",
@@ -56,8 +63,9 @@ SCENARIOS = {
     ),
     "safety": Scenario(
         "safety",
+        "QC-R03",
         "Safety-sensitive prompt replay",
-        "Real silent facial-sEMG for “Keep back!”; no actuation is connected.",
+        "A real safety-sensitive silent facial-sEMG recording; no actuation is connected.",
         "safety",
         91,
         "Keep back!",

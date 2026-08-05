@@ -17,7 +17,7 @@ REQUIRED=[
  "research/landscape.md","research/evidence-matrix.md","research/claim-boundary.md","research/claim-ledger.md",
  "research/references.md","research/presentation-review.md","research/scout-review.md",
  "provenance/source-record.md","provenance/decisions.md","provenance/media-catalogue.md",
- "realtime/README.md","realtime/validate.py","realtime/run-local.sh","realtime/fetch_assets.py","realtime/assets-manifest.json","realtime/app/service.py","realtime/client/index.html"
+ "realtime/README.md","realtime/OPERATOR.md","realtime/validate.py","realtime/run-local.sh","realtime/fetch_assets.py","realtime/assets-manifest.json","realtime/app/service.py","realtime/client/index.html"
 ]
 
 class Links(HTMLParser):

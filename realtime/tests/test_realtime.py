@@ -3,6 +3,7 @@ from __future__ import annotations
 from hashlib import sha256
 from pathlib import Path
 import json
+import re
 import unittest
 
 import numpy as np
@@ -42,6 +43,47 @@ def load_capture(scenario_id: str, repair: bool = False):
 def infer_capture(pipeline: InferencePipeline, scenario_id: str, repair: bool = False):
     recording, before, after, _, metadata = load_capture(scenario_id, repair)
     return pipeline.infer(recording, before, after, metadata["_alignment_frames"])
+
+
+class ScenarioContractTests(unittest.TestCase):
+    def test_committed_replay_metadata_and_safe_example_bindings_are_exact(self):
+        manifest = json.loads(ASSET_MANIFEST_PATH.read_text())
+        expected = {
+            "clear": ("QC-R01", "clear", 314, "What news?", 1),
+            "ambiguous": ("QC-R02", "ambiguous", 379, "09:48 AM", 2),
+            "safety": ("QC-R03", "safety", 91, "Keep back!", 1),
+        }
+        for scenario_id, (example_id, group, index, prompt, takes) in expected.items():
+            scenario = SCENARIOS[scenario_id]
+            self.assertEqual(
+                (scenario.example_id, scenario.sample_group, scenario.sample_index, scenario.reference_prompt, scenario.recorded_takes),
+                (example_id, group, index, prompt, takes),
+            )
+            self.assertEqual(manifest["replays"][scenario_id]["index"], index)
+            self.assertEqual(manifest["replays"][scenario_id]["reference_prompt"], prompt)
+        self.assertEqual(SCENARIOS["ambiguous"].repair_group, "repair")
+        self.assertEqual(SCENARIOS["ambiguous"].repair_index, 310)
+        self.assertEqual(manifest["replays"]["repair"]["reference_prompt"], "09:48 AM")
+
+    def test_browser_assets_keep_three_stage_accessible_no_egress_contract(self):
+        page = (ROOT / "realtime/client/index.html").read_text()
+        script = (ROOT / "realtime/client/app.js").read_text()
+        styles = (ROOT / "realtime/client/styles.css").read_text()
+        self.assertEqual(
+            re.findall(r'data-stage-panel="([^"]+)"', page),
+            ["data-collection", "model", "process-result"],
+        )
+        self.assertEqual(page.count('data-progress-stage="'), 3)
+        for phrase in ("What news?", "09:48 AM", "Keep back!"):
+            self.assertNotIn(phrase, page)
+        for semantic in ('<fieldset id="scenario-list">', "<legend>", 'role="alert"', 'aria-live="polite"', '<meter id="score-meter"'):
+            self.assertIn(semantic, page)
+        self.assertIn(":focus-visible", styles)
+        self.assertIn("prefers-reduced-motion: reduce", styles)
+        combined = page + script + styles
+        self.assertNotRegex(combined, r"https?://")
+        for forbidden in ("sendBeacon", "localStorage", "sessionStorage", "getUserMedia", "mediaDevices", "WebSocket", "indexedDB"):
+            self.assertNotIn(forbidden, combined)
 
 
 class AssetAndReplayTests(unittest.TestCase):
@@ -136,10 +178,29 @@ class ApiAndClaimTests(unittest.TestCase):
             home = client.get("/")
             self.assertIn("REAL RECORDED sEMG REPLAY", home.text)
             self.assertIn("default-src 'self'", home.headers["content-security-policy"])
+            self.assertIn("camera=()", home.headers["permissions-policy"])
             self.assertEqual(client.get("/styles.css").status_code, 200)
+            self.assertEqual(client.get("/replay-contract.js").status_code, 200)
             self.assertEqual(client.get("/app.js").status_code, 200)
 
+            scenario_response = client.get("/api/scenarios")
+            self.assertEqual(scenario_response.status_code, 200)
+            scenario_payload = scenario_response.json()
+            self.assertIn("only after inference", scenario_payload["reference_visibility"])
+            self.assertEqual(
+                [(item["id"], item["example_id"], item["classification"], item["executable"], item["recorded_takes"]) for item in scenario_payload["items"]],
+                [
+                    ("clear", "QC-R01", "official_recorded_example", True, 1),
+                    ("ambiguous", "QC-R02", "official_recorded_example", True, 2),
+                    ("safety", "QC-R03", "official_recorded_example", True, 1),
+                ],
+            )
+            serialized_scenarios = json.dumps(scenario_payload)
+            for reference in ("What news?", "09:48 AM", "Keep back!"):
+                self.assertNotIn(reference, serialized_scenarios)
+
             created = client.post("/api/sessions", json={"scenario": "ambiguous"}).json()
+            self.assertEqual(created["example_id"], "QC-R02")
             events = [json.loads(line) for line in client.get(created["stream"] + "?pace=false").iter_lines()]
             names = [event["event"] for event in events]
             self.assertEqual(names[0], "acquisition_started")
@@ -150,11 +211,14 @@ class ApiAndClaimTests(unittest.TestCase):
             self.assertEqual(repaired.status_code, 200)
             second_events = [json.loads(line) for line in client.get(repaired.json()["stream"] + "?pace=false").iter_lines()]
             self.assertEqual(second_events[-1]["state"], "confirm_required")
-            confirmed = client.post(
+            rejected = client.post(
                 f"/api/sessions/{created['id']}/decision",
-                json={"action": "confirm", "safety_acknowledged": False},
+                json={"action": "reject"},
             )
-            self.assertEqual(confirmed.json()["output"], "09:48 AM")
+            self.assertEqual(rejected.status_code, 200)
+            self.assertEqual(rejected.json()["state"], "rejected")
+            self.assertFalse(rejected.json()["output_committed"])
+            self.assertTrue(rejected.json()["repair_available"])
 
             safety = client.post("/api/sessions", json={"scenario": "safety"}).json()
             safety_events = [json.loads(line) for line in client.get(safety["stream"] + "?pace=false").iter_lines()]
@@ -166,6 +230,15 @@ class ApiAndClaimTests(unittest.TestCase):
                 json={"action": "confirm", "safety_acknowledged": True},
             )
             self.assertEqual(accepted.status_code, 200)
+            self.assertTrue(accepted.json()["output_committed"])
+            self.assertTrue(accepted.json()["local_only"])
+
+            stopped = client.post("/api/sessions", json={"scenario": "clear"}).json()
+            stop_response = client.post(f"/api/sessions/{stopped['id']}/stop")
+            self.assertEqual(stop_response.status_code, 200)
+            self.assertFalse(stop_response.json()["output_committed"])
+            unavailable = client.post(f"/api/sessions/{stopped['id']}/decision", json={"action": "confirm"})
+            self.assertEqual(unavailable.status_code, 409)
 
     def test_truth_attribution_and_boundaries_are_visible(self):
         page = (ROOT / "realtime/client/index.html").read_text()
