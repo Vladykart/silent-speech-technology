@@ -14,7 +14,9 @@ The captain-provided shared lab at `/root/.local/share/silent-speech-lab/` alrea
 
 Open <http://127.0.0.1:8765/>. The service binds to loopback only. It creates `realtime/.venv` if needed and calls [`fetch_assets.py`](fetch_assets.py) only when local assets are not prepared. Existing shared assets are used first; on another workstation `--download-missing` retrieves only the official Zenodo files into the ignored local directory.
 
-No microphone, camera, device or live EMG capture is requested. There is no account, telemetry, upload or database. Do not expose the service beyond loopback.
+The interface has exactly three top-level stages: **1 · Data collection**, **2 · Model**, and **3 · Process result**. “Data collection” means selection and read-only replay of an already-recorded official array; no collection happens in this build. Use the truth-labelled walkthrough in [`OPERATOR.md`](OPERATOR.md) for presentation or QA.
+
+No microphone, camera, device, wearable or live EMG capture is requested. There is no account, telemetry, upload, browser storage or database. Do not expose the service beyond loopback.
 
 ## Official asset preparation
 
@@ -72,11 +74,17 @@ The original repository's text evaluation synthesizes speech and invokes legacy 
 
 Candidate score and threshold are local, uncalibrated diagnostics—not accuracy or a probability of correctness. The record's reference prompt is read from official metadata and revealed only **after** inference; it is never passed to model or decoder.
 
-## Three real-recording paths
+## Recorded examples and future-command truth labels
 
-- **Held-out research replay:** real silent-sEMG record `silent_parallel_data/5-6_silent/314`, metadata prompt “What news?”, source `testset_largedev.json` development split; candidate is held for confirmation.
-- **Abstain + repair:** real record `closed_vocab/silent/5-19_silent/379` falls below the phoneme agreement threshold. Repair replays second real take `310` of the same `09:48 AM` metadata prompt; no noise or signal is manufactured.
-- **Safety-sensitive:** real silent-sEMG record `silent_parallel_data/5-5_silent/91`, metadata prompt “Keep back!”, development split; server requires explicit acknowledgement. No actuation is connected.
+The selectable **Recorded examples available now** group maps one-to-one to the committed scenario contract and four prepared official arrays:
+
+- **QC-R01 / `clear`:** real silent-sEMG record `silent_parallel_data/5-6_silent/314`, metadata prompt “What news?”, source `testset_largedev.json` development split; candidate is held for confirmation.
+- **QC-R02 / `ambiguous`:** real record `closed_vocab/silent/5-19_silent/379` falls below the diagnostic boundary. Repair replays second real take `310` of the same `09:48 AM` metadata prompt; no noise or signal is manufactured.
+- **QC-R03 / `safety`:** real silent-sEMG record `silent_parallel_data/5-5_silent/91`, metadata prompt “Keep back!”, development split; server requires explicit acknowledgement. No actuation is connected.
+
+Those prompt labels are documented here for operators but the browser deliberately seals each label until its model inference completes. The selection cards and `GET /api/scenarios` expose only the safe QC reference, interaction description and split; neither carries the command label. The replay stream emits `record_reference` after `inference`, and the client rejects out-of-order disclosure.
+
+A separate **Future command examples** group contains eight clearly authored ideas. They have no record binding, selection control or API path and cannot execute. They are not source data, model output, current model capability, accuracy evidence or a product promise.
 
 These selected paths demonstrate interaction behavior, not an accuracy estimate. They are not a representative evaluation and must not be counted as project WER, command accuracy or validation.
 
@@ -103,7 +111,7 @@ A real device requires electrical-safety, placement, calibration, consent/ethics
 ## API
 
 - `GET /api/health` — official checkpoint checksum/parameter count, dataset DOI/license and truth boundary.
-- `GET /api/scenarios` — replay/split metadata without reference prompt leakage.
+- `GET /api/scenarios` — safe recorded-example classification/binding and split metadata without reference prompt leakage.
 - `POST /api/sessions` — in-memory replay session.
 - `GET /api/sessions/{id}/stream` — NDJSON recorded-frame → features → real inference → post-inference metadata → decision events.
 - `POST /api/sessions/{id}/stop` — stop without output.
@@ -114,11 +122,14 @@ A real device requires electrical-safety, placement, calibration, consent/ethics
 
 ```bash
 python3 realtime/validate.py
+node --check realtime/client/replay-contract.js
+node --check realtime/client/app.js
+node realtime/tests/client_contract.test.js
 realtime/.venv/bin/python -m unittest discover -s realtime/tests -v
 python3 tools/validate_project.py
 ```
 
-Tests verify official hashes/rights metadata, untouched recording replay, upstream preprocessing shapes, strict checkpoint loading, a real forward pass and mel/phoneme outputs, recorded abstention/second-take repair/safety policy, API ordering, confirmation and visible boundaries. Asset-dependent tests skip with an explicit fetch instruction if official files are absent.
+Tests verify the exact three-stage client reducer, recorded/future example classification and binding, semantic landmarks and keyboard/reduced-motion affordances, no browser egress/storage APIs, official hashes/rights metadata, untouched recording replay, upstream preprocessing shapes, strict checkpoint loading, a real forward pass and mel/phoneme outputs, post-inference metadata ordering, recorded abstention/second-take repair/safety policy, confirm/reject/stop behavior and visible boundaries. Asset-dependent tests skip with an explicit fetch instruction if official files are absent.
 
 Rendered-browser status is in [`QA.md`](QA.md).
 

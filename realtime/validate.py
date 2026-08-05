@@ -10,6 +10,7 @@ import re
 ROOT = Path(__file__).resolve().parent
 REQUIRED = (
     "README.md",
+    "OPERATOR.md",
     "THIRD_PARTY_NOTICES.md",
     "QA.md",
     "assets-manifest.json",
@@ -26,7 +27,9 @@ REQUIRED = (
     "app/service.py",
     "client/index.html",
     "client/styles.css",
+    "client/replay-contract.js",
     "client/app.js",
+    "tests/client_contract.test.js",
     "tests/test_realtime.py",
 )
 
@@ -70,7 +73,9 @@ def main() -> int:
         if path.suffix.lower() in {".pt", ".pth", ".npy", ".h5", ".flac", ".gz", ".zip"}:
             errors.append(f"large/research asset must not be committed: {path.relative_to(ROOT)}")
     page = (ROOT / "client/index.html").read_text()
-    docs = (ROOT / "README.md").read_text()
+    styles = (ROOT / "client/styles.css").read_text()
+    client_scripts = (ROOT / "client/replay-contract.js").read_text() + (ROOT / "client/app.js").read_text()
+    docs = (ROOT / "README.md").read_text() + (ROOT / "OPERATOR.md").read_text()
     combined = (page + docs).lower()
     for phrase in (
         "real recorded semg",
@@ -95,6 +100,22 @@ def main() -> int:
     ):
         if re.search(pattern, page, re.I):
             errors.append(f"remote frontend dependency: {pattern}")
+    stage_panels = re.findall(r'data-stage-panel="([^"]+)"', page)
+    stage_progress = re.findall(r'data-progress-stage="([^"]+)"', page)
+    expected_stages = ["data-collection", "model", "process-result"]
+    if stage_panels != expected_stages or stage_progress != expected_stages:
+        errors.append(f"primary replay stages must be exactly {expected_stages!r}")
+    browser_assets = page + styles + client_scripts
+    if re.search(r"https?://", browser_assets, re.I):
+        errors.append("browser assets must not contain external URLs")
+    for api in ("sendBeacon", "localStorage", "sessionStorage", "getUserMedia", "mediaDevices", "WebSocket", "EventSource", "indexedDB"):
+        if api in browser_assets:
+            errors.append(f"browser asset uses prohibited egress/storage/capture API: {api}")
+    for semantic in ('<fieldset id="scenario-list">', "<legend>", 'role="alert"', 'aria-live="polite"', '<meter id="score-meter"'):
+        if semantic not in page:
+            errors.append(f"accessibility semantic missing: {semantic}")
+    if ":focus-visible" not in styles or "prefers-reduced-motion: reduce" not in styles:
+        errors.append("focus-visible or reduced-motion support missing")
     service = (ROOT / "app/service.py").read_text()
     for route in ("/api/health", "/api/scenarios", "/api/sessions", "/stream", "/stop", "/decision", "/repair"):
         if route not in service:
