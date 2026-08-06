@@ -31,8 +31,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 6159,
-      "sha256": "a7188bf1c25da8d02324c61876c30779bfac8b82c23ca0e0d6a5f02dcd73b4ae"
+      "bytes": 5880,
+      "sha256": "17944c62498a93b8bbecec27edfbaa4e580e47b14c17306859166141f1e578ba"
     },
     {
       "path": "SOURCE_LINEAGE.md",
@@ -71,8 +71,8 @@
     },
     {
       "path": "styles.css",
-      "bytes": 24664,
-      "sha256": "65d90ca91ea2eacdbac2d52fcc72c44fa13c4a62e933c73cff8f711df5f14562"
+      "bytes": 24665,
+      "sha256": "4770fb888b57a4e1f9113b4315ca755fdba995959f30c9feff2442568de268d6"
     },
     {
       "path": "tests/core.test.js",
@@ -80,9 +80,14 @@
       "sha256": "60dfabbe28dd8ecf479bd723a688dece2d7323211dc168121094453979b3c10d"
     },
     {
+      "path": "tests/responsive_layout.test.py",
+      "bytes": 1788,
+      "sha256": "d247ed56488f3984cf29b05e1ea4d8c2463b008bc5cefd122697b1ccfc07d6b3"
+    },
+    {
       "path": "validate.py",
-      "bytes": 9582,
-      "sha256": "d24bc07f95048886828453c74664e2982f55585a8f8db0fbaa1baed59dbb6a7c"
+      "bytes": 9647,
+      "sha256": "5e0adf684709556e39142a5361468cf2e33b58690c1718cc358858ded6535062"
     }
   ]
 }

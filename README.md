@@ -19,7 +19,7 @@ Open `http://127.0.0.1:8765/`. The first run creates `realtime/.venv`, verifies 
 ```bash
 python3 tools/validate_project.py
 python3 demo/generate_manifest.py
-python3 demo/validate.py && node demo/tests/core.test.js
+python3 demo/validate.py && node demo/tests/core.test.js && python3 demo/tests/responsive_layout.test.py
 python3 lab/validate.py && python3 -m unittest lab/tests/test_lab.py
 python3 pitch/validate.py
 python3 pitch/validate_pptx.py

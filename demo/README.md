@@ -14,6 +14,7 @@ From the repository root:
 python3 demo/generate_manifest.py
 python3 demo/validate.py
 node demo/tests/core.test.js
+python3 demo/tests/responsive_layout.test.py
 ```
 
 Open [`index.html`](index.html) directly, or rehearse on loopback:
@@ -57,9 +58,7 @@ The upstream README’s approximate 36% open-vocabulary WER is a historical upst
 
 ## Rehearsal and fallback
 
-Rendered QA was attempted with `chrome-devtools-axi` on 2026-07-29. Both `open` and `newpage` reached the exact `file://` URL but returned `Protocol error (Target.setDiscoverTargets): Target closed`; `pages` reported zero open pages. Therefore this release is **not browser-render certified**. Dependency-free DOM/CSS checks cover narrow breakpoints, focus, keyboard hooks, reduced motion and print structure, but exact-browser desktop/narrow/print rehearsal remains a release gate.
-
-- Test desktop, narrow/mobile, keyboard-only, reduced-motion, 200% zoom, and print/PDF in the exact presentation browser.
+The responsive source is guarded by a dependency-free causal breakpoint test and must also pass browser geometry checks at the release viewport matrix. Exact Safari, keyboard-only, reduced-motion, 200% zoom, and print/PDF rehearsal remain release gates before external circulation.
 - **Unexpected state:** reload; no state persists.
 - **JavaScript disabled/fails:** use the static six-stage rail and [`PRESENTER.md`](PRESENTER.md). Never improvise a sensing claim.
 - **Server issue:** open `index.html` from `file://`.

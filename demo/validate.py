@@ -67,7 +67,7 @@ def main() -> int:
         "index.html", "404.html", "styles.css", "core.js", "script.js", "robots.txt",
         "README.md", "PRESENTER.md", "DEPLOYMENT.md", "CLAIM_BOUNDARY.md", "SOURCE_LINEAGE.md",
         "LAB_FOUNDATION.md", "THIRD_PARTY_NOTICES.md", "artifact-manifest.json",
-        "generate_manifest.py", "tests/core.test.js",
+        "generate_manifest.py", "tests/core.test.js", "tests/responsive_layout.test.py",
     ]
     for name in required:
         if not (ROOT / name).is_file():
@@ -154,7 +154,7 @@ def main() -> int:
     if "noindex, nofollow, noarchive" not in html:
         errors.append("no-index metadata missing")
 
-    for css_hook in (":focus-visible", "@media (prefers-reduced-motion: reduce)", "@media print", "@media (max-width: 560px)", "@keyframes signal-stream"):
+    for css_hook in (":focus-visible", "@media (prefers-reduced-motion: reduce)", "@media print", "@media (max-width: 1100px)", "@media (max-width: 560px)", "@keyframes signal-stream"):
         if css_hook not in css:
             errors.append(f"responsive/accessibility style missing: {css_hook}")
     for js_hook in ("addEventListener(\"keydown\"", "event.key === \" \"", "[\"1\", \"2\", \"3\"]", "event.altKey", "replaceChildren"):

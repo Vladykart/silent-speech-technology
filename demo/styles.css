@@ -230,7 +230,7 @@ footer a { color: var(--signal); }
   .source-grid { grid-template-columns: 1fr 1fr; }
 }
 
-@media (max-width: 840px) {
+@media (max-width: 1100px) {
   .temporary-banner { flex-direction: column; gap: .15rem; }
   .temporary-banner strong { padding: 0; border: 0; }
   .hero { grid-template-columns: 1fr; gap: 1rem; }
