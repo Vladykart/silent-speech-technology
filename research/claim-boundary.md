@@ -52,9 +52,9 @@ Do not state or imply:
 
 The locked static `demo/` must show before traces or candidate values:
 
-> **CONCEPT / SIMULATED PIPELINE — authored fixture data; no sensor, recording, model, or measured accuracy.**
+> **CONCEPT / SIMULATED — authored synthetic fixture data; no sensor, recording, biometric input, model, live inference, or measured accuracy.**
 
-Its illustrative 12-command grammar, egress counters, scores, threshold, delay, miss and manual repair remain authored interaction behavior.
+Start locked. The eight synthetic traces, explanatory architecture labels, token stream, candidates, egress counters, scores, threshold, timing, abstention and manual repair are all authored interaction behavior. Every result state retains the concept/simulated label.
 
 The separate `realtime/` client must keep this visible throughout:
 
@@ -62,7 +62,7 @@ The separate `realtime/` client must keep this visible throughout:
 
 It must name David Gaddy, both official Zenodo model/data records, CC BY 4.0, single-speaker scope, decoder adaptation and non-commercial local-demo boundary. Model/decoder scores are uncalibrated; selected replay behavior is neither measured project accuracy nor a representative source evaluation. “Live” describes browser-to-local-service execution, never live sensing.
 
-If either demo fails, never describe the broken interaction as sensing. The static five-stage rail and presenter script remain the fallback for the locked concept experience.
+If either demo fails, never describe the broken interaction as sensing. Use the static six-stage rail and presenter script as the concept fallback.
 
 ## Research-performance citation rule
 

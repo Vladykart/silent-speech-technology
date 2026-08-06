@@ -1,0 +1,11 @@
+{
+  "schema": "silent-speech-split-manifest/v1",
+  "source": "synthetic-fixture",
+  "policy": "held-out-session",
+  "records": [
+    {"recordId": "synthetic-r001", "subjectId": "synthetic-p01", "sessionId": "synthetic-s01", "split": "train"},
+    {"recordId": "synthetic-r002", "subjectId": "synthetic-p01", "sessionId": "synthetic-s01", "split": "train"},
+    {"recordId": "synthetic-r003", "subjectId": "synthetic-p01", "sessionId": "synthetic-s02", "split": "validation"},
+    {"recordId": "synthetic-r004", "subjectId": "synthetic-p01", "sessionId": "synthetic-s03", "split": "test"}
+  ]
+}
