@@ -1,5 +1,5 @@
 {
-  "application_revision": "d9e06bb073276302a5c527e9441f4ab117863f1c",
+  "application_revision": "4c0cb3d283ac5582181d83bfcb7bf75e9f9a85d0",
   "asset_manifest_sha256": "dc3a38d2bc51ba118202c5baa65b53d581fe3b3de741023b1e3d743e2ba65549",
   "build_command": "python3 realtime/generate_release_manifest.py --revision <exact-clean-commit>",
   "dependency_lock_sha256": "0652261d36b4c2c9f4943d751f8de3615e90209f99822f0d18a39d4f762b8865",
@@ -65,8 +65,8 @@
       "sha256": "a1c9b2daf098a12c1e3b6defe133f747be2539ccf06f9ccc86f1188d97f35df6"
     },
     "realtime/client/styles.css": {
-      "bytes": 29035,
-      "sha256": "27de5de37152a935f9eb3b619a6deb7b5798ed70fd2ac35ea8a4b5242939c643"
+      "bytes": 29031,
+      "sha256": "9a6170706621484eac710bb5b4d88fb3aa6f636a4e7a2cdfaee47cb39ec70893"
     },
     "realtime/fetch_assets.py": {
       "bytes": 10850,

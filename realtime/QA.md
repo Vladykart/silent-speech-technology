@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-11
 
-**Candidate surface:** current implementation worktree on temporary loopback-only `127.0.0.1:8879`; no installed/shared service, Tailscale route, listener, or public endpoint was changed
+**Candidate surface:** exact runtime revision `4c0cb3d283ac5582181d83bfcb7bf75e9f9a85d0` on temporary loopback-only `127.0.0.1:8879`; no installed/shared service, Tailscale route, listener, or public endpoint was changed. A later evidence-record commit may differ only in release binding/QA records, per the no-self-reference release procedure.
 **Product authority:** [`spec/INVESTOR_REAL_REPLAY_SPEC.md`](spec/INVESTOR_REAL_REPLAY_SPEC.md)
 
 ## Approved-tool attempt and fallback
@@ -67,4 +67,4 @@ Dynamic geometry repeated with zero overflow/clipping and all visible enabled co
 
 ## Release disposition
 
-**Rendered/network QA passed** for this implementation candidate. No source-only substitution is claimed. Re-run this matrix against the exact staged immutable release and authorized Tailnet client before any later owner-approved cutover. Any different request, overflow, clipping, inaccessible control, prompt-order failure, persistence, or warning beyond the one disclosed unsupported deny directive is a release block.
+**Rendered/network QA passed** for exact runtime revision `4c0cb3d283ac5582181d83bfcb7bf75e9f9a85d0`. No source-only substitution is claimed. Re-run this matrix against the exact staged immutable release and authorized Tailnet client before any later owner-approved cutover. Any different request, overflow, clipping, inaccessible control, prompt-order failure, persistence, or warning beyond the one disclosed unsupported deny directive is a release block.
