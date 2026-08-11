@@ -1,5 +1,5 @@
 {
-  "schema": 1,
+  "schema_version": 2,
   "model": {
     "name": "Voicing Silent Speech Models",
     "creator": "David Gaddy",
@@ -9,7 +9,8 @@
     "archive": {
       "url": "https://zenodo.org/api/records/6747411/files/pretrained_models.zip/content",
       "bytes": 253447725,
-      "md5": "2e172d2ff74126ca0e68d0f117d6466a"
+      "md5": "2e172d2ff74126ca0e68d0f117d6466a",
+      "sha256": "be370313ffc53e4d9c118032d7eededd9c807f8b8449fadcb2eb2008379a3f54"
     },
     "checkpoint": {
       "member": "pretrained_models/transduction_model.pt",
@@ -17,7 +18,7 @@
       "md5": "7fb0c0ba310cacedfa0f9e7e1277a5c4",
       "sha256": "67d40b64f7831ae15c3c24264e2d13cdff98a212953901048d2923b3db60171a",
       "trainable_parameters": 54187136,
-      "outputs": "80 normalized mel bins plus 48 trained phoneme logits per frame"
+      "outputs": {"mel_bins": 80, "phoneme_classes": 48}
     }
   },
   "dataset": {
@@ -36,51 +37,22 @@
       "sha256": "1a4b205195185d2972923ed4fdaa71bb51cc01462c6b1ab279ed4d00acbd0089"
     }
   },
-  "replays": {
-    "clear": {
-      "directory": "emg_data/silent_parallel_data/5-6_silent",
-      "index": 314,
-      "reference_prompt": "What news?",
-      "book": "books/War_of_the_Worlds.txt",
-      "sentence_index": 658,
-      "source_split": "testset_largedev.json dev"
-    },
-    "ambiguous": {
-      "directory": "emg_data/closed_vocab/silent/5-19_silent",
-      "index": 379,
-      "reference_prompt": "09:48 AM",
-      "book": "datedata.txt",
-      "sentence_index": 272,
-      "source_split": "closed vocabulary"
-    },
-    "repair": {
-      "directory": "emg_data/closed_vocab/silent/5-19_silent",
-      "index": 310,
-      "reference_prompt": "09:48 AM",
-      "book": "datedata.txt",
-      "sentence_index": 221,
-      "source_split": "closed vocabulary"
-    },
-    "safety": {
-      "directory": "emg_data/silent_parallel_data/5-5_silent",
-      "index": 91,
-      "reference_prompt": "Keep back!",
-      "book": "books/War_of_the_Worlds.txt",
-      "sentence_index": 238,
-      "source_split": "testset_largedev.json dev"
-    }
-  },
   "code_reference": {
     "repository": "https://github.com/dgaddy/silent_speech",
     "commit": "a89357c2086609b432919b9d14ffc0be5d8983d5",
     "license": "MIT",
-    "files": [
-      "architecture.py",
-      "transformer.py",
-      "read_emg.py",
-      "data_utils.py",
-      "transduction_model.py"
-    ]
+    "files": ["architecture.py", "transformer.py", "read_emg.py", "data_utils.py", "transduction_model.py"]
   },
-  "use_boundary": "Captain-authorized non-commercial local research demonstration. CC BY 4.0 attribution is mandatory. No live capture, public serving, redistribution of assets, or downstream identity/medical use."
+  "dependencies": {
+    "cmudict_python_package": {
+      "version": "1.0.32",
+      "license": "GPL-3.0-or-later",
+      "role": "runtime Python wrapper/distribution"
+    },
+    "cmu_pronouncing_dictionary_data": {
+      "license": "CMU redistribution notice (permissive data terms; separately noticed)",
+      "role": "pronunciation data"
+    }
+  },
+  "use_boundary": "Captain-authorized private non-commercial research demonstration. Attribution is mandatory. No public asset serving, redistribution, endorsement, project accuracy transfer, or live capture."
 }

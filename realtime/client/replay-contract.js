@@ -7,39 +7,36 @@
   "use strict";
 
   const STAGES = Object.freeze([
-    Object.freeze({id: "data-collection", number: 1, label: "Data collection"}),
-    Object.freeze({id: "model", number: 2, label: "Model"}),
-    Object.freeze({id: "process-result", number: 3, label: "Process result"}),
+    Object.freeze({id: "recorded-source", number: 1, label: "Recorded source"}),
+    Object.freeze({id: "released-model", number: 2, label: "Released model"}),
+    Object.freeze({id: "human-decision", number: 3, label: "Human decision"}),
   ]);
-
-  // These are safe UI references, not participant IDs, archive paths, or prompt labels.
-  const RECORDED_EXAMPLES = Object.freeze([
-    Object.freeze({scenario: "clear", exampleId: "QC-R01", classification: "official_recorded_example", executable: true, recordedTakes: 1}),
-    Object.freeze({scenario: "ambiguous", exampleId: "QC-R02", classification: "official_recorded_example", executable: true, recordedTakes: 2}),
-    Object.freeze({scenario: "safety", exampleId: "QC-R03", classification: "official_recorded_example", executable: true, recordedTakes: 1}),
+  const EVENT_ORDER = Object.freeze([
+    "asset_checks_passed",
+    "source_opened",
+    "replay_started",
+    "source_complete",
+    "preprocessing_complete",
+    "branches_aligned",
+    "model_forward_complete",
+    "decoder_complete",
+    "metadata_revealed",
+    "decision_required",
   ]);
-
-  const FUTURE_COMMAND_EXAMPLES = Object.freeze([
-    "Turn on the desk light",
-    "Open my notes",
-    "Next slide",
-    "Pause playback",
-    "Set a ten-minute timer",
-    "Reply yes",
-    "Go back",
-    "Volume down",
-  ].map((text, index) => Object.freeze({
-    id: `F-${String(index + 1).padStart(2, "0")}`,
-    text,
-    classification: "authored_future_example",
-    executable: false,
-    recorded: false,
+  const RECORDED_EXAMPLES = Object.freeze(Array.from({length: 10}, (_, index) => Object.freeze({
+    sampleId: `QC-R${String(index + 1).padStart(2, "0")}`,
+    classification: "official_recorded_example",
+    executable: true,
+    secondTake: index === 1 ? "QC-R02-T2" : null,
   })));
+  const SECOND_TAKE = Object.freeze({sampleId: "QC-R02-T2", classification: "official_recorded_second_take", executable: true, parent: "QC-R02"});
 
   function initialState() {
     return {
-      stage: "data-collection",
-      inferenceComplete: false,
+      stage: "recorded-source",
+      expectedEventIndex: 0,
+      modelComplete: false,
+      decoderComplete: false,
       metadataVisible: false,
       boundaryViolation: false,
       terminalState: "ready",
@@ -48,51 +45,48 @@
 
   function reduce(state, event) {
     const next = {...state};
-    switch (event.event) {
-      case "acquisition_started":
-      case "raw_frame":
-        next.stage = "data-collection";
-        next.terminalState = "running";
-        break;
-      case "preprocessing":
-      case "features":
-        next.stage = "model";
-        break;
-      case "inference":
-        next.stage = "model";
-        next.inferenceComplete = true;
-        break;
-      case "record_reference":
-        if (!next.inferenceComplete) {
-          next.boundaryViolation = true;
-          next.metadataVisible = false;
-        } else {
-          next.metadataVisible = true;
-        }
-        break;
-      case "decision":
-        next.stage = "process-result";
-        next.terminalState = event.state || "decision";
-        if (!next.inferenceComplete) next.boundaryViolation = true;
-        break;
-      case "stopped":
-      case "error":
-        next.stage = "process-result";
-        next.terminalState = event.event;
-        break;
-      case "local_confirmed":
-        next.stage = "process-result";
-        next.terminalState = "confirmed";
-        break;
-      case "local_rejected":
-        next.stage = "process-result";
-        next.terminalState = "rejected";
-        break;
-      default:
-        break;
+    if (["error", "local_stopped", "local_confirmed", "local_rejected"].includes(event.event)) {
+      next.stage = "human-decision";
+      next.terminalState = event.event.replace("local_", "");
+      return next;
     }
+    const expected = EVENT_ORDER[next.expectedEventIndex];
+    if (event.event !== expected || Number(event.sequence) !== next.expectedEventIndex + 1) {
+      next.boundaryViolation = true;
+      next.metadataVisible = false;
+      next.terminalState = "boundary_error";
+      return next;
+    }
+    next.expectedEventIndex += 1;
+    if (["asset_checks_passed", "source_opened", "replay_started", "source_complete"].includes(event.event)) {
+      next.stage = "recorded-source";
+      next.terminalState = "running";
+    }
+    if (["preprocessing_complete", "branches_aligned", "model_forward_complete", "decoder_complete", "metadata_revealed"].includes(event.event)) {
+      next.stage = "released-model";
+    }
+    if (event.event === "model_forward_complete") next.modelComplete = true;
+    if (event.event === "decoder_complete") next.decoderComplete = next.modelComplete;
+    if (event.event === "metadata_revealed") {
+      if (!next.modelComplete || !next.decoderComplete) next.boundaryViolation = true;
+      else next.metadataVisible = true;
+    }
+    if (event.event === "decision_required") {
+      next.stage = "human-decision";
+      next.terminalState = event.state || "decision";
+      if (!next.metadataVisible) next.boundaryViolation = true;
+    }
+    if (next.boundaryViolation) next.metadataVisible = false;
     return next;
   }
 
-  return Object.freeze({STAGES, RECORDED_EXAMPLES, FUTURE_COMMAND_EXAMPLES, initialState, reduce});
+  function validManifest(items) {
+    if (!Array.isArray(items) || items.length !== RECORDED_EXAMPLES.length) return false;
+    return RECORDED_EXAMPLES.every((expected, index) => {
+      const actual = items[index];
+      return actual && actual.id === expected.sampleId && actual.classification === expected.classification;
+    });
+  }
+
+  return Object.freeze({STAGES, EVENT_ORDER, RECORDED_EXAMPLES, SECOND_TAKE, initialState, reduce, validManifest});
 });

@@ -1,138 +1,124 @@
-# Quiet Channel real recorded-sEMG replay
+# Quiet Channel investor real replay
 
-> **Truth label:** **REPLAY OF REAL RECORDED sEMG THROUGH THE REAL RELEASED PRETRAINED MODEL — NOT LIVE CAPTURE.** The default path uses official single-speaker research recordings and David Gaddy's official 54M-parameter checkpoint. No synthetic sample or synthetic-trained model is selected.
+> **Permanent truth:** **Replay of official single-speaker recorded sEMG through David Gaddy’s official released pretrained model; not live capture.**
 
-This is a separate, local, **non-commercial research demonstration**. It does not modify the locked authored-fixture experience in [`../demo/`](../demo/). It is not measured project accuracy, live hardware, a new participant recording, identity/emotion inference, or medical/AAC/product evidence.
+This private, non-commercial research experience executes one official checksum-bound recording through one official checksum-bound 54,187,136-parameter checkpoint. It exposes real bounded source/preprocessing/output evidence and a mandatory human gate. It is not a device, live capture, project accuracy/WER, representative evaluation, open-vocabulary/generalization claim, customer/product deployment, or medical/AAC/safety system.
 
-## One-command run with official assets
+Product authority: [`spec/INVESTOR_REAL_REPLAY_SPEC.md`](spec/INVESTOR_REAL_REPLAY_SPEC.md). Claim authority remains [`../research/claim-boundary.md`](../research/claim-boundary.md) and [`../research/claim-ledger.md`](../research/claim-ledger.md).
 
-The captain-provided shared lab at `/root/.local/share/silent-speech-lab/` already contains the 3.92 GB dataset. This worktree's ignored `realtime/local_assets/` contains/links the released checkpoint and only the selected replay arrays. From the repository root:
+## Prepare once, then run offline
+
+Use approved local assets only. Preparation is a separate operator step:
+
+```bash
+python3 -m venv realtime/.venv
+realtime/.venv/bin/python -m pip install -r realtime/requirements.txt
+realtime/.venv/bin/python realtime/fetch_assets.py
+```
+
+`fetch_assets.py` defaults to the approved shared lab and makes no network request. `--download-missing` is an explicit preparation-time action on another authorized workstation; it is never called by the service or presentation launcher. It verifies the 3.92 GB archive, model ZIP/checkpoint identities, and all selected/context/metadata members, then atomically prepares only allowlisted `_emg.npy` and selected `_info.json` files under ignored `realtime/local_assets/`. It never extracts audio, cleaned audio, or button arrays.
+
+After preparation:
 
 ```bash
 ./realtime/run-local.sh
 ```
 
-Open <http://127.0.0.1:8765/>. The service binds to loopback only. It creates `realtime/.venv` if needed and calls [`fetch_assets.py`](fetch_assets.py) only when local assets are not prepared. Existing shared assets are used first; on another workstation `--download-missing` retrieves only the official Zenodo files into the ignored local directory.
+Open `http://127.0.0.1:8765/`. The launcher binds loopback, disables access logging, and fails closed instead of installing, downloading, simulating, or falling back. Large assets, weights, outputs, browser profiles, and screenshots are never committed.
 
-The interface has exactly three top-level stages: **1 · Data collection**, **2 · Model**, and **3 · Process result**. “Data collection” means selection and read-only replay of an already-recorded official array; no collection happens in this build. Use the truth-labelled walkthrough in [`OPERATOR.md`](OPERATOR.md) for presentation or QA.
+A private Tailnet-only research demo route exists under owner control; it is **not public and not a product/customer deployment**. This repository task prepares service/deploy/rollback templates only. It does not install, restart, expose, or deploy them. See [`deploy/README.md`](deploy/README.md).
 
-No microphone, camera, device, wearable or live EMG capture is requested. There is no account, telemetry, upload, browser storage or database. Do not expose the service beyond loopback.
-
-## Official asset preparation
-
-To explicitly locate, checksum and prepare assets without starting the service:
-
-```bash
-realtime/.venv/bin/python realtime/fetch_assets.py
-```
-
-The default command makes **no network request** when the shared lab assets are present. On a machine without them:
-
-```bash
-realtime/.venv/bin/python realtime/fetch_assets.py --download-missing
-```
-
-Downloaded archives, the 207 MB checkpoint and extracted `.npy` replays remain under git-ignored `realtime/local_assets/`. The script extracts only each selected recording, its immediate filter context and metadata—never audio. **Do not commit or redistribute those assets from this repository.** Exact machine-readable provenance is in [`assets-manifest.json`](assets-manifest.json).
-
-| Artifact | Official record and rights | Verified file |
-|---|---|---|
-| Voicing Silent Speech Models | David Gaddy; [Zenodo 6747411](https://doi.org/10.5281/zenodo.6747411); CC BY 4.0 | `pretrained_models.zip`, 253,447,725 bytes, MD5 `2e172d2ff74126ca0e68d0f117d6466a`; extracted `transduction_model.pt`, 216,859,418 bytes, SHA-256 `67d40b64f7831ae15c3c24264e2d13cdff98a212953901048d2923b3db60171a` |
-| Silent Speech EMG v1.0 | David Gaddy, UC Berkeley; version [Zenodo 4064409](https://doi.org/10.5281/zenodo.4064409), concept DOI [4064408](https://doi.org/10.5281/zenodo.4064408); CC BY 4.0 | `emg_data.tar.gz`, 3,919,507,637 bytes, MD5 `7f97d2182b896652999b1b2d0c69fd7b`, SHA-256 `1a4b205195185d2972923ed4fdaa71bb51cc01462c6b1ab279ed4d00acbd0089` |
-
-CC BY 4.0 is the deposit license recorded at each official record. Attribution is mandatory. The captain has limited this experience to non-commercial local research demonstration; that project-use boundary is not a reinterpretation of the CC license.
-
-## What executes
+## Exactly what executes
 
 ```text
-Official 1 kHz recorded array [time, 8 facial/neck-region sEMG channels]
-  → upstream 60 Hz notch + seven harmonics
-  → upstream 2 Hz high-pass
-  → upstream 689.06 Hz raw branch + tanh compression
-  → upstream 516.79 Hz / 112-value feature extraction (inspectable)
-  → released 3-block residual temporal CNN
-  → released 6-layer, 768-wide relative-position Transformer
-  → released 80-bin mel head + released 48-class phoneme head
-  → free phoneme path
-  → modern CMUdict bounded phoneme-edit decoder
-  → uncalibrated score / abstention
-  → mandatory human confirmation
-  → local-only staged output
+official native float64 [time,8] source at 1 kHz + immediate recorded context
+  → 60 Hz notch and harmonics 2–7 → 2 Hz third-order high-pass → exact trim
+  ├→ 516.79 Hz / 16-sample window / 6-sample hop / 112 features
+  │    inspectable, real preprocessing output; not checkpoint input
+  └→ 689.06 Hz / 8-sample offset+alignment / divide 20 / 50*tanh(x/50)
+       → explicit float32 model-input conversion
+       → 3 residual temporal CNN blocks
+       → 6-layer, 768-wide, 8-head relative-position Transformer
+       → real [frames,80] normalized predicted mel features
+       → real [frames,48] auxiliary phoneme logits
+       → project bounded CMUdict/edit-distance algorithm (not another model)
+       → abstain or mandatory confirmation; safety acknowledgement where required
+       → volatile local result; no actuation
 ```
 
-The checkpoint has **54,187,136 trainable parameters**. `load_state_dict(..., strict=True)` matches every released tensor, including custom relative-position attention. Each replay performs the real forward pass and exposes measured local software latency for that run only.
+The official `.npy` source remains native `float64` through acquisition. Browser traces are deterministic centered/scaled/quantized min/max envelopes—not untouched raw data. Model forward and project decoder timers are measured separately and exclude recording duration, sensing, hardware, network, endpointing, confirmation, and output.
 
-The upstream `architecture.py` accepts explicit EMG features but its released forward path uses the identically preprocessed raw branch. This implementation still computes the source's 112 features for inspection and labels that architecture fact. Numeric chunk lengths in official JSON reproduce upstream EMG/mel frame alignment without extracting audio; prompt text remains outside inference. It does not invent placeholder model inputs.
+## One model, separate registry
 
-### Decoder adaptation
+[`model-registry.json`](model-registry.json) contains exactly one `executed` checkpoint: David Gaddy, *Voicing Silent Speech Models*, DOI `10.5281/zenodo.6747411`, CC BY 4.0. `load_state_dict(..., strict=True)` checks every released tensor and the exact parameter count. The 48-class head is part of that checkpoint.
 
-The original repository's text evaluation synthesizes speech and invokes legacy DeepSpeech 0.7. The DeepSpeech binary is not available for Python 3.12. We do **not** replace it with a synthetic model. Instead, the modern adapter decodes the released checkpoint's real trained 48-class phoneme emissions directly:
+The project decoder is typed `algorithm`, not model. HiFi-GAN, upstream recognition DOI 7183877, DeepSpeech/KenLM, SilentWear, and MONA/LISA are evidence-only. The UI marks each **NOT EXECUTED HERE** and provides no run control. Papers, architecture cards, datasets, and authored fixtures are never counted as executed models.
 
-1. collapse the free framewise phoneme path;
-2. obtain pronunciations from pinned open-source CMUdict;
-3. compute phoneme edit distance against a bounded grammar of prompts that actually occur in the official dataset;
-4. abstain when free-path agreement is below `0.60`.
+## Frozen official sample catalogue
 
-Candidate score and threshold are local, uncalibrated diagnostics—not accuracy or a probability of correctness. The record's reference prompt is read from official metadata and revealed only **after** inference; it is never passed to model or decoder.
+[`sample-manifest.json`](sample-manifest.json) freezes `QC-R01`–`QC-R10` plus repair-only `QC-R02-T2` before the added recordings were executed. Every selected/context/metadata member has its own full private digest. Browser APIs expose only safe IDs and public source facts.
 
-## Recorded examples and future-command truth labels
+| ID | Split | Duration | Retained pinned-runtime interaction outcome |
+|---|---|---:|---|
+| QC-R01 | largedev dev | 1.752 s | candidate held for confirmation |
+| QC-R02 | closed-vocabulary research set | 2.514 s | abstain; no result |
+| QC-R02-T2 | closed-vocabulary research set | 2.736 s | second official take; candidate held |
+| QC-R03 | largedev dev | 1.830 s | safety hold; acknowledgement + confirmation |
+| QC-R04 | largedev test | 3.210 s | candidate held |
+| QC-R05 | largedev test | 2.448 s | candidate held |
+| QC-R06 | largedev test | 2.922 s | candidate held |
+| QC-R07 | largedev test | 3.108 s | candidate held |
+| QC-R08 | largedev test | 1.878 s | abstain; no result |
+| QC-R09 | largedev dev | 2.808 s | mismatch + abstain; retained |
+| QC-R10 | largedev dev | 2.712 s | abstain; retained |
 
-The selectable **Recorded examples available now** group maps one-to-one to the committed scenario contract and four prepared official arrays:
+These are selected behavior regressions, not semantic success requirements or a metric. Prompts are never embedded in client assets or pre-run API payloads, never passed as per-sample model/decoder input, and appear only after the model and complete-grammar decoder finish. A future catalogue change requires a new version and selection rationale; weak outcomes cannot be swapped out.
 
-- **QC-R01 / `clear`:** real silent-sEMG record `silent_parallel_data/5-6_silent/314`, metadata prompt “What news?”, source `testset_largedev.json` development split; candidate is held for confirmation.
-- **QC-R02 / `ambiguous`:** real record `closed_vocab/silent/5-19_silent/379` falls below the diagnostic boundary. Repair replays second real take `310` of the same `09:48 AM` metadata prompt; no noise or signal is manufactured.
-- **QC-R03 / `safety`:** real silent-sEMG record `silent_parallel_data/5-5_silent/91`, metadata prompt “Keep back!”, development split; server requires explicit acknowledgement. No actuation is connected.
+## Bounded browser evidence
 
-Those prompt labels are documented here for operators but the browser deliberately seals each label until its model inference completes. The selection cards and `GET /api/scenarios` expose only the safe QC reference, interaction description and split; neither carries the command label. The replay stream emits `record_reference` after `inference`, and the client rejects out-of-order disclosure.
+`DisplayPayloadBuilder` is the sole derivative builder:
 
-A separate **Future command examples** group contains eight clearly authored ideas. They have no record binding, selection control or API path and cannot execute. They are not source data, model output, current model capability, accuracy evidence or a product promise.
+- source: 8 × ≤256 min/max bins, at least 16 source samples/bin, robust per-channel display scaling, signed 8-bit;
+- source/filtered: two independently scaled 8 × ≤128 aligned envelopes;
+- features: ≤64 × 112 per-feature normalized signed-8-bit values;
+- mel: ≤64 × 80 transformed signed-8-bit model-output values;
+- phoneme head: exact top class/token and rounded top softmax diagnostic per bounded frame, plus collapsed path; no full logits;
+- decoder: at most three candidates.
 
-These selected paths demonstrate interaction behavior, not an accuracy estimate. They are not a representative evaluation and must not be counted as project WER, command accuracy or validation.
+The browser receives no participant/session/date identity, source/member/local path, full digest, archive inventory, full arrays/tensors/logits/weights, audio/buttons, download, credential, prompt before inference, telemetry, service worker, persistent storage, or external URL. It receives only explicit client files and `/api/v1/...` responses with `no-store` and hardened CSP/Permissions Policy. OpenAPI/docs and old/generic routes are disabled.
 
-## Primary code reference
+Disclosure: **Bounded transformed evidence is sent to this authorized browser; no third-party telemetry, persistence, raw archive, or actuation.** Do not call this “no egress.”
 
-The released architecture and preprocessing adapter follow:
+## Versioned API and event order
 
-- David Gaddy, [`dgaddy/silent_speech`](https://github.com/dgaddy/silent_speech/tree/a89357c2086609b432919b9d14ffc0be5d8983d5), commit `a89357c2086609b432919b9d14ffc0be5d8983d5`, MIT; specifically `architecture.py`, `transformer.py`, `read_emg.py`, `data_utils.py`, and `transduction_model.py`.
-- Gaddy & Klein, “Digital Voicing of Silent Speech,” EMNLP 2020, DOI [10.18653/v1/2020.emnlp-main.445](https://doi.org/10.18653/v1/2020.emnlp-main.445).
-- Gaddy & Klein, “An Improved Model for Voicing Silent Speech,” ACL-IJCNLP 2021, DOI [10.18653/v1/2021.acl-short.23](https://doi.org/10.18653/v1/2021.acl-short.23).
+- `GET /api/v1/health`
+- `GET /api/v1/manifest`
+- `POST /api/v1/runs`
+- `GET /api/v1/runs/{opaque}/events`
+- `POST .../stop`, `.../decision`, `.../second-take`
 
-MIT and CC BY 4.0 notices are in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md). External paper/repository results do not become project results.
+The stream is exactly:
 
-## Acquisition seam
+`asset_checks_passed → source_opened → replay_started → source_complete → preprocessing_complete → branches_aligned → model_forward_complete → decoder_complete → metadata_revealed → decision_required`.
 
-[`app/signal_source.py`](app/signal_source.py) defines `SignalSource.start()`, `frames()` and `stop()`:
+Duplicate/out-of-order disclosure fails closed. Runs are bounded, expire, cannot be replayed, and release full active tensors after stream termination. Stop/reject/error/abstain commit no output. Confirmation is mandatory for every accepted result; safety acknowledgement is additional.
 
-- `RecordedEMGReplaySource` is the default. It yields untouched official `float32 [time, 8]` arrays at 1 kHz and supplies neighboring recorded context only to prevent filter-edge artifacts.
-- `RealHardwareSignalSource` is the unimplemented reviewed-device seam. A future driver must map units/channels/timestamps to the same contract; preprocessing/model/decoder code remains unchanged.
-- `SimulatedSignalSource` remains an explicit acquisition-only fallback for hardware plumbing, as directed, but no default scenario or service path instantiates it and it supports no model/performance claim.
+## Source and dependency authority
 
-A real device requires electrical-safety, placement, calibration, consent/ethics, retention/deletion, security, withdrawal, labor/jurisdiction and intended-use review. None is present.
+- Data: David Gaddy / UC Berkeley, *Silent Speech EMG v1.0*, version DOI `10.5281/zenodo.4064409` (concept `10.5281/zenodo.4064408`), CC BY 4.0, one-speaker source line.
+- Checkpoint: David Gaddy, *Voicing Silent Speech Models*, DOI `10.5281/zenodo.6747411`, CC BY 4.0.
+- Adapted code: `dgaddy/silent_speech` commit `a89357c2086609b432919b9d14ffc0be5d8983d5`, MIT.
+- `cmudict==1.0.32` Python package: GPL-3.0-or-later. CMU Pronouncing Dictionary data carries a separate CMU redistribution notice. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md); broader distribution requires a complete dependency review.
 
-## API
-
-- `GET /api/health` — official checkpoint checksum/parameter count, dataset DOI/license and truth boundary.
-- `GET /api/scenarios` — safe recorded-example classification/binding and split metadata without reference prompt leakage.
-- `POST /api/sessions` — in-memory replay session.
-- `GET /api/sessions/{id}/stream` — NDJSON recorded-frame → features → real inference → post-inference metadata → decision events.
-- `POST /api/sessions/{id}/stop` — stop without output.
-- `POST /api/sessions/{id}/decision` — confirm/reject; safety acknowledgement enforced server-side.
-- `POST /api/sessions/{id}/repair` — replay a second real recording; downstream code unchanged.
+Full unserved archive/checkpoint identities are in [`assets-manifest.json`](assets-manifest.json); human-readable provenance is in [`../provenance/realtime-assets.md`](../provenance/realtime-assets.md).
 
 ## Validation
 
 ```bash
 python3 realtime/validate.py
-node --check realtime/client/replay-contract.js
-node --check realtime/client/app.js
 node realtime/tests/client_contract.test.js
 realtime/.venv/bin/python -m unittest discover -s realtime/tests -v
 python3 tools/validate_project.py
 ```
 
-Tests verify the exact three-stage client reducer, recorded/future example classification and binding, semantic landmarks and keyboard/reduced-motion affordances, no browser egress/storage APIs, official hashes/rights metadata, untouched recording replay, upstream preprocessing shapes, strict checkpoint loading, a real forward pass and mel/phoneme outputs, post-inference metadata ordering, recorded abstention/second-take repair/safety policy, confirm/reject/stop behavior and visible boundaries. Asset-dependent tests skip with an explicit fetch instruction if official files are absent.
-
-Rendered-browser status is in [`QA.md`](QA.md).
-
-## Boundaries
-
-Replay of existing, consented-for-release single-speaker research data is still sensitive and placement/session specific. No live capture or new collection occurs. No mind reading/inner speech, identity, authentication, emotion, productivity or health inference. Not medical, AAC, clinical, emergency, payment, access-control or safety automation. No measured project accuracy/WER, transfer, comfort, power, calibration, privacy, hardware or end-to-end product-latency claim. A conventional fallback remains required for future work.
+The complete project command is in [`../AGENTS.md`](../AGENTS.md). Rendered loopback-only network/accessibility/geometry evidence for 320×568, 375×812, 768×1024, 1024×768, 1366×768, 1920×1080, and 3840×2160 is recorded in [`QA.md`](QA.md). A failed browser harness is a release block, not a static-check waiver.

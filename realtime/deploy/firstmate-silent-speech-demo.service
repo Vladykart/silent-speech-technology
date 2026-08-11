@@ -1,0 +1,42 @@
+[Unit]
+Description=Quiet Channel official recorded-sEMG replay
+After=network.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=quiet-channel-replay
+Group=quiet-channel-replay
+WorkingDirectory=/opt/quiet-channel/current
+EnvironmentFile=/etc/quiet-channel/replay.env
+Environment=QUIET_CHANNEL_REQUIRE_RELEASE_BINDING=1
+ExecStartPre=/opt/quiet-channel/venv/bin/python /opt/quiet-channel/current/realtime/generate_release_manifest.py --check
+ExecStart=/opt/quiet-channel/venv/bin/uvicorn realtime.app.service:app --app-dir /opt/quiet-channel/current --host 127.0.0.1 --port 8765 --no-access-log --workers 1
+Restart=on-failure
+RestartSec=3
+TimeoutStartSec=180
+TimeoutStopSec=30
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictRealtime=true
+RemoveIPC=true
+UMask=0077
+ReadOnlyPaths=/opt/quiet-channel/current /var/lib/quiet-channel/assets
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+IPAddressDeny=any
+IPAddressAllow=localhost
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target
