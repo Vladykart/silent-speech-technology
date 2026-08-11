@@ -3,267 +3,179 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Local three-stage replay of real recorded silent-speech sEMG through David Gaddy's real released pretrained model.">
-  <title>Quiet Channel / real recorded-sEMG replay</title>
+  <meta name="description" content="Private evidence-first replay of official recorded sEMG through one official released pretrained model.">
+  <meta name="referrer" content="no-referrer">
+  <link rel="icon" href="data:,">
+  <title>Quiet Channel / official artifact replay</title>
   <link rel="stylesheet" href="styles.css">
   <script src="replay-contract.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#stage-data">Skip to Data collection</a>
-  <header class="topbar">
-    <a class="brand" href="#top" aria-label="Quiet Channel research replay, return to top">
-      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <span>QUIET CHANNEL <b>/ RESEARCH REPLAY</b></span>
-    </a>
-    <p class="truth-chip"><span aria-hidden="true"></span> REAL RECORDED sEMG REPLAY <b>•</b> REAL RELEASED MODEL</p>
-    <p id="service-health" class="health" role="status" aria-live="polite">LOCAL SERVICE · CONNECTING</p>
+  <a class="skip-link" href="#sample-library">Skip to official sample library</a>
+  <header class="truth-bar" id="top">
+    <div class="truth-primary"><strong>REAL RECORDED sEMG REPLAY</strong><span>ONE REAL RELEASED PRETRAINED MODEL</span><em>NOT LIVE CAPTURE</em></div>
+    <div class="truth-meta"><span>LOCAL / TAILNET PRIVATE</span><span>SINGLE-SPEAKER ENGLISH RESEARCH DATA</span><span id="service-health" role="status" aria-live="polite">SERVICE CHECKING</span><button id="open-evidence" type="button" aria-controls="evidence-drawer" aria-expanded="false">Evidence &amp; limits</button></div>
+    <p class="limitation-line">No live hardware; no project accuracy/WER; no open-vocabulary, cross-speaker/session, customer, medical/AAC, safety-system, comfort, privacy, production, or deployment-performance evidence. Official source scope is single-speaker English research data.</p>
   </header>
 
-  <main id="top">
+  <main>
     <section class="hero" aria-labelledby="page-title">
-      <div>
-        <p class="eyebrow">LOCAL · SINGLE-SPEAKER RESEARCH DATA · NON-COMMERCIAL</p>
-        <h1 id="page-title">Recorded signal in.<br><em>Human-reviewed result out.</em></h1>
-      </div>
       <div class="hero-copy">
-        <p><strong>This build selects and replays existing research recordings.</strong> It does not collect from a person or device. The actual model input is an official 1 kHz, eight-channel facial/neck-region sEMG tensor—not a typed command, prompt label, microphone track, camera image, or wearable feed.</p>
-        <p class="warning">Real artifact execution does not establish measured project accuracy, generalization, hardware readiness, or a shipping product.</p>
+        <p class="eyebrow">OFFICIAL RESEARCH ARTIFACT REPLAY / PRIVATE</p>
+        <h1 id="page-title">One real recording.<br>One released model.<br><em>Every boundary visible.</em></h1>
+        <p>Select an official recording and inspect its source-derived trace, preprocessing, released output tensors, project decoder, and human decision gate. No person or device is being sensed.</p>
+        <div class="hero-actions">
+          <button id="run-featured" class="button primary" type="button">Run featured official recording</button>
+          <a class="button secondary" href="#sample-library">Browse 10 official recordings</a>
+        </div>
+        <p class="curation-warning">Selected replay behavior is a curated demonstration—not project accuracy or a representative source evaluation.</p>
+      </div>
+      <div class="proof-stack" aria-label="Proof contract">
+        <article><span>01 / RECORDED SOURCE</span><strong>Silent Speech EMG v1.0</strong><p>Official one-speaker source · 1 kHz × 8 channels · CC BY 4.0</p></article>
+        <article><span>02 / EXECUTED MODEL 1 OF 1</span><strong>54,187,136 parameters</strong><p>David Gaddy release · strict state load · DOI 6747411</p></article>
+        <article><span>03 / HUMAN GATE</span><strong>Abstain · second real take · reject · confirm</strong><p>No downstream action or actuation is connected.</p></article>
       </div>
     </section>
 
-    <section class="boundary" aria-labelledby="boundary-title">
-      <h2 id="boundary-title">BOUNDARY / ALWAYS ON</h2>
-      <ul>
-        <li>No live collection, microphone, camera, wearable access or new participant recording</li>
-        <li>No new collection, accounts or telemetry</li>
-        <li>No mind reading, identity or emotion inference</li>
-        <li>Not medical, AAC, emergency or safety automation</li>
-      </ul>
+    <div id="error-banner" class="error-banner" role="alert" tabindex="-1" hidden><strong>Replay stopped safely.</strong><span id="error-message">No result is available.</span></div>
+
+    <section id="sample-library" class="library" aria-labelledby="library-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">FROZEN OFFICIAL SAMPLE LIBRARY</p><h2 id="library-title">Choose recorded evidence, not a promised outcome.</h2></div>
+        <span id="catalogue-state" class="status-chip">10 CARDS · PROMPTS SEALED</span>
+      </div>
+      <p id="selection-disclosure" class="selection-disclosure">Curated official-recording examples chosen for a short demonstration and interaction coverage. Outcomes may be success, mismatch, or abstention. This set is not representative and must not be counted as accuracy, WER, validation, or generalization evidence.</p>
+      <fieldset id="sample-list">
+        <legend>Official recorded example</legend>
+        <div class="sample-grid">
+          <label class="sample-card selected" data-sample-id="QC-R01"><input type="radio" name="sample" value="QC-R01" checked><span><b>QC-R01</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Question / confirmation</strong><small>largedev dev · 1.752 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R02"><input type="radio" name="sample" value="QC-R02"><span><b>QC-R02</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Abstention / repair path</strong><small>closed-vocabulary research set · 2.514 s · 1 kHz × 8</small><i>Second official take available · prompt sealed</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R03"><input type="radio" name="sample" value="QC-R03"><span><b>QC-R03</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Safety hold</strong><small>largedev dev · 1.830 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R04"><input type="radio" name="sample" value="QC-R04"><span><b>QC-R04</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Longer declarative phrase</strong><small>largedev test · 3.210 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R05"><input type="radio" name="sample" value="QC-R05"><span><b>QC-R05</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Short statement</strong><small>largedev test · 2.448 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R06"><input type="radio" name="sample" value="QC-R06"><span><b>QC-R06</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Negation / medium phrase</strong><small>largedev test · 2.922 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R07"><input type="radio" name="sample" value="QC-R07"><span><b>QC-R07</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Longer phrase</strong><small>largedev test · 3.108 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R08"><input type="radio" name="sample" value="QC-R08"><span><b>QC-R08</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Compact exclamation</strong><small>largedev test · 1.878 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R09"><input type="radio" name="sample" value="QC-R09"><span><b>QC-R09</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Longer question</strong><small>largedev dev · 2.808 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R10"><input type="radio" name="sample" value="QC-R10"><span><b>QC-R10</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Question / source coverage</strong><small>largedev dev · 2.712 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
+        </div>
+      </fieldset>
+      <div class="library-actions"><p><strong id="selected-id">QC-R01</strong><span>Selected safe public ID · no prompt text enters selection</span></p><button id="start" class="button primary" type="button">Run selected official recording</button><button id="stop" class="button danger" type="button" disabled>Stop · no result</button></div>
     </section>
 
-    <div id="error-banner" class="error-banner" role="alert" tabindex="-1" hidden>
-      <strong>Replay could not continue.</strong>
-      <span id="error-message">The local service returned an error. No output was accepted.</span>
-    </div>
-
-    <nav class="stage-progress" aria-label="Replay stages">
+    <nav class="stage-rail" aria-label="Run workspace stages">
       <ol>
-        <li class="active" data-progress-stage="data-collection">
-          <a href="#stage-data" aria-current="step"><span class="stage-number">1</span><span><b>Data collection</b><small id="progress-data-state">Select a recorded example</small></span></a>
-        </li>
-        <li data-progress-stage="model">
-          <a href="#stage-model"><span class="stage-number">2</span><span><b>Model</b><small id="progress-model-state">Waiting for replay</small></span></a>
-        </li>
-        <li data-progress-stage="process-result">
-          <a href="#stage-result"><span class="stage-number">3</span><span><b>Process result</b><small id="progress-result-state">No candidate</small></span></a>
-        </li>
+        <li class="active" data-progress-stage="recorded-source"><span>1</span><b>Recorded source</b><small id="source-progress">Awaiting selection</small></li>
+        <li data-progress-stage="released-model"><span>2</span><b>Released model</b><small id="model-progress">Not started</small></li>
+        <li data-progress-stage="human-decision"><span>3</span><b>Human decision</b><small id="decision-progress">No candidate</small></li>
       </ol>
-      <p id="stage-announcer" class="sr-only" role="status" aria-live="polite">Stage 1 of 3, Data collection.</p>
+      <p id="stage-announcer" class="sr-only" role="status" aria-live="polite">Stage 1 of 3, Recorded source.</p>
     </nav>
 
-    <section id="stage-data" class="stage-panel active" data-stage-panel="data-collection" aria-labelledby="stage-data-title">
-      <header class="stage-header">
-        <div class="stage-kicker"><span>1</span><p>STAGE 1 OF 3</p></div>
-        <div><h2 id="stage-data-title">Data collection</h2><p>Select an already-recorded official sample. No collection happens here.</p></div>
-        <span id="capture-state" class="state ready" role="status">READY</span>
-      </header>
-
-      <div class="collection-grid">
-        <div class="recorded-area">
-          <div class="section-heading">
-            <div><p class="eyebrow">EXAMPLE INPUT COMMANDS</p><h3>Recorded examples available now</h3></div>
-            <span id="scenario-contract-state" class="count-chip">3 PATHS · 4 ARRAYS</span>
-          </div>
-          <p class="section-intro">Each selectable card is deterministically bound to an official local recording. To prevent label leakage, the participant/dataset command text stays sealed until that recording has completed model inference.</p>
-
-          <fieldset id="scenario-list">
-            <legend>Choose one official recorded example</legend>
-            <label class="recorded-example selected" data-scenario="clear" data-example-id="QC-R01">
-              <input type="radio" name="scenario" value="clear" checked>
-              <span class="example-copy">
-                <span class="example-badges"><b>RECORDED EXAMPLE</b><em>AVAILABLE</em></span>
-                <strong>Held-out question recording</strong>
-                <small>QC-R01 · large development split · one official silent-sEMG take</small>
-                <span class="recorded-label">Dataset command label: sealed until inference</span>
-              </span>
-            </label>
-            <label class="recorded-example" data-scenario="ambiguous" data-example-id="QC-R02">
-              <input type="radio" name="scenario" value="ambiguous">
-              <span class="example-copy">
-                <span class="example-badges"><b>RECORDED EXAMPLE</b><em>AVAILABLE · 2 TAKES</em></span>
-                <strong>Clock-prompt abstention + repair</strong>
-                <small>QC-R02 · closed-vocabulary research set · two official silent-sEMG takes</small>
-                <span class="recorded-label">Dataset command label: sealed until inference</span>
-              </span>
-            </label>
-            <label class="recorded-example" data-scenario="safety" data-example-id="QC-R03">
-              <input type="radio" name="scenario" value="safety">
-              <span class="example-copy">
-                <span class="example-badges"><b>RECORDED EXAMPLE</b><em>SAFETY HOLD</em></span>
-                <strong>Safety-sensitive instruction recording</strong>
-                <small>QC-R03 · large development split · one official silent-sEMG take</small>
-                <span class="recorded-label">Dataset command label: sealed until inference</span>
-              </span>
-            </label>
-          </fieldset>
-        </div>
-
-        <aside class="future-area" aria-labelledby="future-title">
-          <div class="future-label">AUTHORED TEXT · NOT RECORDED</div>
-          <h3 id="future-title">Future command examples</h3>
-          <p>Ideas only. These phrases have no bound replay array, cannot be selected or executed, and are not current model capability or output.</p>
-          <ul id="future-command-list" class="future-list" aria-label="Non-executable future command examples"></ul>
-          <p class="future-foot"><strong>0 executable</strong> · no inference path · no capability claim</p>
-        </aside>
-      </div>
-
-      <section class="input-inspector" aria-labelledby="input-title">
-        <div class="inspector-title"><p class="eyebrow">WHAT THE OPERATOR SELECTS / WHAT THE MODEL RECEIVES</p><h3 id="input-title">Keep these three things separate</h3></div>
-        <ol>
-          <li><span>1A</span><div><small>OPERATOR REPLAY SELECTION</small><strong id="selected-example">QC-R01 · official recorded example</strong><p>The operator selects a dataset reference; they do not type or silently perform a new command.</p></div></li>
-          <li><span>1B</span><div><small>PARTICIPANT / DATASET COMMAND LABEL</small><strong id="dataset-label">Sealed until this run completes inference</strong><p>Official metadata for audit only. It is revealed after inference and never enters the model or decoder.</p></div></li>
-          <li class="model-input"><span>→</span><div><small>ACTUAL MODEL INPUT</small><strong id="actual-model-input">Recorded sEMG tensor only · 1 kHz · 8 channels</strong><p>No prompt text, reference label, audio, image, identity field or authored future example is passed in.</p></div></li>
-          <li><span>1C</span><div><small>MODEL CANDIDATE / RESULT</small><strong id="input-candidate">Not available until the released model runs</strong><p>A candidate is generated downstream and remains separate from the final human-reviewed local result.</p></div></li>
-        </ol>
-      </section>
-
-      <div class="collection-footer">
-        <div class="source-summary">
-          <span class="source-dot" aria-hidden="true"></span>
-          <div><strong>RecordedEMGReplaySource</strong><p>Read-only local replay · official Silent Speech EMG v1.0 · one speaker · 1,000 Hz · 8 channels · CC BY 4.0</p></div>
-        </div>
-        <div class="actions">
-          <button id="start" class="primary" type="button">Run selected recorded example <span aria-hidden="true">→</span></button>
-          <button id="stop" type="button" disabled>Stop replay</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="stage-model" class="stage-panel" data-stage-panel="model" aria-labelledby="stage-model-title">
-      <header class="stage-header">
-        <div class="stage-kicker"><span>2</span><p>STAGE 2 OF 3</p></div>
-        <div><h2 id="stage-model-title">Model</h2><p>Source-faithful preprocessing and the real released pretrained model, in one stage.</p></div>
-        <span id="model-stage-state" class="state waiting" role="status">WAITING</span>
-      </header>
-
-      <div class="model-flow" aria-label="Model-stage flow">
-        <div><small>INPUT</small><strong id="model-tensor-shape">Recorded sEMG tensor</strong><span>1 kHz · eight channels · no text</span></div>
-        <i aria-hidden="true">→</i>
-        <div><small>PREPROCESS</small><strong>Source-faithful signal path</strong><span>notch · high-pass · dual resampling</span></div>
-        <i aria-hidden="true">→</i>
-        <div><small>RELEASED MODEL</small><strong>Residual CNN + Transformer</strong><span>54,187,136 official parameters</span></div>
-      </div>
-
-      <article class="signal-card" aria-labelledby="signal-title">
-        <header><div><small>RECORDED ARRAY / DISPLAY SUBSAMPLE</small><h3 id="signal-title">Four of eight sEMG channels</h3></div><span id="sample-count">0 samples</span></header>
-        <canvas id="signal-canvas" width="1200" height="280" role="img" aria-describedby="signal-description">Recorded sEMG trace appears while the selected local array replays.</canvas>
-        <p id="signal-description" class="signal-foot">Display-centered per channel for inspection · recorded values remain unchanged at acquisition · no sensor is connected</p>
-      </article>
-
-      <div class="model-status-grid">
-        <article class="model-status-card">
-          <p class="eyebrow">REAL RELEASED MODEL RUN</p>
-          <h3 id="model-run-title">Waiting for recorded input</h3>
+    <section id="stage-source" class="stage-panel active" data-stage-panel="recorded-source" aria-labelledby="stage-source-title">
+      <header class="stage-header"><span>01</span><div><p class="eyebrow">RECORDED SOURCE</p><h2 id="stage-source-title">A checksum-bound recording, transformed for display.</h2></div><b id="source-state" class="state">READY</b></header>
+      <div class="source-grid">
+        <article class="source-facts">
+          <h3>Source identity</h3>
           <dl>
-            <div><dt>Loaded weights</dt><dd>David Gaddy release · CC BY 4.0</dd></div>
-            <div><dt>Parameters</dt><dd>54,187,136</dd></div>
-            <div><dt>Local forward-pass time</dt><dd id="latency">—</dd></div>
-            <div><dt>Outputs</dt><dd>80 mel bins + 48 phoneme classes/frame</dd></div>
+            <div><dt>Public replay ID</dt><dd id="source-id">QC-R01</dd></div>
+            <div><dt>Official source</dt><dd>Silent Speech EMG v1.0</dd></div>
+            <div><dt>Scope / rights</dt><dd>One speaker · CC BY 4.0</dd></div>
+            <div><dt>Source array</dt><dd id="source-shape">1,752 × 8 · native float64</dd></div>
+            <div><dt>Rate / duration</dt><dd id="source-rate-duration">1 kHz · 1.752 s</dd></div>
+            <div><dt>Input boundary</dt><dd>Source array loaded from its checksum-bound recording, then explicitly converted only at documented runtime stages.</dd></div>
           </dl>
-          <p>Timing, when shown, is a local software diagnostic for this run—not end-to-end product latency.</p>
         </article>
-
-        <details class="technical-details">
-          <summary><span><small>OPTIONAL DETAIL</small><strong>Inspect preprocessing and phoneme emissions</strong></span><span aria-hidden="true">+</span></summary>
-          <div class="technical-detail-body">
-            <div><p><strong>112-value upstream feature tensor</strong> <span id="feature-shape">—</span></p><div id="feature-bars" class="feature-bars" role="img" aria-label="Feature tensor waiting for preprocessing"><span>Waiting for preprocessing…</span></div></div>
-            <dl>
-              <div><dt>Free phoneme path</dt><dd id="raw-ctc">—</dd></div>
-              <div><dt>Architecture note</dt><dd>The released path consumes the identically preprocessed raw branch; 112-value features remain inspectable.</dd></div>
-            </dl>
-          </div>
-        </details>
+        <article class="trace-card">
+          <header><div><p>RECORDED SOURCE TRACE · TRANSFORMED DISPLAY ENVELOPE</p><h3>All eight source channels</h3></div><span id="trace-bins">AWAITING RUN</span></header>
+          <canvas id="source-canvas" width="1280" height="560" role="img" aria-describedby="source-chart-description">Eight-channel transformed display envelope.</canvas>
+          <p id="source-chart-description">8/8 channels · 16-source-sample min/max bins · per-channel display centering/scaling · not untouched raw data. A table summary identifies every channel.</p>
+          <table class="channel-table"><caption>Text alternative for source trace</caption><thead><tr><th>Channels</th><th>Display</th><th>Meaning</th></tr></thead><tbody><tr><td>1–8</td><td id="channel-summary">Waiting for bounded transformed evidence</td><td>Official recorded source; no sensor is connected</td></tr></tbody></table>
+        </article>
       </div>
     </section>
 
-    <section id="stage-result" class="stage-panel" data-stage-panel="process-result" aria-labelledby="stage-result-title">
-      <header class="stage-header">
-        <div class="stage-kicker"><span>3</span><p>STAGE 3 OF 3</p></div>
-        <div><h2 id="stage-result-title">Process result</h2><p>Inspect candidate or abstention, compare the diagnostic boundary, then confirm or reject locally.</p></div>
-        <span id="result-stage-state" class="state waiting" role="status">WAITING</span>
-      </header>
+    <section id="stage-model" class="stage-panel" data-stage-panel="released-model" aria-labelledby="stage-model-title">
+      <header class="stage-header"><span>02</span><div><p class="eyebrow">PREPROCESSING + RELEASED MODEL</p><h2 id="stage-model-title">Real branches. Real output heads. One executed model.</h2></div><b id="model-state" class="state">WAITING</b></header>
+      <ol class="pipeline-rail" aria-label="Executed pipeline"><li>checksum-bound source</li><li>context-aware filter</li><li>dual resample</li><li>model raw branch</li><li>released CNN / Transformer</li><li>real output heads</li></ol>
 
-      <div class="result-grid">
-        <article class="candidate-panel" aria-labelledby="candidate-title">
-          <div class="result-heading"><div><p class="eyebrow">MODEL CANDIDATE / NOT AN ACTION</p><h3 id="candidate-title">Candidate ranking</h3></div><span id="candidate-hold">NO CANDIDATE</span></div>
-          <div id="candidates" class="candidates" aria-live="polite"><p>Run a recorded example to produce a model candidate.</p></div>
-          <div class="score-boundary">
-            <div><label for="score-meter">Diagnostic score</label><strong id="diagnostic-score">—</strong></div>
-            <meter id="score-meter" min="0" max="1" low="0.6" optimum="1" value="0" aria-describedby="score-note">0</meter>
-            <div class="boundary-scale"><span>0</span><b>ABSTAIN BOUNDARY 0.60</b><span>1</span></div>
-            <p id="score-note">An uncalibrated phoneme-alignment diagnostic—not confidence, accuracy, probability of correctness, or a representative evaluation.</p>
-          </div>
-          <div class="reference-row"><small>OFFICIAL DATASET COMMAND LABEL</small><strong id="record-reference">Sealed until inference completes</strong><span id="reference-status">Never passed to the model or decoder</span></div>
+      <div class="evidence-grid">
+        <article class="evidence-card comparison-card">
+          <header><div><p class="eyebrow">SOURCE / FILTERED DISPLAY</p><h3>Eight aligned channels, independently scaled</h3></div><span>60 Hz + H2–H7 · 2 Hz HP</span></header>
+          <canvas id="comparison-canvas" width="1100" height="480" role="img" aria-describedby="comparison-description">Source and filtered display envelopes.</canvas>
+          <p id="comparison-description">Source-derived display and filtered display use aligned bins with independent centering/scaling. Context-aware filters are applied before exact trim.</p>
         </article>
 
-        <aside class="decision-panel" aria-labelledby="decision-heading">
-          <div id="decision-box" class="decision-box idle" aria-live="polite">
-            <span class="decision-icon" aria-hidden="true">···</span>
-            <small id="decision-label">WAITING</small>
-            <h3 id="decision-heading"><span id="decision-title">No candidate staged</span></h3>
-            <p id="decision-reason">A model candidate never executes automatically. Nothing becomes a final local result without human review.</p>
-          </div>
+        <article class="evidence-card model-card">
+          <p class="model-one">EXECUTED MODEL 1 OF 1</p>
+          <h3>David Gaddy transduction checkpoint</h3>
+          <dl><div><dt>Identity</dt><dd>Voicing Silent Speech Models · DOI 10.5281/zenodo.6747411 · CC BY 4.0</dd></div><div><dt>Architecture</dt><dd>3 residual blocks · 6 Transformer layers · width 768 · 8 heads</dd></div><div><dt>Parameters</dt><dd>54,187,136 · strict load</dd></div><div><dt>Checkpoint identifier</dt><dd id="model-fingerprint">short prefix pending</dd></div><div><dt>Code lineage</dt><dd>dgaddy/silent_speech · commit a89357c20866… · MIT</dd></div></dl>
+          <p>This run executes unchanged released state tensors through a modern source-compatible adapter. No weight or model download is exposed.</p>
+        </article>
 
-          <section class="candidate-hold-card" aria-labelledby="held-title">
-            <small id="held-title">CANDIDATE HELD FOR REVIEW</small>
-            <strong id="held-candidate">—</strong>
-            <span id="held-status">Nothing staged</span>
-          </section>
+        <details class="evidence-card provenance-card">
+          <summary><span><p class="eyebrow">STAGE PROVENANCE</p><h3>Inspect transformations and model-input status</h3></span><b aria-hidden="true">+</b></summary>
+          <div class="table-wrap"><table><caption>Preprocessing provenance</caption><thead><tr><th>Operation</th><th>Rate</th><th>Shape / dtype</th><th>Model input?</th></tr></thead><tbody id="provenance-body"><tr><td>Waiting for a run</td><td>—</td><td>—</td><td>—</td></tr></tbody></table></div>
+        </details>
 
-          <label id="safety-row" class="safety-row hidden"><input id="safety-ack" type="checkbox"><span>I reviewed this safety-sensitive recorded candidate. No actuation is connected, and this is not an emergency system.</span></label>
+        <article class="evidence-card heatmap-card">
+          <header><div><p class="eyebrow">112-FEATURE INSPECTION</p><h3>8 channels × 14 named values</h3></div><span id="feature-shape">—</span></header>
+          <canvas id="feature-canvas" width="1100" height="360" role="img" aria-describedby="feature-description">Real preprocessing feature heatmap.</canvas>
+          <p id="feature-description">Real preprocessing output, time-binned and per-feature normalized/quantized for display; inspectable and not consumed by the released forward path.</p>
+        </article>
 
-          <div class="decision-actions">
-            <button id="confirm" class="confirm" type="button" disabled>Accept as final local result</button>
-            <button id="reject" type="button" disabled>Reject candidate</button>
-            <button id="repair" class="repair hidden" type="button">Replay second official recorded take</button>
-          </div>
+        <article class="evidence-card heatmap-card">
+          <header><div><p class="eyebrow">REAL 80-BIN OUTPUT</p><h3>Released mel-head prediction</h3></div><span id="mel-shape">—</span></header>
+          <canvas id="mel-canvas" width="1100" height="360" role="img" aria-describedby="mel-description">Released model mel-head output heatmap.</canvas>
+          <p id="mel-description">Released model’s normalized predicted 80-bin mel features; transformed/time-binned display; not audio and not a ground-truth spectrogram.</p>
+        </article>
 
-          <section id="final-card" class="final-card" aria-labelledby="final-title" tabindex="-1">
-            <small id="final-title">FINAL LOCAL RESULT / NO ACTUATION</small>
-            <strong id="final-output">—</strong>
-            <span id="output-status">No result accepted</span>
-          </section>
+        <article class="evidence-card phoneme-card">
+          <header><div><p class="eyebrow">REAL 48-CLASS OUTPUT</p><h3>Released auxiliary phoneme head</h3></div><span id="phoneme-shape">—</span></header>
+          <p id="phoneme-label">Real released auxiliary-head output; top-class diagnostic, not text confidence. Full logits remain server-held.</p>
+          <div id="phoneme-frames" class="phoneme-frames" aria-label="Top phoneme classes by frame"><span>Waiting for model output</span></div>
+          <details class="phoneme-sequence-details"><summary>Inspect exact framewise top classes + rounded diagnostics</summary><ol id="phoneme-sequence"><li>Waiting for model output</li></ol></details>
+          <dl><div><dt>Collapsed free path</dt><dd id="collapsed-path">—</dd></div></dl>
+        </article>
+      </div>
+
+      <section class="timing" aria-labelledby="timing-title"><div><p class="eyebrow">THIS RUN / LOCAL SOFTWARE ONLY</p><h3 id="timing-title">Separated timing scope</h3></div><dl><div><dt>Model forward</dt><dd id="model-time">—</dd></div><div><dt>Project decoder</dt><dd id="decoder-time">—</dd></div></dl><p>Measured on this host for this run only; excludes recording duration, sensing, hardware, network, endpointing, confirmation, and output.</p></section>
+
+      <section class="timeline" aria-labelledby="timeline-title"><div><p class="eyebrow">ORDERED RUN PROVENANCE</p><h3 id="timeline-title">Every boundary in sequence</h3></div><ol id="event-timeline"><li data-event="asset_checks_passed">Asset checks passed</li><li data-event="source_opened">Selected official source opened</li><li data-event="replay_started">Display replay began</li><li data-event="source_complete">Source replay complete</li><li data-event="preprocessing_complete">Filtering complete</li><li data-event="branches_aligned">Feature/model branches aligned</li><li data-event="model_forward_complete">Released model forward complete</li><li data-event="decoder_complete">Project decoder complete</li><li data-event="metadata_revealed">Metadata prompt revealed</li><li data-event="decision_required">Decision required</li></ol></section>
+    </section>
+
+    <section id="stage-decision" class="stage-panel" data-stage-panel="human-decision" aria-labelledby="stage-decision-title">
+      <header class="stage-header"><span>03</span><div><p class="eyebrow">PROCESS RESULT / HUMAN GATE</p><h2 id="stage-decision-title">A candidate can be held. Only a human can finish.</h2></div><b id="decision-state" class="state">WAITING</b></header>
+      <div class="decision-grid">
+        <article class="decoder-card">
+          <p class="decoder-label">PROJECT BOUNDED DECODER · NOT THE RELEASED MODEL</p>
+          <h3>Candidate ranking</h3>
+          <div id="candidates" class="candidates" aria-live="polite"><p>Run an official recording to produce model output and then decoder candidates.</p></div>
+          <div class="diagnostic"><div><label for="score-meter">Phoneme-alignment diagnostic</label><strong id="diagnostic-score">—</strong></div><meter id="score-meter" min="0" max="1" low="0.6" optimum="1" value="0">0</meter><p><b>ABSTAIN BOUNDARY 0.60</b> · Uncalibrated diagnostic; not accuracy, confidence, or probability of correctness.</p></div>
+          <div class="metadata-audit"><small>OFFICIAL DATASET METADATA</small><strong id="record-reference">Sealed until model and decoder complete</strong><span id="reference-status">Audit only · never model or per-sample decoder input</span></div>
+        </article>
+        <aside class="gate-card" aria-labelledby="gate-title">
+          <div id="decision-box" class="decision-box idle" role="status" aria-live="polite"><span aria-hidden="true">◇</span><small id="decision-label">WAITING</small><h3 id="gate-title"><span id="decision-title">No candidate staged</span></h3><p id="decision-reason">Nothing becomes a final result without confirmation. No action is connected.</p></div>
+          <div class="held"><small>CANDIDATE HELD / NEVER AN ACTION</small><strong id="held-candidate">—</strong><span id="held-status">No candidate</span></div>
+          <label id="safety-row" class="safety-row" hidden><input id="safety-ack" type="checkbox"><span>I acknowledge this safety-sensitive replay candidate. No actuation is connected, and this is not an emergency or safety system.</span></label>
+          <div class="decision-actions"><button id="confirm" class="button primary" type="button" disabled>Confirm final local result</button><button id="reject" class="button secondary" type="button" disabled>Reject · no result</button><button id="second-take" class="button repair" type="button" hidden>Run second official take</button></div>
+          <div id="final-card" class="final-card" tabindex="-1"><small>FINAL LOCAL RESULT / NO ACTUATION</small><strong id="final-output">—</strong><span id="output-status">No result committed</span></div>
         </aside>
       </div>
-
-      <details class="event-details">
-        <summary><span>Volatile local event log</span><span>No account · no saved history</span></summary>
-        <div class="event-log-head"><p>Recorded arrays and outputs stay in this local service/browser session.</p><button id="clear-log" type="button">Clear log</button></div>
-        <ol id="event-log"><li><time>—</time><span>Ready. No live collection occurs.</span></li></ol>
-      </details>
-      <p class="no-egress"><strong>NO EGRESS</strong> No telemetry, external runtime request, account, database, recording API or browser storage. Recorded arrays and decoded outputs stay local to the existing loopback service/browser session.</p>
+      <p class="browser-transfer"><strong>DISCLOSED BROWSER TRANSFER</strong> Bounded transformed evidence is sent to this authorized browser; no third-party telemetry, persistence, raw archive, or actuation.</p>
     </section>
-
-    <section class="source-strip" aria-label="Source and rights summary">
-      <div><small>RECORDED DATA</small><strong>Silent Speech EMG v1.0 · David Gaddy / UC Berkeley</strong><span>Zenodo 10.5281/zenodo.4064409 · concept DOI 4064408 · CC BY 4.0 · one speaker</span></div>
-      <div><small>RELEASED MODEL</small><strong>Voicing Silent Speech Models · David Gaddy</strong><span>Zenodo 10.5281/zenodo.6747411 · CC BY 4.0 · 54,187,136 parameters</span></div>
-    </section>
-
-    <details class="technical-basis">
-      <summary><span><small>TECHNICAL BASIS &amp; LIMITS</small><strong>Inspect architecture, adaptation, source code and hardware boundary</strong></span><span aria-hidden="true">+</span></summary>
-      <dl>
-        <div><dt>Released architecture</dt><dd>Eight-channel raw sEMG → three residual CNN blocks → six-layer, 768-wide relative-position Transformer → 80 mel features + 48 trained phoneme emissions.</dd></div>
-        <div><dt>Decoder adaptation</dt><dd>Legacy DeepSpeech 0.7 is unavailable on Python 3.12. This build decodes the released model's real trained phoneme head with CMUdict and a bounded phoneme-edit grammar; no synthetic replacement model.</dd></div>
-        <div><dt>Code reference</dt><dd>dgaddy/silent_speech at commit a89357c2086609b432919b9d14ffc0be5d8983d5, MIT; Gaddy &amp; Klein, EMNLP 2020 and ACL-IJCNLP 2021. External source results do not become project results.</dd></div>
-        <div><dt>Hardware boundary</dt><dd>A reviewed electrode/device driver, electrical safety, placement, calibration and governed human-subject protocol would be required. None is present. There is no hardware-present claim.</dd></div>
-      </dl>
-    </details>
   </main>
 
-  <footer class="footer">
-    <strong>REAL RECORDED sEMG REPLAY • REAL RELEASED MODEL • NOT LIVE CAPTURE</strong>
-    <p>Non-commercial local research demonstration. CC BY 4.0 assets © David Gaddy. Not measured project accuracy, mind reading, identity/emotion inference, medical/AAC/emergency use, live hardware or a shipping product. No new biometric collection.</p>
-  </footer>
+  <section id="evidence-drawer" class="drawer" aria-labelledby="drawer-title" hidden>
+    <div class="drawer-head"><div><p class="eyebrow">DILIGENCE DRAWER</p><h2 id="drawer-title">What executed—and what did not.</h2></div><button id="close-evidence" type="button">Close evidence drawer</button></div>
+    <div class="drawer-tabs" role="tablist" aria-label="Evidence sections"><button role="tab" aria-selected="true" aria-controls="drawer-executed" id="tab-executed">What executed</button><button role="tab" aria-selected="false" aria-controls="drawer-registry" id="tab-registry">Evidence-only registry</button><button role="tab" aria-selected="false" aria-controls="drawer-claims" id="tab-claims">Claims / limitations</button><button role="tab" aria-selected="false" aria-controls="drawer-rights" id="tab-rights">Sources / rights</button></div>
+    <div id="drawer-executed" role="tabpanel" aria-labelledby="tab-executed"><h3>One selected source. One strict-loaded checkpoint.</h3><p>The active run verifies one frozen official recording, applies context-aware preprocessing, executes the released 80-bin and 48-class heads, then runs a separately labelled project algorithm and human gate.</p><dl id="active-provenance"><div><dt>Active run</dt><dd>No run yet</dd></div></dl></div>
+    <div id="drawer-registry" role="tabpanel" aria-labelledby="tab-registry" hidden><h3>Research context is not execution.</h3><p>Every evidence-only row is marked <strong>NOT EXECUTED HERE</strong>.</p><div id="model-registry" class="registry"><p>Loading evidence-only registry…</p></div></div>
+    <div id="drawer-claims" role="tabpanel" aria-labelledby="tab-claims" hidden><h3>Proof stops at artifact execution.</h3><ul><li>No live hardware or new participant capture</li><li>No project accuracy, WER, representative evaluation, or open-vocabulary claim</li><li>Official source scope is single-speaker English research data</li><li>No cross-speaker/session, customer, medical/AAC, safety, comfort, privacy, or production evidence</li><li>No paper or external metric transfers to this project</li></ul></div>
+    <div id="drawer-rights" role="tabpanel" aria-labelledby="tab-rights" hidden><h3>Text-only source and rights record</h3><dl><div><dt>Recorded source</dt><dd>Silent Speech EMG v1.0 · David Gaddy / UC Berkeley · DOI 10.5281/zenodo.4064409 · CC BY 4.0</dd></div><div><dt>Executed checkpoint</dt><dd>Voicing Silent Speech Models · David Gaddy · DOI 10.5281/zenodo.6747411 · CC BY 4.0</dd></div><div><dt>Adapted code</dt><dd>dgaddy/silent_speech · commit a89357c20866… · MIT</dd></div><div><dt>Pronunciation dependency</dt><dd>cmudict Python package 1.0.32: GPL-3.0-or-later; CMU dictionary data: separate CMU redistribution notice.</dd></div></dl></div>
+  </section>
+
+  <footer><div><strong>PRIVATE TAILNET-ONLY RESEARCH DEMO DELIVERY</strong><span>Not public and not a product/customer deployment.</span></div><p>Official CC BY 4.0 source/model attribution: David Gaddy. Project-built visualizations are bounded transformed evidence; no screenshots, recordings, model outputs, or weights are retained here.</p><button id="footer-evidence" type="button">Open evidence &amp; limitations</button></footer>
 </body>
 </html>

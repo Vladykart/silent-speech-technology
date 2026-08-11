@@ -32,7 +32,7 @@
 - Gaddy abstract numbers describe ASR transcription of synthesized audio under two paper-defined conditions; they are not two population accuracy estimates. They remain outside the core deck because full condition-level reproduction was not performed.
 - Willett’s 62 words/minute is attempted speaking rate, not error-free throughput. The 23.8% online WER includes the 125,000-word language model and one participant’s evaluation.
 - SilentWear’s 2.47 ms is model inference after an input window (0.8–1.4 s in the paper), not end-to-end command latency. Its 27.1 h value is an estimate with a named 150 mAh battery, not wear/comfort evidence.
-- This project has **no measured project** WER, command accuracy, false accept/reject rate, calibration, participant, comfort, power or hardware number. The replay UI may show one local released-model forward-pass time as a software diagnostic only—not end-to-end hardware/product latency.
+- This project has **no measured project** WER, command accuracy, false accept/reject rate, calibration, participant, comfort, power or hardware number. The replay UI may show separate local model-forward and project-decoder times for one run only; both exclude recording duration, sensing, hardware, network, endpointing, confirmation and output and are not end-to-end product latency.
 
 ## Governance, product, and source evidence
 

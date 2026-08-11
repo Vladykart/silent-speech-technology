@@ -1,8 +1,8 @@
 # Silent Speech Technology — first local release
 
-An evidence-gated research package, an offline concept demo, a separate local real-model bench, and a professional 13-slide decision deck.
+An evidence-gated research package, an offline concept demo, a professional evidence-first official-recording replay, and editable decision decks.
 
-> **Claim boundary:** No silent-speech device, live sensor capture, newly collected participant data, measured project accuracy, customer, deployment, or medical/AAC product is present. The locked [`demo/`](demo/) remains a deterministic **CONCEPT / SIMULATED PIPELINE** with authored fixtures. Separately, [`realtime/`](realtime/) replays official single-speaker recorded sEMG through source-faithful preprocessing and David Gaddy's official released 54M-parameter model. That is real research-data/model execution—not live hardware or project performance.
+> **Claim boundary:** No silent-speech device, live sensor capture, newly collected participant data, measured project accuracy, customer, public/product deployment, or medical/AAC product is present. The locked [`demo/`](demo/) remains a deterministic **CONCEPT / SIMULATED PIPELINE** with authored fixtures. Separately, [`realtime/`](realtime/) replays a frozen official single-speaker recorded-sEMG catalogue through source-faithful preprocessing and David Gaddy's one official released 54,187,136-parameter model. That is real artifact execution—not live hardware or project performance. A private Tailnet-only research-demo delivery path exists; it is not public or a product/customer deployment.
 
 ## Quick start
 
@@ -12,7 +12,7 @@ An evidence-gated research package, an offline concept demo, a separate local re
 ./realtime/run-local.sh
 ```
 
-Open `http://127.0.0.1:8765/`. The first run creates `realtime/.venv`, verifies the official assets from the captain-provided shared lab (or fetches missing Zenodo files into ignored local storage), and binds to loopback only. No checkpoint or recorded sample is committed. See [`realtime/README.md`](realtime/README.md) for sizes, licenses, architecture, hardware seam and tests.
+Open `http://127.0.0.1:8765/`. Dependencies and approved ignored assets must be prepared before launch; presentation-time install/download/fallback is prohibited. The service verifies all frozen members and the strict-loaded checkpoint, then binds to loopback only with access logging disabled. No checkpoint or recording is committed. See [`realtime/README.md`](realtime/README.md) and the product authority at [`realtime/spec/INVESTOR_REAL_REPLAY_SPEC.md`](realtime/spec/INVESTOR_REAL_REPLAY_SPEC.md).
 
 ### Static concept and decks
 
@@ -46,7 +46,7 @@ Authority and boundaries: [`provenance/decisions.md`](provenance/decisions.md), 
 ## Project map
 
 - [`demo/`](demo/) — locked authored-fixture, no-model interaction; runbook, script, deterministic test and validator.
-- [`realtime/`](realtime/) — separate loopback FastAPI service and live client: official CC BY 4.0 recorded sEMG replay, source-faithful preprocessing, official 54,187,136-parameter residual/relative-Transformer weights, trained phoneme decoding, abstention, second-take repair, confirmation, tests and a physical-driver seam. Large assets are fetched locally and never committed.
+- [`realtime/`](realtime/) — evidence-first private FastAPI/client experience: ten frozen official CC BY 4.0 recordings plus one second take, all eight channels, explicit source/display transformations, 112-feature inspection, real 80-bin/48-class output views, exactly one strict-loaded 54,187,136-parameter model, separate project decoder, abstention/repair/safety/confirmation gates, provenance, tests, and private deployment/rollback templates. Large assets stay ignored and simulation is unreachable from production.
 - [`pitch/`](pitch/) — matched 13-slide HTML/PPTX evidence deck plus a source-driven four-slide executive PPTX, notes, original SVGs, representative geometry QA and validators.
 - [`research/`](research/) — landscape, evidence matrix, definitions, metrics, competitors, references, critical scout reconciliation and claim boundaries.
 - [`provenance/`](provenance/) — captain-source retrieval/checksum, decision authority, and media-rights catalogue.
@@ -58,6 +58,6 @@ SilentWear v2 (arXiv preprint, 2026) reports n=4, 14 differential neck sEMG chan
 
 ## Quality status
 
-Static HTML/SVG/OOXML parsing, JavaScript syntax, deterministic fixtures and PPTX rebuild, local references, claim decisions, source records and offline dependency guards are validated without installs. With official local assets present, the replay bench adds checksum/right checks, untouched-recording replay, upstream preprocessing, strict checkpoint load, real mel/phoneme forward output and API/policy tests; selected single-speaker replays are not measured project accuracy. The four-slide deck also passed representative 1920×1080 headless-Chromium geometry review from the same layout scene graph. This is not exact PowerPoint rendering: target-application opening plus desktop/narrow/print visual rehearsal remain gates before external circulation. No site is deployed.
+Static HTML/SVG/OOXML parsing, JavaScript syntax, deterministic fixtures/PPTX rebuild, local references, claim/source authority, and offline dependency guards are validated without installs. With approved local assets present, `realtime/` adds full archive/member/checkpoint checks, native-dtype/conversion provenance, strict state load, all frozen real forward passes, bounded payload/event/prompt/human-policy tests, and isolated loopback rendered/network evidence across the required viewport matrix. Selected outputs are not project accuracy. The private Tailnet-only research-demo access path is not public or product/customer deployment. Exact PowerPoint plus target browser surfaces still require operator rehearsal before circulation.
 
 This private local repository carries no general third-party or external-publication permission. See [`provenance/media-catalogue.md`](provenance/media-catalogue.md).

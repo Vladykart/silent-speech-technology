@@ -2,117 +2,57 @@
   "use strict";
 
   const contract = globalThis.ReplayContract;
-  if (!contract) throw new Error("replay contract did not load");
+  if (!contract) throw new Error("replay contract unavailable");
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
-
   const elements = {
-    health: $("#service-health"),
-    errorBanner: $("#error-banner"),
-    errorMessage: $("#error-message"),
-    stageAnnouncer: $("#stage-announcer"),
-    captureState: $("#capture-state"),
-    modelStageState: $("#model-stage-state"),
-    resultStageState: $("#result-stage-state"),
-    progressDataState: $("#progress-data-state"),
-    progressModelState: $("#progress-model-state"),
-    progressResultState: $("#progress-result-state"),
-    scenarioList: $("#scenario-list"),
-    scenarioContractState: $("#scenario-contract-state"),
-    futureList: $("#future-command-list"),
-    selectedExample: $("#selected-example"),
-    datasetLabel: $("#dataset-label"),
-    actualModelInput: $("#actual-model-input"),
-    inputCandidate: $("#input-candidate"),
-    startButton: $("#start"),
-    stopButton: $("#stop"),
-    modelTensorShape: $("#model-tensor-shape"),
-    sampleCount: $("#sample-count"),
-    canvas: $("#signal-canvas"),
-    modelRunTitle: $("#model-run-title"),
-    latency: $("#latency"),
-    featureShape: $("#feature-shape"),
-    featureBars: $("#feature-bars"),
-    rawCtc: $("#raw-ctc"),
-    candidates: $("#candidates"),
-    candidateHold: $("#candidate-hold"),
-    diagnosticScore: $("#diagnostic-score"),
-    scoreMeter: $("#score-meter"),
-    recordReference: $("#record-reference"),
-    referenceStatus: $("#reference-status"),
-    decisionBox: $("#decision-box"),
-    decisionIcon: $(".decision-icon", $("#decision-box")),
-    decisionLabel: $("#decision-label"),
-    decisionTitle: $("#decision-title"),
-    decisionReason: $("#decision-reason"),
-    heldCandidate: $("#held-candidate"),
-    heldStatus: $("#held-status"),
-    safetyRow: $("#safety-row"),
-    safetyAck: $("#safety-ack"),
-    confirmButton: $("#confirm"),
-    rejectButton: $("#reject"),
-    repairButton: $("#repair"),
-    finalCard: $("#final-card"),
-    finalOutput: $("#final-output"),
-    outputStatus: $("#output-status"),
-    eventLog: $("#event-log"),
-    clearLog: $("#clear-log"),
+    health: $("#service-health"), openEvidence: $("#open-evidence"), footerEvidence: $("#footer-evidence"), closeEvidence: $("#close-evidence"), drawer: $("#evidence-drawer"),
+    errorBanner: $("#error-banner"), errorMessage: $("#error-message"), catalogueState: $("#catalogue-state"), selectionDisclosure: $("#selection-disclosure"), sampleList: $("#sample-list"), selectedId: $("#selected-id"),
+    featured: $("#run-featured"), start: $("#start"), stop: $("#stop"), sourceProgress: $("#source-progress"), modelProgress: $("#model-progress"), decisionProgress: $("#decision-progress"), announcer: $("#stage-announcer"),
+    sourceState: $("#source-state"), sourceId: $("#source-id"), sourceShape: $("#source-shape"), sourceRateDuration: $("#source-rate-duration"), sourceCanvas: $("#source-canvas"), traceBins: $("#trace-bins"), channelSummary: $("#channel-summary"),
+    modelState: $("#model-state"), comparisonCanvas: $("#comparison-canvas"), provenanceBody: $("#provenance-body"), featureCanvas: $("#feature-canvas"), featureShape: $("#feature-shape"), featureDescription: $("#feature-description"),
+    modelFingerprint: $("#model-fingerprint"), melCanvas: $("#mel-canvas"), melShape: $("#mel-shape"), melDescription: $("#mel-description"), phonemeShape: $("#phoneme-shape"), phonemeFrames: $("#phoneme-frames"), phonemeSequence: $("#phoneme-sequence"), collapsedPath: $("#collapsed-path"), modelTime: $("#model-time"), decoderTime: $("#decoder-time"), timeline: $("#event-timeline"),
+    decisionState: $("#decision-state"), candidates: $("#candidates"), diagnosticScore: $("#diagnostic-score"), scoreMeter: $("#score-meter"), recordReference: $("#record-reference"), referenceStatus: $("#reference-status"), decisionBox: $("#decision-box"), decisionLabel: $("#decision-label"), decisionTitle: $("#decision-title"), decisionReason: $("#decision-reason"), heldCandidate: $("#held-candidate"), heldStatus: $("#held-status"), safetyRow: $("#safety-row"), safetyAck: $("#safety-ack"), confirm: $("#confirm"), reject: $("#reject"), secondTake: $("#second-take"), finalCard: $("#final-card"), finalOutput: $("#final-output"), outputStatus: $("#output-status"),
+    modelRegistry: $("#model-registry"), activeProvenance: $("#active-provenance"),
   };
 
-  const context = elements.canvas.getContext("2d");
-  const exampleByScenario = new Map(contract.RECORDED_EXAMPLES.map((example) => [example.scenario, example]));
-  const revealedReferences = new Map();
-  let replayState = contract.initialState();
-  let currentProgressStage = "data-collection";
-  let sessionId = null;
-  let sessionScenario = "clear";
-  let streamAbort = null;
-  let points = [[], [], [], []];
-  let totalSamples = 0;
+  let state = contract.initialState();
+  let manifest = null;
+  let runId = null;
+  let runEventsPath = null;
+  let activeCardId = "QC-R01";
+  let activeSampleId = "QC-R01";
   let currentCandidate = "";
   let safetySensitive = false;
-  let operatorStopped = false;
+  let streamController = null;
+  let animationFrame = 0;
+  const reducedMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
 
-  function selectedScenario() {
-    return $('input[name="scenario"]:checked', elements.scenarioList)?.value || "clear";
+  function selectedSampleId() {
+    return $('input[name="sample"]:checked', elements.sampleList)?.value || "QC-R01";
   }
 
-  function selectedExample() {
-    return exampleByScenario.get(selectedScenario());
+  function setStatePill(element, kind, text) {
+    element.className = `state ${kind}`;
+    element.textContent = text;
   }
 
-  function setPill(element, state, label) {
-    element.className = `state ${state}`;
-    element.textContent = label;
-  }
-
-  function renderProgress(stage, announce = true) {
-    const stageIndex = contract.STAGES.findIndex((item) => item.id === stage);
-    if (stageIndex < 0) return;
-    $$("[data-progress-stage]").forEach((item, index) => {
-      item.classList.toggle("active", index === stageIndex);
-      item.classList.toggle("complete", index < stageIndex);
-      const link = $("a", item);
-      if (index === stageIndex) link.setAttribute("aria-current", "step");
-      else link.removeAttribute("aria-current");
+  function renderStage(stage, announce = true) {
+    const index = contract.STAGES.findIndex((item) => item.id === stage);
+    $$('[data-progress-stage]').forEach((item, itemIndex) => {
+      item.classList.toggle("active", itemIndex === index);
+      item.classList.toggle("complete", itemIndex < index);
     });
-    $$('[data-stage-panel]').forEach((panel) => panel.classList.toggle("active", panel.dataset.stagePanel === stage));
-    if (announce && currentProgressStage !== stage) {
-      const definition = contract.STAGES[stageIndex];
-      elements.stageAnnouncer.textContent = `Stage ${definition.number} of 3, ${definition.label}.`;
-    }
-    currentProgressStage = stage;
+    $$('[data-stage-panel]').forEach((panel, itemIndex) => panel.classList.toggle("active", itemIndex === index));
+    if (announce && index >= 0) elements.announcer.textContent = `Stage ${index + 1} of 3, ${contract.STAGES[index].label}.`;
   }
 
-  function log(message) {
-    if (elements.eventLog.children.length === 1 && elements.eventLog.textContent.includes("Ready.")) elements.eventLog.innerHTML = "";
-    const item = document.createElement("li");
-    const time = document.createElement("time");
-    const text = document.createElement("span");
-    time.textContent = new Date().toLocaleTimeString([], {hour12: false});
-    text.textContent = message;
-    item.append(time, text);
-    elements.eventLog.prepend(item);
+  function setTimelineComplete(event) {
+    const row = $(`[data-event="${event.event}"]`, elements.timeline);
+    if (row) {
+      row.classList.add("complete");
+      row.title = `Completed at +${Number(event.relative_ms).toFixed(1)} ms local sequence time`;
+    }
   }
 
   function clearError() {
@@ -120,379 +60,419 @@
     elements.errorMessage.textContent = "";
   }
 
-  function showError(message, focus = false) {
-    const safeMessage = message || "The local replay failed. No output was accepted.";
-    elements.errorMessage.textContent = safeMessage;
+  function safeError(message, focus = false) {
+    const text = message || "The real replay failed. No result is available.";
+    elements.errorMessage.textContent = text;
     elements.errorBanner.hidden = false;
-    setPill(elements.captureState, "error", "ERROR");
-    setPill(elements.resultStageState, "error", "NO RESULT");
-    elements.progressResultState.textContent = "Error · no final result";
-    elements.startButton.disabled = false;
-    elements.stopButton.disabled = true;
-    setScenarioLocked(false);
-    replayState = contract.reduce(replayState, {event: "error"});
-    renderProgress(replayState.stage);
-    elements.finalOutput.textContent = "No final local result";
-    elements.outputStatus.textContent = "Error path · nothing accepted";
+    state = contract.reduce(state, {event: "error"});
+    renderStage(state.stage);
+    setStatePill(elements.sourceState, "error", "ERROR");
+    setStatePill(elements.modelState, "error", "NO OUTPUT");
+    setStatePill(elements.decisionState, "error", "NO RESULT");
     elements.decisionBox.className = "decision-box error";
     elements.decisionLabel.textContent = "ERROR";
-    elements.decisionTitle.textContent = "No result available";
-    elements.decisionReason.textContent = "The replay stopped safely. No candidate was accepted or executed.";
-    log(safeMessage);
+    elements.decisionTitle.textContent = "Replay stopped safely";
+    elements.decisionReason.textContent = "No candidate or final result is available. No fallback was substituted.";
+    elements.finalOutput.textContent = "No final result";
+    elements.outputStatus.textContent = "Error · nothing committed";
+    elements.start.disabled = false;
+    elements.featured.disabled = false;
+    elements.stop.disabled = true;
+    elements.sampleList.disabled = false;
     if (focus) elements.errorBanner.focus();
   }
 
-  function setScenarioLocked(locked) {
-    elements.scenarioList.disabled = locked;
-  }
-
-  function renderFutureExamples() {
-    const fragment = document.createDocumentFragment();
-    contract.FUTURE_COMMAND_EXAMPLES.forEach((example) => {
-      const item = document.createElement("li");
-      const label = document.createElement("small");
-      const phrase = document.createElement("q");
-      label.textContent = `${example.id} · FUTURE ONLY`;
-      phrase.textContent = example.text;
-      item.append(label, phrase);
-      fragment.append(item);
-    });
-    elements.futureList.replaceChildren(fragment);
-  }
-
-  function updateSelectedExample() {
-    const scenario = selectedScenario();
-    const example = exampleByScenario.get(scenario);
-    $$(".recorded-example", elements.scenarioList).forEach((card) => card.classList.toggle("selected", card.dataset.scenario === scenario));
-    if (!example) {
-      elements.startButton.disabled = true;
-      showError("Recorded-example binding is unavailable. No replay started.");
-      return;
+  function updateSelection() {
+    const selected = selectedSampleId();
+    $$(".sample-card", elements.sampleList).forEach((card) => card.classList.toggle("selected", card.dataset.sampleId === selected));
+    elements.selectedId.textContent = selected;
+    const card = manifest?.samples.find((item) => item.id === selected);
+    if (card) {
+      elements.sourceId.textContent = selected;
+      elements.sourceShape.textContent = `${Number(card.sample_count).toLocaleString()} × 8 · native float64`;
+      elements.sourceRateDuration.textContent = `1 kHz · ${Number(card.duration_seconds).toFixed(3)} s`;
     }
-    elements.selectedExample.textContent = `${example.exampleId} · official recorded example`;
-    const revealed = revealedReferences.get(scenario);
-    elements.datasetLabel.textContent = revealed || "Sealed until this run completes inference";
-    elements.actualModelInput.textContent = `Recorded sEMG tensor only · 1 kHz · 8 channels · ${example.exampleId}`;
-    elements.inputCandidate.textContent = "Not available until the released model runs";
-    elements.progressDataState.textContent = `${example.exampleId} selected`;
   }
 
   function resetRunDisplay() {
+    cancelAnimationFrame(animationFrame);
     clearError();
-    replayState = contract.initialState();
-    renderProgress("data-collection", false);
-    points = [[], [], [], []];
-    totalSamples = 0;
+    state = contract.initialState();
+    renderStage("recorded-source", false);
     currentCandidate = "";
     safetySensitive = false;
-    operatorStopped = false;
-    drawSignal();
-    elements.sampleCount.textContent = "0 samples";
-    elements.modelTensorShape.textContent = "Recorded sEMG tensor";
-    elements.modelRunTitle.textContent = "Waiting for recorded input";
-    elements.latency.textContent = "—";
+    $$("li", elements.timeline).forEach((item) => { item.classList.remove("complete"); item.removeAttribute("title"); });
+    elements.sourceProgress.textContent = "Awaiting recorded replay";
+    elements.modelProgress.textContent = "Not started";
+    elements.decisionProgress.textContent = "No candidate";
+    setStatePill(elements.sourceState, "", "READY");
+    setStatePill(elements.modelState, "", "WAITING");
+    setStatePill(elements.decisionState, "", "WAITING");
+    elements.traceBins.textContent = "AWAITING RUN";
+    elements.channelSummary.textContent = "Waiting for bounded transformed evidence";
+    elements.provenanceBody.innerHTML = '<tr><td data-label="Operation">Waiting for a run</td><td data-label="Rate">—</td><td data-label="Shape / dtype">—</td><td data-label="Model input?">—</td></tr>';
     elements.featureShape.textContent = "—";
-    elements.featureBars.innerHTML = "<span>Waiting for preprocessing…</span>";
-    elements.featureBars.setAttribute("aria-label", "Feature tensor waiting for preprocessing");
-    elements.rawCtc.textContent = "—";
-    elements.candidates.innerHTML = "<p>Released-model forward pass pending.</p>";
-    elements.candidateHold.textContent = "NO CANDIDATE";
+    elements.melShape.textContent = "—";
+    elements.phonemeShape.textContent = "—";
+    elements.phonemeFrames.innerHTML = "<span>Waiting for model output</span>";
+    elements.phonemeSequence.innerHTML = "<li>Waiting for model output</li>";
+    elements.collapsedPath.textContent = "—";
+    elements.modelTime.textContent = "—";
+    elements.decoderTime.textContent = "—";
+    elements.candidates.innerHTML = "<p>Run an official recording to produce model output and then decoder candidates.</p>";
     elements.diagnosticScore.textContent = "—";
     elements.scoreMeter.value = 0;
     elements.scoreMeter.textContent = "0";
-    elements.recordReference.textContent = "Sealed until inference completes";
-    elements.referenceStatus.textContent = "Never passed to the model or decoder";
+    elements.recordReference.textContent = "Sealed until model and decoder complete";
+    elements.referenceStatus.textContent = "Audit only · never model or per-sample decoder input";
     elements.decisionBox.className = "decision-box idle";
-    elements.decisionIcon.textContent = "···";
     elements.decisionLabel.textContent = "WAITING";
     elements.decisionTitle.textContent = "No candidate staged";
-    elements.decisionReason.textContent = "A model candidate never executes automatically. Nothing becomes a final local result without human review.";
+    elements.decisionReason.textContent = "Nothing becomes a final result without confirmation. No action is connected.";
     elements.heldCandidate.textContent = "—";
-    elements.heldStatus.textContent = "Nothing staged";
-    elements.safetyRow.classList.add("hidden");
+    elements.heldStatus.textContent = "No candidate";
+    elements.safetyRow.hidden = true;
     elements.safetyAck.checked = false;
-    elements.confirmButton.disabled = true;
-    elements.rejectButton.disabled = true;
-    elements.repairButton.classList.add("hidden");
+    elements.confirm.disabled = true;
+    elements.reject.disabled = true;
+    elements.secondTake.hidden = true;
     elements.finalCard.classList.remove("accepted");
     elements.finalOutput.textContent = "—";
-    elements.outputStatus.textContent = "No result accepted";
-    setPill(elements.captureState, "ready", "READY");
-    setPill(elements.modelStageState, "waiting", "WAITING");
-    setPill(elements.resultStageState, "waiting", "WAITING");
-    elements.progressModelState.textContent = "Waiting for replay";
-    elements.progressResultState.textContent = "No candidate";
-    updateSelectedExample();
-    elements.datasetLabel.textContent = "Sealed until this run completes inference";
+    elements.outputStatus.textContent = "No result committed";
+    blankCanvas(elements.sourceCanvas, "#0e1511");
+    blankCanvas(elements.comparisonCanvas, "#14201a");
+    blankCanvas(elements.featureCanvas, "#15211b");
+    blankCanvas(elements.melCanvas, "#15211b");
   }
 
-  function resizeCanvas() {
-    const rect = elements.canvas.getBoundingClientRect();
-    if (!rect.width || !rect.height) return;
+  function canvasSize(canvas) {
+    const rectangle = canvas.getBoundingClientRect();
     const ratio = Math.min(globalThis.devicePixelRatio || 1, 2);
-    const width = Math.max(1, Math.round(rect.width * ratio));
-    const height = Math.max(1, Math.round(rect.height * ratio));
-    if (elements.canvas.width !== width || elements.canvas.height !== height) {
-      elements.canvas.width = width;
-      elements.canvas.height = height;
+    const width = Math.max(1, Math.round(rectangle.width * ratio));
+    const height = Math.max(1, Math.round(rectangle.height * ratio));
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
     }
-    drawSignal();
+    return {context: canvas.getContext("2d"), width, height, ratio};
   }
 
-  function drawSignal() {
-    const width = elements.canvas.width;
-    const height = elements.canvas.height;
-    context.fillStyle = "#0f1511";
+  function blankCanvas(canvas, color) {
+    const {context, width, height} = canvasSize(canvas);
+    context.fillStyle = color;
     context.fillRect(0, 0, width, height);
-    context.strokeStyle = "#2d3931";
-    context.lineWidth = Math.max(1, width / 1600);
-    const fontSize = Math.max(12, Math.round(width / 85));
-    for (let row = 0; row < 4; row += 1) {
-      const center = (row + .5) * height / 4;
-      context.beginPath();
-      context.moveTo(0, center);
-      context.lineTo(width, center);
-      context.stroke();
-      context.fillStyle = "#7e8d81";
-      context.font = `${fontSize}px ui-monospace, monospace`;
-      context.fillText(`CH ${row + 1}`, Math.round(width * .012), center - Math.round(height * .035));
-    }
-    const colors = ["#c9ff45", "#63d5b8", "#68a7ff", "#f0a254"];
-    points.forEach((channel, row) => {
-      if (channel.length < 2) return;
-      const mean = channel.reduce((sum, value) => sum + value, 0) / channel.length;
-      const scale = Math.max(...channel.map((value) => Math.abs(value - mean)), 1);
-      context.strokeStyle = colors[row];
-      context.lineWidth = Math.max(1.5, width / 850);
-      context.beginPath();
-      channel.forEach((value, index) => {
-        const x = index / (channel.length - 1) * width;
-        const y = (row + .5) * height / 4 - (value - mean) / scale * height * .09;
-        if (index === 0) context.moveTo(x, y);
-        else context.lineTo(x, y);
+  }
+
+  function drawEnvelope(canvas, payload, progress = 1) {
+    const {context, width, height, ratio} = canvasSize(canvas);
+    context.fillStyle = "#0e1511";
+    context.fillRect(0, 0, width, height);
+    const channels = payload?.channels || [];
+    const visibleCount = Math.max(1, Math.floor((payload?.display_bins || 1) * progress));
+    const colors = ["#baf13f", "#55cfb5", "#67a8ef", "#f2aa55", "#c982e8", "#e57878", "#7bd77b", "#e6d36d"];
+    context.font = `${10 * ratio}px ui-monospace, monospace`;
+    for (let channel = 0; channel < 8; channel += 1) {
+      const center = (channel + .5) * height / 8;
+      context.strokeStyle = "#344139";
+      context.lineWidth = ratio;
+      context.beginPath(); context.moveTo(0, center); context.lineTo(width, center); context.stroke();
+      context.fillStyle = "#9aa79f";
+      context.fillText(`CH ${channel + 1}`, 8 * ratio, center - 7 * ratio);
+      const bins = (channels[channel] || []).slice(0, visibleCount);
+      context.strokeStyle = colors[channel];
+      context.lineWidth = Math.max(ratio, width / 1200);
+      bins.forEach((range, index) => {
+        const x = bins.length === 1 ? 0 : index / Math.max(1, (payload.display_bins - 1)) * width;
+        const y1 = center - Number(range[1]) / 127 * height * .045;
+        const y2 = center - Number(range[0]) / 127 * height * .045;
+        context.beginPath(); context.moveTo(x, y1); context.lineTo(x, y2); context.stroke();
       });
-      context.stroke();
-    });
-  }
-
-  function addRawFrame(event) {
-    if (!Array.isArray(event.preview)) return;
-    event.preview.forEach((sample) => sample.forEach((value, channel) => {
-      if (points[channel]) points[channel].push(Number(value));
-    }));
-    points = points.map((channel) => channel.slice(-520));
-    totalSamples += Number(event.sample_count) || 0;
-    elements.sampleCount.textContent = `${totalSamples.toLocaleString()} samples`;
-    drawSignal();
-  }
-
-  function showPreprocessing(event) {
-    const shape = Array.isArray(event.input_shape) ? event.input_shape.map(Number) : [];
-    if (shape.length === 2) {
-      const label = `${shape[0].toLocaleString()} × ${shape[1]} recorded sEMG tensor only`;
-      elements.modelTensorShape.textContent = label;
-      elements.actualModelInput.textContent = `${label} · 1 kHz`;
     }
-    setPill(elements.modelStageState, "model", "PREPROCESSING");
-    elements.modelRunTitle.textContent = "Source-faithful preprocessing";
-    elements.progressModelState.textContent = "Preprocessing recorded tensor";
-    log("Stage 2: source-faithful preprocessing began; metadata text remains outside inference.");
   }
 
-  function showFeatures(event) {
-    const shape = Array.isArray(event.shape) ? event.shape.map(Number) : [];
-    elements.featureShape.textContent = shape.length ? shape.join(" × ") : "—";
-    const values = Array.isArray(event.preview) ? event.preview.flat().slice(0, 80).map(Number).filter(Number.isFinite) : [];
-    const maximum = Math.max(...values.map(Math.abs), .001);
+  function animateEnvelope(payload, durationSeconds) {
+    const started = performance.now();
+    const duration = reducedMotion ? 1 : Math.max(500, Number(durationSeconds) * 1000);
+    const step = (now) => {
+      const progress = Math.min(1, (now - started) / duration);
+      drawEnvelope(elements.sourceCanvas, payload, progress);
+      if (progress < 1) animationFrame = requestAnimationFrame(step);
+    };
+    animationFrame = requestAnimationFrame(step);
+  }
+
+  function drawComparison(payload) {
+    const {context, width, height, ratio} = canvasSize(elements.comparisonCanvas);
+    context.fillStyle = "#14201a"; context.fillRect(0, 0, width, height);
+    context.font = `${9 * ratio}px ui-monospace, monospace`;
+    for (let channel = 0; channel < 8; channel += 1) {
+      const center = (channel + .5) * height / 8;
+      context.strokeStyle = "#344139"; context.beginPath(); context.moveTo(0, center); context.lineTo(width, center); context.stroke();
+      context.fillStyle = "#9ba79f"; context.fillText(`CH ${channel + 1}`, 7 * ratio, center - 7 * ratio);
+      [[payload.source, "#8d9a91", .035], [payload.filtered, "#baf13f", .035]].forEach(([branch, color, amplitude]) => {
+        const bins = branch[channel] || [];
+        context.strokeStyle = color; context.lineWidth = Math.max(1, ratio);
+        bins.forEach((range, index) => {
+          const x = index / Math.max(1, bins.length - 1) * width;
+          context.beginPath();
+          context.moveTo(x, center - Number(range[1]) / 127 * height * amplitude);
+          context.lineTo(x, center - Number(range[0]) / 127 * height * amplitude);
+          context.stroke();
+        });
+      });
+    }
+    context.fillStyle = "#8d9a91"; context.fillRect(width - 175 * ratio, 10 * ratio, 12 * ratio, 3 * ratio);
+    context.fillStyle = "#c9d0cb"; context.fillText("source-derived", width - 158 * ratio, 16 * ratio);
+    context.fillStyle = "#baf13f"; context.fillRect(width - 175 * ratio, 27 * ratio, 12 * ratio, 3 * ratio);
+    context.fillStyle = "#c9d0cb"; context.fillText("filtered", width - 158 * ratio, 33 * ratio);
+  }
+
+  function heatColor(value) {
+    const normalized = Math.max(-127, Math.min(127, Number(value))) / 127;
+    if (normalized >= 0) return `rgb(${Math.round(28 + 140 * normalized)},${Math.round(99 + 125 * normalized)},${Math.round(91 - 25 * normalized)})`;
+    const magnitude = Math.abs(normalized);
+    return `rgb(${Math.round(25 + 36 * magnitude)},${Math.round(45 + 48 * magnitude)},${Math.round(39 + 103 * magnitude)})`;
+  }
+
+  function drawHeatmap(canvas, payload) {
+    const {context, width, height} = canvasSize(canvas);
+    context.fillStyle = "#15211b"; context.fillRect(0, 0, width, height);
+    const rows = payload.values || [];
+    if (!rows.length) return;
+    const cellWidth = width / rows.length;
+    const cellHeight = height / payload.value_bins;
+    rows.forEach((row, x) => row.forEach((value, y) => {
+      context.fillStyle = heatColor(value);
+      context.fillRect(Math.floor(x * cellWidth), Math.floor(y * cellHeight), Math.ceil(cellWidth + .5), Math.ceil(cellHeight + .5));
+    }));
+  }
+
+  function heatmapInteraction(canvas, payload, description, names, kind) {
+    canvas.tabIndex = 0;
+    let x = 0; let y = 0;
+    const announce = () => {
+      const rows = payload.values || [];
+      if (!rows.length) return;
+      x = Math.max(0, Math.min(rows.length - 1, x));
+      y = Math.max(0, Math.min(payload.value_bins - 1, y));
+      const label = names?.[y] || `${kind} bin ${y + 1}`;
+      const channel = names ? `, source channel ${Math.floor(y / 14) + 1}` : "";
+      description.textContent = `${label}${channel}, display time bin ${x + 1} of ${rows.length}, rounded signed display value ${rows[x][y]}. Transformed evidence only.`;
+    };
+    canvas.onpointermove = (event) => {
+      const rectangle = canvas.getBoundingClientRect();
+      x = Math.floor((event.clientX - rectangle.left) / rectangle.width * payload.display_bins);
+      y = Math.floor((event.clientY - rectangle.top) / rectangle.height * payload.value_bins);
+      announce();
+    };
+    canvas.onkeydown = (event) => {
+      if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+      event.preventDefault();
+      if (event.key === "ArrowLeft") x -= 1;
+      if (event.key === "ArrowRight") x += 1;
+      if (event.key === "ArrowUp") y -= 1;
+      if (event.key === "ArrowDown") y += 1;
+      announce();
+    };
+    canvas.onfocus = announce;
+  }
+
+  function renderPhonemes(payload) {
     const fragment = document.createDocumentFragment();
-    values.forEach((value) => {
-      const bar = document.createElement("i");
-      bar.style.setProperty("--height", `${Math.max(3, Math.abs(value) / maximum * 100).toFixed(1)}%`);
-      bar.title = Number(value).toFixed(4);
-      fragment.append(bar);
+    (payload.frames || []).forEach((frame) => {
+      const item = document.createElement("span");
+      item.setAttribute("aria-hidden", "true");
+      item.textContent = frame.token;
+      item.title = `frame ${frame.frame + 1}: ${frame.token}; rounded top-class diagnostic ${Number(frame.top_class_diagnostic).toFixed(3)}`;
+      item.style.setProperty("--phoneme-height", `${Math.max(12, Number(frame.top_class_diagnostic) * 100).toFixed(1)}%`);
+      fragment.append(item);
     });
-    elements.featureBars.replaceChildren(fragment);
-    elements.featureBars.setAttribute("aria-label", `Extracted feature tensor, shape ${shape.join(" by ")}`);
-    elements.modelRunTitle.textContent = "Running official released weights";
-    elements.progressModelState.textContent = "Official weights running";
+    elements.phonemeFrames.replaceChildren(fragment);
+    elements.phonemeFrames.setAttribute("aria-label", `${payload.frames.length} model frames; exact top classes and rounded diagnostics are available in the adjacent disclosure; collapsed path is provided as text.`);
+    const sequence = document.createDocumentFragment();
+    (payload.frames || []).forEach((frame) => {
+      const row = document.createElement("li");
+      row.textContent = `F${frame.frame + 1} · ${frame.token} · ${Number(frame.top_class_diagnostic).toFixed(3)}`;
+      sequence.append(row);
+    });
+    elements.phonemeSequence.replaceChildren(sequence);
+    elements.collapsedPath.textContent = payload.collapsed_path.length ? payload.collapsed_path.join(" · ") : "No non-silence class after collapse";
   }
 
-  function appendCandidate(candidate, index) {
-    const row = document.createElement("div");
-    row.className = "candidate";
-    const rank = document.createElement("i");
-    const text = document.createElement("b");
-    const score = document.createElement("span");
-    rank.textContent = String(index + 1);
-    text.textContent = String(candidate.text || "—");
-    score.textContent = `ranking diagnostic ${Number(candidate.score).toFixed(3)}`;
-    row.append(rank, text, score);
-    elements.candidates.append(row);
+  function renderProvenance(rows) {
+    const fragment = document.createDocumentFragment();
+    rows.forEach((row) => {
+      const tr = document.createElement("tr");
+      const rate = `${row.input_rate_hz} → ${row.output_rate_hz} Hz`;
+      const shape = `${row.input_shape.join("×")} ${row.input_dtype} → ${row.output_shape.join("×")} ${row.output_dtype}`;
+      [["Operation", row.operation], ["Rate", rate], ["Shape / dtype", shape], ["Model input?", row.model_input ? "YES · released raw branch" : (row.note || "NO")]].forEach(([label, text]) => {
+        const td = document.createElement("td"); td.dataset.label = label; td.textContent = text; tr.append(td);
+      });
+      fragment.append(tr);
+    });
+    elements.provenanceBody.replaceChildren(fragment);
   }
 
-  function showInference(event) {
-    const candidateRows = Array.isArray(event.candidates) ? event.candidates : [];
+  function renderCandidates(event) {
     elements.candidates.innerHTML = "";
-    candidateRows.forEach(appendCandidate);
-    if (!candidateRows.length) elements.candidates.innerHTML = "<p>No decoder candidates were returned.</p>";
-    currentCandidate = String(candidateRows[0]?.text || "");
-    elements.inputCandidate.textContent = currentCandidate ? `${currentCandidate} · model candidate only, not a final result` : "No model candidate";
+    (event.candidates || []).forEach((candidate, index) => {
+      const row = document.createElement("div"); row.className = "candidate";
+      const rank = document.createElement("i"); rank.textContent = String(index + 1);
+      const text = document.createElement("b"); text.textContent = String(candidate.text || "—");
+      const diagnostic = document.createElement("span"); diagnostic.textContent = `rank diagnostic ${Number(candidate.diagnostic_score).toFixed(3)} · edit distance ${Number(candidate.phoneme_distance)}`;
+      row.append(rank, text, diagnostic); elements.candidates.append(row);
+    });
+    if (!(event.candidates || []).length) elements.candidates.innerHTML = "<p>No candidates were returned. No result is available.</p>";
+    currentCandidate = String(event.candidates?.[0]?.text || "");
     elements.heldCandidate.textContent = currentCandidate || "—";
-    elements.heldStatus.textContent = currentCandidate ? "Generated by model/decoder · not accepted" : "No candidate staged";
-    elements.candidateHold.textContent = "HELD · NOT EXECUTED";
-    const score = Number(event.confidence);
+    elements.heldStatus.textContent = currentCandidate ? "Project decoder candidate · not a final result" : "No candidate";
+    const score = Number(event.phoneme_alignment_score);
     elements.diagnosticScore.textContent = Number.isFinite(score) ? score.toFixed(3) : "—";
     elements.scoreMeter.value = Number.isFinite(score) ? Math.max(0, Math.min(1, score)) : 0;
     elements.scoreMeter.textContent = Number.isFinite(score) ? score.toFixed(3) : "0";
-    elements.rawCtc.textContent = Array.isArray(event.raw_phonemes) && event.raw_phonemes.length ? event.raw_phonemes.join(" · ") : "∅";
-    elements.latency.textContent = `${Number(event.latency_ms).toFixed(1)} ms`;
-    elements.modelRunTitle.textContent = "Official-weight forward pass complete";
-    setPill(elements.modelStageState, "model", "MODEL COMPLETE");
-    elements.progressModelState.textContent = "Inference complete";
-    elements.progressResultState.textContent = "Candidate held for gate";
-    log(`Released-model forward pass completed locally: ${Number(event.parameter_count).toLocaleString()} parameters; candidate held.`);
+    elements.decoderTime.textContent = `${Number(event.project_decoder_ms).toFixed(1)} ms`;
   }
 
-  function revealReference(event) {
-    if (!replayState.metadataVisible || replayState.boundaryViolation) {
-      showError("Metadata boundary check failed. The dataset label remains hidden and no result can be accepted.", true);
+  function revealMetadata(event) {
+    if (!state.metadataVisible || state.boundaryViolation) {
+      safeError("Prompt-sealing boundary failed. No result is available.", true);
+      streamController?.abort();
       return;
     }
-    const prompt = String(event.prompt || "Unavailable");
-    revealedReferences.set(sessionScenario, prompt);
-    elements.recordReference.textContent = prompt;
-    elements.referenceStatus.textContent = "Revealed after inference · audit metadata only";
-    elements.datasetLabel.textContent = `${prompt} · revealed after inference`;
-    const card = $(`.recorded-example[data-scenario="${sessionScenario}"]`, elements.scenarioList);
-    if (card) {
-      const label = $(".recorded-label", card);
-      label.textContent = `Post-inference dataset label: ${prompt}`;
-      label.classList.add("revealed");
-    }
-    log("Official dataset command label revealed after inference; it was not model or decoder input.");
+    elements.recordReference.textContent = String(event.prompt || "Unavailable");
+    elements.referenceStatus.textContent = `${event.matches_top_candidate ? "Matches" : "Does not match"} top candidate · audit observation, not an accuracy score`;
   }
 
-  function showDecision(event) {
-    renderProgress("process-result");
-    elements.startButton.disabled = false;
-    elements.stopButton.disabled = true;
-    setScenarioLocked(false);
+  function markCardOutcome(outcome) {
+    const card = $(`.sample-card[data-sample-id="${activeCardId}"]`);
+    const line = card ? $("i", card) : null;
+    if (line) { line.textContent = `Last run: ${outcome} · volatile browser state`; line.classList.add("outcome"); }
+  }
+
+  function renderDecision(event) {
     safetySensitive = Boolean(event.safety_sensitive);
+    elements.stop.disabled = true;
+    elements.start.disabled = false;
+    elements.featured.disabled = false;
+    elements.sampleList.disabled = false;
     elements.decisionBox.className = `decision-box ${event.state}`;
     elements.decisionReason.textContent = String(event.reason || "Human review is required.");
     elements.heldCandidate.textContent = currentCandidate || String(event.prediction || "—");
-    elements.finalOutput.textContent = "—";
-    elements.finalCard.classList.remove("accepted");
-    elements.confirmButton.disabled = true;
-    elements.rejectButton.disabled = true;
-    elements.safetyRow.classList.add("hidden");
+    elements.confirm.disabled = true;
+    elements.reject.disabled = true;
+    elements.secondTake.hidden = true;
+    elements.safetyRow.hidden = true;
     elements.safetyAck.checked = false;
-    elements.repairButton.classList.add("hidden");
-
     if (event.state === "abstain") {
-      setPill(elements.captureState, "abstain", "ABSTAINED");
-      setPill(elements.resultStageState, "abstain", "ABSTAINED");
-      elements.decisionIcon.textContent = "×";
+      setStatePill(elements.sourceState, "complete", "REPLAY COMPLETE");
+      setStatePill(elements.modelState, "complete", "OUTPUT INSPECTABLE");
+      setStatePill(elements.decisionState, "abstain", "ABSTAIN · NO RESULT");
       elements.decisionLabel.textContent = "ABSTAINED";
       elements.decisionTitle.textContent = "No final result available";
-      elements.heldStatus.textContent = "Candidate below diagnostic boundary · not accepted";
-      elements.outputStatus.textContent = "Abstained below 0.60 · nothing accepted";
-      elements.progressResultState.textContent = "Abstained · no final result";
-      if (sessionScenario === "ambiguous") elements.repairButton.classList.remove("hidden");
-      log("Diagnostic score fell below 0.60. The system abstained; no result was accepted.");
-    } else {
-      setPill(elements.captureState, "confirm_required", "HUMAN HOLD");
-      setPill(elements.resultStageState, "confirm_required", safetySensitive ? "SAFETY HOLD" : "REVIEW REQUIRED");
-      elements.decisionIcon.textContent = "?";
+      elements.heldStatus.textContent = "Below diagnostic boundary · not committable";
+      elements.outputStatus.textContent = "Abstained · nothing committed";
+      elements.decisionProgress.textContent = "Abstained · no final result";
+      elements.secondTake.hidden = !event.second_official_take_available;
+      markCardOutcome("abstained");
+    } else if (event.state === "confirm_required") {
+      setStatePill(elements.sourceState, "complete", "REPLAY COMPLETE");
+      setStatePill(elements.modelState, "complete", "MODEL COMPLETE");
+      setStatePill(elements.decisionState, "hold", safetySensitive ? "SAFETY HOLD" : "CONFIRMATION REQUIRED");
       elements.decisionLabel.textContent = safetySensitive ? "SAFETY HOLD" : "HUMAN HOLD";
-      elements.decisionTitle.textContent = safetySensitive ? "Acknowledge before review" : "Accept or reject the candidate";
-      elements.heldStatus.textContent = "Staged for human review · not a final result";
-      elements.outputStatus.textContent = "Waiting for human decision";
-      elements.confirmButton.disabled = safetySensitive;
-      elements.rejectButton.disabled = false;
-      elements.safetyRow.classList.toggle("hidden", !safetySensitive);
-      elements.progressResultState.textContent = safetySensitive ? "Safety acknowledgement required" : "Human decision required";
-      log(safetySensitive ? "Safety-sensitive candidate held; explicit acknowledgement is required." : "Candidate held for human confirmation or rejection.");
+      elements.decisionTitle.textContent = safetySensitive ? "Acknowledge, then confirm or reject" : "Confirm or reject the held candidate";
+      elements.confirm.disabled = safetySensitive;
+      elements.reject.disabled = false;
+      elements.safetyRow.hidden = !safetySensitive;
+      elements.decisionProgress.textContent = safetySensitive ? "Acknowledgement + confirmation required" : "Human confirmation required";
+      markCardOutcome("held for decision");
     }
-  }
-
-  function showStopped() {
-    replayState = contract.reduce(replayState, {event: "stopped"});
-    renderProgress(replayState.stage);
-    setPill(elements.captureState, "stopped", "STOPPED");
-    setPill(elements.resultStageState, "stopped", "NO RESULT");
-    elements.decisionBox.className = "decision-box stopped";
-    elements.decisionIcon.textContent = "×";
-    elements.decisionLabel.textContent = "STOPPED";
-    elements.decisionTitle.textContent = "Replay stopped locally";
-    elements.decisionReason.textContent = "The operator stopped the replay. No candidate was accepted or executed.";
-    elements.finalOutput.textContent = "No final local result";
-    elements.outputStatus.textContent = "Stopped by operator · nothing accepted";
-    elements.progressResultState.textContent = "Stopped · no final result";
-    elements.startButton.disabled = false;
-    elements.stopButton.disabled = true;
-    elements.confirmButton.disabled = true;
-    elements.rejectButton.disabled = true;
-    setScenarioLocked(false);
   }
 
   async function handleEvent(event) {
-    replayState = contract.reduce(replayState, event);
-    renderProgress(replayState.stage);
-    if (replayState.boundaryViolation) {
-      showError("Replay event ordering violated the post-inference metadata boundary. No output was accepted.", true);
-      if (streamAbort) streamAbort.abort();
+    state = contract.reduce(state, event);
+    if (state.boundaryViolation) {
+      safeError("Ordered run evidence failed its sealing contract. No result is available.", true);
+      streamController?.abort();
       return;
     }
+    renderStage(state.stage);
+    setTimelineComplete(event);
     switch (event.event) {
-      case "acquisition_started":
-        setPill(elements.captureState, "running", event.attempt === "repair" ? "SECOND TAKE" : "REPLAYING");
-        elements.progressDataState.textContent = event.attempt === "repair" ? "Replaying second official take" : "Replaying official array";
-        log("Stage 1: official recorded sEMG array replay started; no person or sensor is connected.");
+      case "asset_checks_passed":
+        setStatePill(elements.sourceState, "running", "ASSETS VERIFIED");
+        elements.sourceProgress.textContent = "Asset checks passed";
         break;
-      case "raw_frame":
-        addRawFrame(event);
+      case "source_opened":
+        activeSampleId = String(event.sample_id);
+        elements.sourceId.textContent = activeSampleId;
+        elements.sourceShape.textContent = `${Number(event.sample_count).toLocaleString()} × ${event.channels} · native ${event.native_dtype}`;
+        elements.sourceRateDuration.textContent = `1 kHz · ${Number(event.duration_seconds).toFixed(3)} s`;
+        elements.sourceProgress.textContent = `${activeSampleId} official source opened`;
         break;
-      case "preprocessing":
-        showPreprocessing(event);
+      case "replay_started":
+        animateEnvelope(event.source_display, event.visualization_duration_seconds);
+        elements.traceBins.textContent = `${event.source_display.display_bins} BINS · ${event.source_display.source_samples_per_bin}:1`;
+        elements.channelSummary.textContent = `Channels 1–8 present; ${event.source_display.display_bins} chronological min/max bins each; signed 8-bit transformed display`;
+        setStatePill(elements.sourceState, "running", "RECORDED DISPLAY");
         break;
-      case "features":
-        showFeatures(event);
+      case "source_complete":
+        elements.sourceProgress.textContent = "Recorded source replay complete";
+        elements.modelProgress.textContent = "Preprocessing official source";
         break;
-      case "inference":
-        showInference(event);
+      case "preprocessing_complete":
+        renderProvenance(event.provenance || []);
+        drawComparison(event.comparison_display);
+        setStatePill(elements.modelState, "running", "PREPROCESSING COMPLETE");
+        elements.modelProgress.textContent = "Filtering complete";
         break;
-      case "record_reference":
-        revealReference(event);
+      case "branches_aligned":
+        drawHeatmap(elements.featureCanvas, event.feature_display);
+        heatmapInteraction(elements.featureCanvas, event.feature_display, elements.featureDescription, event.feature_display.names, "feature");
+        elements.featureShape.textContent = `${event.feature_shape.join(" × ")} · ≤${event.feature_display.display_bins} display bins`;
+        elements.modelProgress.textContent = "Feature and model branches aligned";
         break;
-      case "decision":
-        showDecision(event);
+      case "model_forward_complete":
+        drawHeatmap(elements.melCanvas, event.mel_display);
+        heatmapInteraction(elements.melCanvas, event.mel_display, elements.melDescription, null, "mel");
+        renderPhonemes(event.phoneme_display);
+        elements.melShape.textContent = event.output_shapes.mel.join(" × ");
+        elements.phonemeShape.textContent = event.output_shapes.phoneme_logits.join(" × ");
+        elements.modelTime.textContent = `${Number(event.model_forward_ms).toFixed(1)} ms`;
+        setStatePill(elements.modelState, "complete", "MODEL FORWARD COMPLETE");
+        elements.modelProgress.textContent = "Released model forward complete";
         break;
-      case "stopped":
-        showStopped();
-        log("Recorded replay stopped; no final local result was accepted.");
+      case "decoder_complete":
+        renderCandidates(event);
+        elements.modelProgress.textContent = "Project decoder complete";
+        break;
+      case "metadata_revealed":
+        revealMetadata(event);
+        break;
+      case "decision_required":
+        renderDecision(event);
         break;
       case "error":
-        showError(String(event.detail || "The local replay pipeline failed. No output was accepted."));
+        safeError(String(event.detail || "Real replay pipeline failed. No result is available."));
         break;
       default:
         break;
     }
+    elements.activeProvenance.innerHTML = `<div><dt>Active run</dt><dd>${activeSampleId} · event ${Math.min(state.expectedEventIndex, 10)} of 10 · ${state.terminalState}</dd></div>`;
   }
 
-  async function fetchJson(path, options) {
+  async function fetchJson(path, options = {}) {
     const response = await fetch(path, options);
     let payload = {};
     try { payload = await response.json(); } catch (_) { payload = {}; }
-    if (!response.ok) throw new Error(String(payload.detail || `local request failed (${response.status})`));
+    if (!response.ok) throw new Error(String(payload.detail || `same-origin request failed (${response.status})`));
     return payload;
   }
 
   async function consume(path) {
     const controller = new AbortController();
-    streamAbort = controller;
-    const response = await fetch(path, {signal: controller.signal});
-    if (!response.ok || !response.body) throw new Error(`local replay stream failed (${response.status})`);
+    streamController = controller;
+    const response = await fetch(path, {signal: controller.signal, cache: "no-store"});
+    if (!response.ok || !response.body) throw new Error(`run event stream failed (${response.status})`);
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
@@ -507,165 +487,179 @@
     if (buffer.trim()) await handleEvent(JSON.parse(buffer));
   }
 
-  async function runSelected() {
+  function runError(error) {
+    if (error?.name === "AbortError") return;
+    safeError(String(error?.message || "The real replay could not continue. No result is available."), true);
+  }
+
+  async function runSelected(forcedId = null) {
     resetRunDisplay();
-    sessionScenario = selectedScenario();
-    const example = exampleByScenario.get(sessionScenario);
-    if (!example) throw new Error("selected replay is not bound to an official recorded example");
-    setScenarioLocked(true);
-    elements.startButton.disabled = true;
-    elements.stopButton.disabled = false;
-    setPill(elements.captureState, "running", "STARTING");
-    const session = await fetchJson("/api/sessions", {
+    activeCardId = forcedId || selectedSampleId();
+    activeSampleId = activeCardId;
+    const radio = $(`input[value="${activeCardId}"]`, elements.sampleList);
+    if (radio) { radio.checked = true; updateSelection(); }
+    elements.sampleList.disabled = true;
+    elements.start.disabled = true;
+    elements.featured.disabled = true;
+    elements.stop.disabled = false;
+    setStatePill(elements.sourceState, "running", "STARTING");
+    const created = await fetchJson("/api/v1/runs", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({scenario: sessionScenario}),
+      body: JSON.stringify({sample_id: activeCardId}),
     });
-    if (session.example_id && session.example_id !== example.exampleId) throw new Error("recorded-example binding mismatch; replay cancelled");
-    sessionId = session.id;
-    await consume(session.stream);
+    if (created.sample_id !== activeCardId) throw new Error("safe sample binding mismatch; run cancelled");
+    runId = created.id;
+    runEventsPath = created.events;
+    await consume(runEventsPath);
   }
 
-  function handleRunError(error) {
-    if (error?.name === "AbortError" && operatorStopped) return;
-    showError(String(error?.message || "The local replay could not run. No output was accepted."), true);
-  }
-
-  async function stopReplay() {
-    if (!sessionId) return;
-    operatorStopped = true;
+  async function stopRun() {
+    if (!runId) return;
     try {
-      await fetchJson(`/api/sessions/${sessionId}/stop`, {method: "POST"});
-      if (streamAbort) streamAbort.abort();
-      showStopped();
-      log("Operator stopped the recorded replay. No result was accepted.");
-    } catch (error) {
-      handleRunError(error);
-    }
+      await fetchJson(`/api/v1/runs/${runId}/stop`, {method: "POST"});
+      streamController?.abort();
+      state = contract.reduce(state, {event: "local_stopped"});
+      renderStage(state.stage);
+      setStatePill(elements.sourceState, "stopped", "STOPPED");
+      setStatePill(elements.modelState, "stopped", "STOPPED");
+      setStatePill(elements.decisionState, "stopped", "NO RESULT");
+      elements.decisionBox.className = "decision-box stopped";
+      elements.decisionLabel.textContent = "STOPPED";
+      elements.decisionTitle.textContent = "Operator stopped the replay";
+      elements.decisionReason.textContent = "No candidate or final result was committed.";
+      elements.finalOutput.textContent = "No final result";
+      elements.outputStatus.textContent = "Stopped · nothing committed";
+      elements.stop.disabled = true; elements.start.disabled = false; elements.featured.disabled = false; elements.sampleList.disabled = false;
+      markCardOutcome("stopped");
+    } catch (error) { runError(error); }
   }
 
-  async function confirmCandidate() {
+  async function confirmRun() {
     try {
-      const result = await fetchJson(`/api/sessions/${sessionId}/decision`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
+      const payload = await fetchJson(`/api/v1/runs/${runId}/decision`, {
+        method: "POST", headers: {"Content-Type": "application/json"},
         body: JSON.stringify({action: "confirm", safety_acknowledged: elements.safetyAck.checked}),
       });
-      replayState = contract.reduce(replayState, {event: "local_confirmed"});
-      renderProgress(replayState.stage);
-      setPill(elements.captureState, "confirmed", "ACCEPTED");
-      setPill(elements.resultStageState, "confirmed", "FINAL LOCAL RESULT");
+      state = contract.reduce(state, {event: "local_confirmed"}); renderStage(state.stage);
+      setStatePill(elements.decisionState, "confirmed", "CONFIRMED · NO ACTUATION");
       elements.decisionBox.className = "decision-box confirmed";
-      elements.decisionIcon.textContent = "✓";
-      elements.decisionLabel.textContent = "HUMAN ACCEPTED";
-      elements.decisionTitle.textContent = "Final local result recorded";
-      elements.decisionReason.textContent = "Human review completed the local gate. No external action or actuation occurred.";
-      elements.heldStatus.textContent = "Reviewed and accepted locally";
-      elements.finalOutput.textContent = String(result.output || currentCandidate || "—");
-      elements.outputStatus.textContent = "Accepted in this browser/service session · no actuation";
+      elements.decisionLabel.textContent = "HUMAN CONFIRMED";
+      elements.decisionTitle.textContent = "Final local result";
+      elements.decisionReason.textContent = "The human gate completed. Nothing was sent to an action or actuator.";
+      elements.finalOutput.textContent = String(payload.output || currentCandidate || "—");
+      elements.outputStatus.textContent = "Confirmed in volatile service/browser memory · no actuation";
       elements.finalCard.classList.add("accepted");
-      elements.confirmButton.disabled = true;
-      elements.rejectButton.disabled = true;
-      elements.safetyRow.classList.add("hidden");
-      elements.progressResultState.textContent = "Human accepted local result";
-      log(`Human accepted a final local result: ${String(result.output || currentCandidate)}. No action was connected.`);
-      elements.finalCard.focus();
-    } catch (error) {
-      showError(String(error?.message || "The local service refused confirmation. No result was accepted."), true);
-    }
+      elements.confirm.disabled = true; elements.reject.disabled = true; elements.safetyRow.hidden = true;
+      markCardOutcome("confirmed"); elements.finalCard.focus();
+    } catch (error) { runError(error); }
   }
 
-  async function rejectCandidate() {
+  async function rejectRun() {
     try {
-      const result = await fetchJson(`/api/sessions/${sessionId}/decision`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({action: "reject"}),
+      const payload = await fetchJson(`/api/v1/runs/${runId}/decision`, {
+        method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({action: "reject"}),
       });
-      replayState = contract.reduce(replayState, {event: "local_rejected"});
-      renderProgress(replayState.stage);
-      setPill(elements.captureState, "rejected", "REJECTED");
-      setPill(elements.resultStageState, "rejected", "NO RESULT");
+      state = contract.reduce(state, {event: "local_rejected"}); renderStage(state.stage);
+      setStatePill(elements.decisionState, "rejected", "REJECTED · NO RESULT");
       elements.decisionBox.className = "decision-box rejected";
-      elements.decisionIcon.textContent = "×";
       elements.decisionLabel.textContent = "REJECTED";
-      elements.decisionTitle.textContent = "No final result accepted";
-      elements.decisionReason.textContent = "The human reviewer rejected the model candidate. It was not executed.";
-      elements.heldStatus.textContent = "Rejected by human reviewer";
-      elements.finalOutput.textContent = "No final local result";
-      elements.outputStatus.textContent = "Rejected by human reviewer · nothing accepted";
-      elements.confirmButton.disabled = true;
-      elements.rejectButton.disabled = true;
-      elements.safetyRow.classList.add("hidden");
-      elements.repairButton.classList.toggle("hidden", !result.repair_available);
-      elements.progressResultState.textContent = "Rejected · no final result";
-      log("Human reviewer rejected the model candidate; no result was accepted or executed.");
-      elements.finalCard.focus();
-    } catch (error) {
-      showError(String(error?.message || "The local service could not reject the candidate safely."), true);
-    }
+      elements.decisionTitle.textContent = "No final result";
+      elements.decisionReason.textContent = "The human reviewer rejected the held candidate. Nothing was committed or actuated.";
+      elements.finalOutput.textContent = "No final result"; elements.outputStatus.textContent = "Rejected · nothing committed";
+      elements.confirm.disabled = true; elements.reject.disabled = true; elements.safetyRow.hidden = true;
+      elements.secondTake.hidden = !payload.second_official_take_available;
+      markCardOutcome("rejected"); elements.finalCard.focus();
+    } catch (error) { runError(error); }
   }
 
-  async function repairReplay() {
+  async function runSecondTake() {
     try {
-      const result = await fetchJson(`/api/sessions/${sessionId}/repair`, {method: "POST"});
+      const payload = await fetchJson(`/api/v1/runs/${runId}/second-take`, {method: "POST"});
       resetRunDisplay();
-      sessionScenario = "ambiguous";
-      setScenarioLocked(true);
-      elements.startButton.disabled = true;
-      elements.stopButton.disabled = false;
-      setPill(elements.captureState, "running", "SECOND TAKE");
-      log("Repair selected: a second official recorded take of the same prompt; downstream code is unchanged.");
-      await consume(result.stream);
-    } catch (error) {
-      handleRunError(error);
-    }
+      activeSampleId = "QC-R02-T2";
+      elements.sourceId.textContent = activeSampleId;
+      elements.sourceProgress.textContent = "Second official take selected";
+      elements.sampleList.disabled = true; elements.start.disabled = true; elements.featured.disabled = true; elements.stop.disabled = false;
+      setStatePill(elements.sourceState, "running", "SECOND OFFICIAL TAKE");
+      runEventsPath = payload.events;
+      await consume(runEventsPath);
+    } catch (error) { runError(error); }
   }
 
-  function validateScenarioContract(payload) {
-    if (!Array.isArray(payload.items)) throw new Error("scenario contract unavailable");
-    contract.RECORDED_EXAMPLES.forEach((expected) => {
-      const item = payload.items.find((candidate) => candidate.id === expected.scenario);
-      if (!item || item.example_id !== expected.exampleId || item.classification !== expected.classification || item.executable !== true || item.recorded_takes !== expected.recordedTakes) {
-        throw new Error(`recorded-example binding mismatch for ${expected.exampleId}`);
-      }
+  function renderRegistry(items) {
+    const fragment = document.createDocumentFragment();
+    items.forEach((item) => {
+      const article = document.createElement("article");
+      const name = document.createElement("b"); name.textContent = item.name;
+      const status = document.createElement("span"); status.textContent = "NOT EXECUTED HERE";
+      const reason = document.createElement("p"); reason.textContent = item.reason;
+      article.append(name, status, reason); fragment.append(article);
     });
-    const references = ["What news?", "09:48 AM", "Keep back!"];
-    const serialized = JSON.stringify(payload);
-    if (references.some((reference) => serialized.includes(reference))) throw new Error("scenario contract revealed a dataset label before inference");
-    elements.scenarioContractState.textContent = "3 RECORDED PATHS · 4 LOCAL ARRAYS";
+    elements.modelRegistry.replaceChildren(fragment);
   }
 
-  elements.startButton.addEventListener("click", () => runSelected().catch(handleRunError));
-  elements.stopButton.addEventListener("click", stopReplay);
-  elements.confirmButton.addEventListener("click", confirmCandidate);
-  elements.rejectButton.addEventListener("click", rejectCandidate);
-  elements.repairButton.addEventListener("click", repairReplay);
-  elements.safetyAck.addEventListener("change", () => {
-    if (safetySensitive) elements.confirmButton.disabled = !elements.safetyAck.checked;
-  });
-  elements.scenarioList.addEventListener("change", updateSelectedExample);
-  elements.clearLog.addEventListener("click", () => {
-    elements.eventLog.innerHTML = "<li><time>—</time><span>Log cleared locally.</span></li>";
+  function validateManifest(payload) {
+    if (!contract.validManifest(payload.samples)) throw new Error("frozen public catalogue contract mismatch");
+    if (payload.executed_model?.parameters !== 54187136 || payload.executed_model?.label !== "Executed model 1 of 1") throw new Error("one-model execution contract mismatch");
+    const serialized = JSON.stringify(payload.samples);
+    if (/prompt"\s*:\s*"(?!sealed)/i.test(serialized)) throw new Error("sample prompt appeared before inference");
+    manifest = payload;
+    elements.selectionDisclosure.textContent = payload.selection_disclosure;
+    elements.catalogueState.textContent = "10 VERIFIED CARDS · PROMPTS SEALED";
+    elements.modelFingerprint.textContent = `${payload.executed_model.fingerprint_prefix}… · short identifier, not integrity proof`;
+    renderRegistry(payload.evidence_only_registry || []);
+    updateSelection();
+  }
+
+  function openDrawer() {
+    elements.drawer.hidden = false;
+    elements.openEvidence.setAttribute("aria-expanded", "true");
+    elements.closeEvidence.focus();
+  }
+  function closeDrawer() {
+    elements.drawer.hidden = true;
+    elements.openEvidence.setAttribute("aria-expanded", "false");
+    elements.openEvidence.focus();
+  }
+  function selectTab(button) {
+    $$("[role=tab]", elements.drawer).forEach((tab) => tab.setAttribute("aria-selected", String(tab === button)));
+    $$("[role=tabpanel]", elements.drawer).forEach((panel) => { panel.hidden = panel.id !== button.getAttribute("aria-controls"); });
+  }
+
+  elements.sampleList.addEventListener("change", updateSelection);
+  elements.start.addEventListener("click", () => runSelected().catch(runError));
+  elements.featured.addEventListener("click", () => runSelected("QC-R01").catch(runError));
+  elements.stop.addEventListener("click", stopRun);
+  elements.confirm.addEventListener("click", confirmRun);
+  elements.confirm.addEventListener("keydown", (event) => { if (event.key === " ") event.preventDefault(); });
+  elements.reject.addEventListener("click", rejectRun);
+  elements.secondTake.addEventListener("click", runSecondTake);
+  elements.safetyAck.addEventListener("change", () => { if (safetySensitive) elements.confirm.disabled = !elements.safetyAck.checked; });
+  elements.openEvidence.addEventListener("click", openDrawer);
+  elements.footerEvidence.addEventListener("click", openDrawer);
+  elements.closeEvidence.addEventListener("click", closeDrawer);
+  elements.drawer.addEventListener("click", (event) => { const tab = event.target.closest("[role=tab]"); if (tab) selectTab(tab); });
+  document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !elements.drawer.hidden) closeDrawer(); });
+  globalThis.addEventListener("resize", () => {
+    if (state.expectedEventIndex === 0) {
+      blankCanvas(elements.sourceCanvas, "#0e1511"); blankCanvas(elements.comparisonCanvas, "#14201a"); blankCanvas(elements.featureCanvas, "#15211b"); blankCanvas(elements.melCanvas, "#15211b");
+    }
   });
 
-  renderFutureExamples();
-  updateSelectedExample();
-  drawSignal();
-  if ("ResizeObserver" in globalThis) new ResizeObserver(resizeCanvas).observe(elements.canvas);
-  else globalThis.addEventListener("resize", resizeCanvas);
-
+  resetRunDisplay();
+  updateSelection();
   Promise.all([
-    fetchJson("/api/health").then((data) => {
-      elements.health.textContent = `LOCAL SERVICE · ${Number(data.model.parameters).toLocaleString()} PARAMS`;
-      elements.health.classList.add("online");
+    fetchJson("/api/v1/health").then((payload) => {
+      if (payload.status !== "ready" || payload.executed_models !== 1) throw new Error("service did not prove one ready executed model");
+      elements.health.textContent = `SERVICE READY · ${String(payload.revision).toUpperCase()}`;
+      elements.health.className = "ready";
     }),
-    fetchJson("/api/scenarios").then(validateScenarioContract),
+    fetchJson("/api/v1/manifest").then(validateManifest),
   ]).catch((error) => {
-    elements.health.textContent = "LOCAL SERVICE · OFFLINE OR CONTRACT ERROR";
-    setPill(elements.captureState, "error", "BACKEND OFFLINE");
-    elements.startButton.disabled = true;
-    elements.errorMessage.textContent = String(error?.message || "Local service unavailable. No replay can start.");
-    elements.errorBanner.hidden = false;
+    elements.health.textContent = "SERVICE BLOCKED";
+    elements.health.className = "error";
+    elements.start.disabled = true; elements.featured.disabled = true;
+    safeError(String(error?.message || "Service or evidence contract unavailable. No replay can start."));
   });
 })();

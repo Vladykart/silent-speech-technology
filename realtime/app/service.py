@@ -1,90 +1,131 @@
-"""FastAPI service for real recorded-sEMG replay through released weights."""
+"""Hardened same-origin service for one official-recording / one-model replay."""
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from pathlib import Path
 from threading import Lock
 from typing import Literal
-from uuid import uuid4
 import json
 import logging
 import os
+import secrets
 import time
 
 import numpy as np
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
-from .config import CONFIDENCE_THRESHOLD, MODEL_PATH, REPLAY_ROOT, SCENARIOS
+from .asset_registry import AssetRegistry, SampleRecord
+from .config import (
+    APP_REVISION,
+    DIAGNOSTIC_THRESHOLD,
+    MAX_ACTIVE_RUNS,
+    PUBLIC_SAMPLE_IDS,
+    RUN_TTL_SECONDS,
+    TRUTH,
+)
+from .display_payload import DisplayPayloadBuilder
 from .pipeline import InferencePipeline
 from .signal_source import RecordedEMGReplaySource, SignalSource
 
 logger = logging.getLogger("quiet_channel.realtime")
-logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"), format="%(asctime)s %(levelname)s %(name)s %(message)s")
 CLIENT = Path(__file__).resolve().parents[1] / "client"
-TRUTH = "Replay of real recorded sEMG through the real released pretrained model; not live capture."
+EVENT_ORDER = (
+    "asset_checks_passed",
+    "source_opened",
+    "replay_started",
+    "source_complete",
+    "preprocessing_complete",
+    "branches_aligned",
+    "model_forward_complete",
+    "decoder_complete",
+    "metadata_revealed",
+    "decision_required",
+)
 
 
-class CreateSession(BaseModel):
-    scenario: Literal["clear", "ambiguous", "safety"]
+class CreateRun(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    sample_id: str
 
 
 class DecisionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     action: Literal["confirm", "reject"]
     safety_acknowledged: bool = False
 
 
 @dataclass
-class Session:
+class Run:
     id: str
-    scenario_id: str
+    sample_id: str
+    original_sample_id: str
+    created_at: float = field(default_factory=time.monotonic)
     state: str = "ready"
-    attempt: str = "initial"
+    streamed: bool = False
+    event_index: int = 0
     prediction: str | None = None
     safety_sensitive: bool = False
     active_source: SignalSource | None = None
     lock: Lock = field(default_factory=Lock)
+    event_started: float = 0.0
+
+    def expired(self) -> bool:
+        return time.monotonic() - self.created_at > RUN_TTL_SECONDS
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.pipeline = InferencePipeline(MODEL_PATH)
-    app.state.sessions = {}
-    logger.info(
-        "released_model_loaded path=%s sha256=%s parameters=%s acquisition=recorded_replay",
-        MODEL_PATH,
-        app.state.pipeline.asset_manifest["model"]["checkpoint"]["sha256"],
-        app.state.pipeline.parameter_count,
-    )
+    if os.getenv("QUIET_CHANNEL_REQUIRE_RELEASE_BINDING") == "1":
+        from realtime.generate_release_manifest import verify as verify_release
+        release = json.loads((Path(__file__).resolve().parents[1] / "release-manifest.json").read_text(encoding="utf-8"))
+        verify_release(release)
+        expected_revision = os.getenv("QUIET_CHANNEL_REVISION", "")
+        if release.get("application_revision") != expected_revision:
+            raise RuntimeError("deployed revision differs from release manifest")
+    registry = AssetRegistry()
+    registry.verify_all()
+    pipeline = InferencePipeline()
+    app.state.registry = registry
+    app.state.pipeline = pipeline
+    app.state.runs = {}
+    app.state.runs_lock = Lock()
+    logger.info("official replay service ready; one strict-loaded checkpoint; %s parameters", pipeline.parameter_count)
     yield
-    for session in app.state.sessions.values():
-        if session.active_source:
-            session.active_source.stop()
+    for run in list(app.state.runs.values()):
+        if run.active_source:
+            run.active_source.stop()
+    app.state.runs.clear()
 
 
 app = FastAPI(
-    title="Quiet Channel real recorded-sEMG replay service",
-    version="2.0.0",
+    title="Quiet Channel official-recording replay",
+    version="3.0.0",
     description=TRUTH,
     lifespan=lifespan,
-    docs_url="/api/docs",
+    docs_url=None,
     redoc_url=None,
+    openapi_url=None,
 )
 
 
 @app.middleware("http")
-async def local_security_headers(request: Request, call_next):
+async def hardened_headers(request: Request, call_next):
     response = await call_next(request)
-    response.headers["Cache-Control"] = "no-store"
+    response.headers["Cache-Control"] = "no-store, max-age=0"
+    response.headers["Pragma"] = "no-cache"
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+    response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
     response.headers["Content-Security-Policy"] = (
         "default-src 'self'; script-src 'self'; style-src 'self'; "
         "img-src 'self' data:; connect-src 'self'; object-src 'none'; "
-        "base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+        "base-uri 'none'; form-action 'none'; frame-ancestors 'none'; "
+        "media-src 'none'; worker-src 'none'; manifest-src 'none'"
     )
     response.headers["Permissions-Policy"] = (
         "camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=()"
@@ -92,278 +133,316 @@ async def local_security_headers(request: Request, call_next):
     return response
 
 
-@app.get("/api/health")
+def _cleanup(request: Request, *, prune_terminal: bool = False) -> None:
+    with request.app.state.runs_lock:
+        for run_id, run in list(request.app.state.runs.items()):
+            repair_hold = run.original_sample_id == "QC-R02" and run.sample_id == "QC-R02" and run.state in {"abstain", "rejected"}
+            terminal = run.state in {"confirmed", "rejected", "stopped", "error"}
+            if run.expired() or (prune_terminal and terminal and not repair_hold):
+                if run.active_source:
+                    run.active_source.stop()
+                del request.app.state.runs[run_id]
+
+
+def _run(request: Request, run_id: str) -> Run:
+    _cleanup(request)
+    run = request.app.state.runs.get(run_id)
+    if run is None:
+        raise HTTPException(404, "run not found or expired")
+    return run
+
+
+def _line(event: dict) -> bytes:
+    return (json.dumps(event, separators=(",", ":"), ensure_ascii=False) + "\n").encode("utf-8")
+
+
+def _event(run: Run, kind: str, **payload) -> bytes:
+    if run.event_index >= len(EVENT_ORDER) or EVENT_ORDER[run.event_index] != kind:
+        raise RuntimeError("run event ordering violation")
+    elapsed = max(0.0, (time.perf_counter() - run.event_started) * 1_000.0)
+    value = {"event": kind, "sequence": run.event_index + 1, "relative_ms": round(elapsed, 1), **payload}
+    run.event_index += 1
+    return _line(value)
+
+
+@app.get("/api/v1/health")
 def health(request: Request):
     pipeline: InferencePipeline = request.app.state.pipeline
-    checkpoint = pipeline.asset_manifest["model"]["checkpoint"]
+    registry: AssetRegistry = request.app.state.registry
     return {
-        "status": "ok",
-        "service": "local-only_non-commercial_research_demo",
+        "status": "ready",
+        "revision": APP_REVISION if len(APP_REVISION) == 12 else "unbound",
+        "service": "private_research_replay",
         "acquisition": "official_recorded_semg_replay",
         "live_capture": False,
-        "inference": "official_released_pretrained_model",
-        "model": {
-            "kind": "released residual CNN + relative-position Transformer transduction model",
-            "parameters": pipeline.parameter_count,
-            "sha256": checkpoint["sha256"],
-            "license": "CC BY 4.0",
-            "creator": "David Gaddy",
-        },
-        "dataset": {
-            "name": "Silent Speech EMG v1.0",
-            "doi": "10.5281/zenodo.4064409",
-            "license": "CC BY 4.0",
-            "single_speaker": True,
-        },
-        "truth": TRUTH,
+        "executed_models": 1,
+        "parameters": pipeline.parameter_count,
+        "model_fingerprint_prefix": registry.assets["model"]["checkpoint"]["sha256"][:10],
+        "catalogue_version": registry.catalogue["catalogue_version"],
         "telemetry": False,
+        "persistence": False,
     }
 
 
-@app.get("/api/scenarios")
-def scenarios():
-    return {
-        "truth": TRUTH,
-        "confidence": "Uncalibrated phoneme-alignment score; not accuracy or probability of correctness.",
-        "reference_visibility": "Dataset command labels are omitted here and emitted only after inference.",
-        "items": [
-            {
-                "id": scenario.id,
-                "example_id": scenario.example_id,
-                "classification": "official_recorded_example",
-                "executable": True,
-                "recorded_takes": scenario.recorded_takes,
-                "title": scenario.title,
-                "description": scenario.description,
-                "source_split": scenario.evaluation_split,
-                "safety_sensitive": scenario.safety_sensitive,
-            }
-            for scenario in SCENARIOS.values()
-        ],
-    }
+@app.get("/api/v1/manifest")
+def public_manifest(request: Request):
+    registry: AssetRegistry = request.app.state.registry
+    pipeline: InferencePipeline = request.app.state.pipeline
+    return registry.public_manifest(revision=APP_REVISION, parameter_count=pipeline.parameter_count)
 
 
-@app.post("/api/sessions", status_code=201)
-def create_session(payload: CreateSession, request: Request):
-    session = Session(uuid4().hex, payload.scenario)
-    request.app.state.sessions[session.id] = session
+@app.post("/api/v1/runs", status_code=201)
+def create_run(payload: CreateRun, request: Request):
+    if payload.sample_id not in PUBLIC_SAMPLE_IDS:
+        raise HTTPException(422, "unknown official replay ID")
+    _cleanup(request, prune_terminal=True)
+    with request.app.state.runs_lock:
+        if len(request.app.state.runs) >= MAX_ACTIVE_RUNS:
+            raise HTTPException(429, "bounded run capacity reached; reload after prior runs expire")
+        run_id = secrets.token_urlsafe(18)
+        run = Run(run_id, payload.sample_id, payload.sample_id)
+        request.app.state.runs[run_id] = run
     return {
-        "id": session.id,
-        "scenario": payload.scenario,
-        "example_id": SCENARIOS[payload.scenario].example_id,
-        "state": session.state,
-        "stream": f"/api/sessions/{session.id}/stream",
+        "id": run.id,
+        "sample_id": run.sample_id,
+        "state": run.state,
+        "events": f"/api/v1/runs/{run.id}/events",
         "truth": TRUTH,
     }
 
 
-def _session(request: Request, session_id: str) -> Session:
-    session = request.app.state.sessions.get(session_id)
-    if session is None:
-        raise HTTPException(404, "session not found")
-    return session
+def _source_for(run: Run, registry: AssetRegistry) -> tuple[SampleRecord, RecordedEMGReplaySource]:
+    sample = registry.get(run.sample_id, allow_second_take=run.sample_id == "QC-R02-T2")
+    return sample, RecordedEMGReplaySource(sample)
 
 
-def _event(kind: str, **payload) -> bytes:
-    return (json.dumps({"event": kind, **payload}, separators=(",", ":")) + "\n").encode()
-
-
-def _source_for(session: Session) -> RecordedEMGReplaySource:
-    scenario = SCENARIOS[session.scenario_id]
-    group = scenario.sample_group
-    index = scenario.sample_index
-    if session.attempt == "repair":
-        if scenario.repair_group is None or scenario.repair_index is None:
-            raise RuntimeError("scenario has no recorded repair take")
-        group, index = scenario.repair_group, scenario.repair_index
-    return RecordedEMGReplaySource(REPLAY_ROOT / group, index)
-
-
-def _stream_events(session: Session, pipeline: InferencePipeline, pace: bool):
-    with session.lock:
-        if session.state not in {"ready", "repair_ready"}:
-            yield _event("error", detail=f"session cannot stream from state {session.state}")
-            return
-        session.state = "capturing"
-    source = _source_for(session)
-    session.active_source = source
-    samples: list[np.ndarray] = []
-    scenario = SCENARIOS[session.scenario_id]
-    yield _event(
-        "acquisition_started",
-        stage="raw_signal",
-        source="RecordedEMGReplaySource",
-        replay_example_id=scenario.example_id,
-        model_input="recorded sEMG tensor only",
-        provenance="official Zenodo 4064409 single-speaker research recording",
-        simulated=False,
-        live_capture=False,
-        license="CC BY 4.0",
-        sample_rate=source.sample_rate,
-        channels=source.channels,
-        attempt=session.attempt,
-        truth=TRUTH,
-    )
+def _stream(run: Run, registry: AssetRegistry, pipeline: InferencePipeline):
+    sample, source = _source_for(run, registry)
+    run.active_source = source
     try:
+        yield _event(
+            run,
+            "asset_checks_passed",
+            sample_id=sample.public_id,
+            checkpoint="verified and strict-loaded",
+            frozen_member_set="verified",
+        )
         source.start()
+        yield _event(
+            run,
+            "source_opened",
+            sample_id=sample.public_id,
+            source="official Silent Speech EMG v1.0 recording",
+            source_doi="10.5281/zenodo.4064409",
+            license="CC BY 4.0",
+            source_split=sample.spec["source_split"],
+            sample_count=sample.spec["sample_count"],
+            duration_seconds=sample.spec["duration_seconds"],
+            sample_rate_hz=1_000,
+            channels=8,
+            native_dtype="float64",
+            live_capture=False,
+        )
+        frames: list[np.ndarray] = []
         for frame in source.frames():
-            if session.state == "stopped":
-                yield _event("stopped", stage="raw_signal", state="stopped")
+            if run.state == "stopped":
                 return
-            samples.append(frame.samples)
-            preview = frame.samples[::8, :4]
-            yield _event(
-                "raw_frame",
-                stage="raw_signal",
-                first_sample=frame.first_sample,
-                sample_count=len(frame.samples),
-                preview=np.round(preview, 2).tolist(),
-                provenance=frame.provenance,
-            )
-            if pace:
-                time.sleep(len(frame.samples) / source.sample_rate * 0.35)
-        recording = np.concatenate(samples, axis=0)
+            frames.append(frame.samples)
+        if not frames:
+            raise RuntimeError("official source produced no frames")
+        recording = np.concatenate(frames, axis=0)
+        recording.flags.writeable = False
+        source_display = DisplayPayloadBuilder.source_envelope(recording)
+        yield _event(
+            run,
+            "replay_started",
+            sample_id=sample.public_id,
+            visualization="recorded-duration display only; not live sensing",
+            visualization_duration_seconds=sample.spec["duration_seconds"],
+            source_display=source_display,
+        )
+        if run.state == "stopped":
+            return
+        yield _event(
+            run,
+            "source_complete",
+            sample_id=sample.public_id,
+            sample_count=len(recording),
+            channel_text_summary="Eight official recorded source channels prepared as bounded transformed display envelopes.",
+        )
         before, after = source.filter_context()
-        yield _event(
-            "preprocessing",
-            stage="features",
-            operations=[
-                "60 Hz notch + harmonics (upstream)",
-                "2 Hz high-pass (upstream)",
-                "689.06 Hz raw-model resample",
-                "516.79 Hz / 112-value upstream features",
-            ],
-            input_shape=list(recording.shape),
-        )
         result = pipeline.infer(recording, before, after, source.alignment_frames)
-        feature_preview = result.preprocessed.features
+        if run.state == "stopped":
+            return
+        comparison = DisplayPayloadBuilder.source_filtered_comparison(recording, result.preprocessed.filtered)
         yield _event(
-            "features",
-            stage="features",
-            shape=list(feature_preview.shape),
-            names=list(result.preprocessed.feature_names[:8]),
-            preview=np.round(feature_preview[:: max(1, len(feature_preview) // 20), :8], 4).tolist(),
-            model_note="Released architecture consumes the identically preprocessed raw branch; explicit features are inspectable but unused by architecture.py.",
+            run,
+            "preprocessing_complete",
+            comparison_display=comparison,
+            provenance=list(result.preprocessed.provenance),
         )
-        decoded = result.decoded
-        candidates = [asdict(candidate) for candidate in decoded.candidates]
+        feature_display = DisplayPayloadBuilder.features(result.preprocessed.features, result.preprocessed.feature_names)
         yield _event(
-            "inference",
-            stage="model",
-            architecture="Official 54M-parameter residual CNN + relative Transformer (Gaddy release)",
-            parameter_count=pipeline.parameter_count,
-            model_license="CC BY 4.0",
-            model_sha256=pipeline.asset_manifest["model"]["checkpoint"]["sha256"],
-            output_steps=result.output_steps,
-            mel_shape=list(result.mel_features.shape),
-            latency_ms=result.latency_ms,
-            raw_phonemes=list(decoded.raw_phonemes),
+            run,
+            "branches_aligned",
+            model_raw_shape=list(result.preprocessed.model_raw.shape),
+            model_raw_dtype="float32",
+            feature_shape=list(result.preprocessed.features.shape),
+            feature_branch="inspectable / not consumed by released forward path",
+            feature_display=feature_display,
+        )
+        mel_display = DisplayPayloadBuilder.mel(result.mel_features)
+        phoneme_display = DisplayPayloadBuilder.phonemes(result.phoneme_logits)
+        yield _event(
+            run,
+            "model_forward_complete",
+            executed_model="Executed model 1 of 1",
+            architecture="3 residual CNN blocks; 6-layer 768-wide 8-head relative-position Transformer",
+            parameters=pipeline.parameter_count,
+            strict_load=True,
+            output_shapes={"mel": list(result.mel_features.shape), "phoneme_logits": list(result.phoneme_logits.shape)},
+            model_forward_ms=result.model_forward_ms,
+            timing_label="Measured local software model forward time for this run on this host; excludes recording duration, sensing, hardware, network, endpointing, confirmation, and output.",
+            mel_display=mel_display,
+            phoneme_display=phoneme_display,
+        )
+        candidates = [
+            {
+                "text": candidate.text,
+                "diagnostic_score": candidate.diagnostic_score,
+                "phoneme_distance": candidate.phoneme_distance,
+            }
+            for candidate in result.decoded.candidates[:3]
+        ]
+        run.prediction = candidates[0]["text"] if candidates else None
+        run.safety_sensitive = bool(sample.safety_sensitive or result.decoded.safety_sensitive)
+        yield _event(
+            run,
+            "decoder_complete",
+            decoder="project bounded phoneme-edit algorithm; not the released model",
             candidates=candidates,
-            confidence=decoded.confidence,
-            frame_certainty=decoded.frame_certainty,
-            decoder_agreement=decoded.decoder_agreement,
-            confidence_label="uncalibrated phoneme-alignment score — not accuracy",
-        )
-        session.prediction = candidates[0]["text"]
-        session.safety_sensitive = scenario.safety_sensitive or decoded.safety_sensitive
-        session.state = decoded.status
-        reason = decoded.reason
-        if scenario.safety_sensitive and session.state != "abstain":
-            reason = "Safety-sensitive research replay: explicit confirmation is mandatory; no actuation is connected."
-        yield _event(
-            "record_reference",
-            stage="model",
-            prompt=source.metadata["text"],
-            label="dataset metadata shown after inference; never passed to the model or decoder",
-            book=source.metadata["book"],
-            sentence_index=source.metadata["sentence_index"],
-            source_split=scenario.evaluation_split,
+            phoneme_alignment_score=result.decoded.phoneme_alignment_score,
+            frame_top_class_diagnostic=result.decoded.frame_top_class_diagnostic,
+            decoder_agreement=result.decoded.decoder_agreement,
+            threshold=DIAGNOSTIC_THRESHOLD,
+            project_decoder_ms=result.project_decoder_ms,
+            timing_label="Measured local software project decoder time for this run on this host; excludes recording duration, sensing, hardware, network, endpointing, confirmation, and output.",
         )
         yield _event(
-            "decision",
-            stage="decision",
-            state=decoded.status,
+            run,
+            "metadata_revealed",
+            prompt=sample.prompt,
+            label="revealed after model and decoder completed; official dataset metadata for audit only",
+            matches_top_candidate=bool(run.prediction == sample.prompt),
+        )
+        run.state = result.decoded.status
+        reason = result.decoded.reason
+        if run.safety_sensitive and run.state == "confirm_required":
+            reason = "Safety hold: acknowledgement and confirmation are both required; no actuation is connected."
+        yield _event(
+            run,
+            "decision_required",
+            state=run.state,
             reason=reason,
-            prediction=session.prediction,
-            safety_sensitive=session.safety_sensitive,
-            threshold=CONFIDENCE_THRESHOLD,
+            prediction=run.prediction,
+            safety_sensitive=run.safety_sensitive,
+            second_official_take_available=bool(sample.second_take_id),
             output_committed=False,
         )
-    except Exception:
-        logger.exception("stream_failed session=%s", session.id)
-        session.state = "error"
-        yield _event("error", detail="real replay pipeline failed; see local service log", state="error")
+    except Exception as error:
+        run.state = "error"
+        run.prediction = None
+        logger.error("real replay run failed safely; category=%s", type(error).__name__)
+        yield _line({"event": "error", "detail": "real replay pipeline failed; no result is available", "state": "error"})
     finally:
         source.stop()
-        session.active_source = None
+        run.active_source = None
 
 
-@app.get("/api/sessions/{session_id}/stream")
-def stream_session(session_id: str, request: Request, pace: bool = Query(default=True)):
-    session = _session(request, session_id)
+@app.get("/api/v1/runs/{run_id}/events")
+def stream_run(run_id: str, request: Request):
+    run = _run(request, run_id)
+    with run.lock:
+        if run.streamed or run.state not in {"ready", "second_take_ready"}:
+            raise HTTPException(409, "run events are unavailable in the current state")
+        run.streamed = True
+        run.state = "running"
+        run.event_started = time.perf_counter()
+        run.event_index = 0
     return StreamingResponse(
-        _stream_events(session, request.app.state.pipeline, pace),
+        _stream(run, request.app.state.registry, request.app.state.pipeline),
         media_type="application/x-ndjson",
         headers={"X-Accel-Buffering": "no"},
     )
 
 
-@app.post("/api/sessions/{session_id}/stop")
-def stop_session(session_id: str, request: Request):
-    session = _session(request, session_id)
-    session.state = "stopped"
-    if session.active_source:
-        session.active_source.stop()
-    return {"id": session.id, "state": "stopped", "output_committed": False}
+@app.post("/api/v1/runs/{run_id}/stop")
+def stop_run(run_id: str, request: Request):
+    run = _run(request, run_id)
+    with run.lock:
+        if run.state in {"confirmed", "rejected", "stopped", "error"}:
+            raise HTTPException(409, "run is already terminal")
+        run.state = "stopped"
+        run.prediction = None
+        if run.active_source:
+            run.active_source.stop()
+    return {"state": "stopped", "output_committed": False, "terminal": True}
 
 
-@app.post("/api/sessions/{session_id}/decision")
-def decide(session_id: str, payload: DecisionRequest, request: Request):
-    session = _session(request, session_id)
-    if session.state != "confirm_required":
-        raise HTTPException(409, f"decision unavailable in state {session.state}")
-    if payload.action == "reject":
-        session.state = "rejected"
+@app.post("/api/v1/runs/{run_id}/decision")
+def decide(run_id: str, payload: DecisionRequest, request: Request):
+    run = _run(request, run_id)
+    with run.lock:
+        if run.state != "confirm_required":
+            raise HTTPException(409, "human decision is unavailable in the current state")
+        if payload.action == "reject":
+            run.state = "rejected"
+            run.prediction = None
+            return {
+                "state": "rejected",
+                "output_committed": False,
+                "terminal": True,
+                "second_official_take_available": run.original_sample_id == "QC-R02" and run.sample_id == "QC-R02",
+            }
+        if run.safety_sensitive and not payload.safety_acknowledged:
+            raise HTTPException(409, "safety acknowledgement is required in addition to confirmation")
+        if not run.prediction:
+            raise HTTPException(409, "no candidate is available")
+        output = run.prediction
+        run.state = "confirmed"
+        run.prediction = None
         return {
-            "id": session.id,
-            "state": "rejected",
-            "output_committed": False,
-            "repair_available": SCENARIOS[session.scenario_id].repair_group is not None,
+            "state": "confirmed",
+            "output_committed": True,
+            "output": output,
+            "actuation": False,
+            "terminal": True,
         }
-    if session.safety_sensitive and not payload.safety_acknowledged:
-        raise HTTPException(409, "safety acknowledgement is required")
-    session.state = "confirmed"
-    return {
-        "id": session.id,
-        "state": "confirmed",
-        "output_committed": True,
-        "output": session.prediction,
-        "local_only": True,
-    }
 
 
-@app.post("/api/sessions/{session_id}/repair")
-def repair(session_id: str, request: Request):
-    session = _session(request, session_id)
-    if session.state not in {"abstain", "rejected"}:
-        raise HTTPException(409, f"repair unavailable in state {session.state}")
-    scenario = SCENARIOS[session.scenario_id]
-    if scenario.repair_group is None:
-        raise HTTPException(409, "this scenario has no second recorded take")
-    session.attempt = "repair"
-    session.state = "repair_ready"
-    session.prediction = None
+@app.post("/api/v1/runs/{run_id}/second-take")
+def second_take(run_id: str, request: Request):
+    run = _run(request, run_id)
+    with run.lock:
+        if run.original_sample_id != "QC-R02" or run.sample_id != "QC-R02" or run.state not in {"abstain", "rejected"}:
+            raise HTTPException(409, "second official take is unavailable")
+        run.sample_id = "QC-R02-T2"
+        run.state = "second_take_ready"
+        run.streamed = False
+        run.event_index = 0
+        run.prediction = None
+        run.safety_sensitive = False
     return {
-        "id": session.id,
-        "state": session.state,
-        "stream": f"/api/sessions/{session.id}/stream",
-        "repair": "second real recorded take of the same source prompt; downstream pipeline is unchanged",
+        "state": run.state,
+        "sample_id": "QC-R02-T2",
+        "events": f"/api/v1/runs/{run.id}/events",
+        "repair": "second official recorded take; no synthetic signal and the downstream pipeline is unchanged",
     }
 
 
 @app.get("/")
 def index():
-    return FileResponse(CLIENT / "index.html")
+    return FileResponse(CLIENT / "index.html", media_type="text/html")
 
 
 @app.get("/styles.css", include_in_schema=False)

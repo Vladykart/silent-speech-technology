@@ -1,10 +1,10 @@
 # Third-party notices and attribution
 
-This local non-commercial research demonstration uses official third-party research assets fetched outside git. Do not remove attribution or redistribute downloaded assets from this repository.
+This private non-commercial research demonstration references or executes third-party artifacts fetched into ignored owner-controlled storage. No model, recording, paper, figure, logo, font, screenshot, audio, or video is redistributed in git. Attribution does not imply endorsement or project ownership. A complete distribution/dependency review is required before broader delivery.
 
-## dgaddy/silent_speech code
+## dgaddy/silent_speech adapted code — MIT
 
-Reference: <https://github.com/dgaddy/silent_speech/tree/a89357c2086609b432919b9d14ffc0be5d8983d5>
+Source: `github.com/dgaddy/silent_speech`, exact commit `a89357c2086609b432919b9d14ffc0be5d8983d5`.
 
 ```text
 MIT License
@@ -30,37 +30,49 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-`app/model.py`, `app/upstream_transformer.py`, and `app/preprocessing.py` adapt the exact layer/state layout and algorithms in upstream `architecture.py`, `transformer.py`, `read_emg.py`, and `data_utils.py`. The custom Transformer also notes its upstream fairseq/PyTorch derivation. No upstream repository clone is committed.
+`app/model.py`, `app/upstream_transformer.py`, and `app/preprocessing.py` adapt the state layout and algorithms in upstream `architecture.py`, `transformer.py`, `read_emg.py`, and `data_utils.py`. Changes: modern pinned NumPy/SciPy/PyTorch implementation, explicit source/model dtype provenance, bounded browser derivatives, and direct inspection/decoding of the released phoneme head. No upstream clone is committed.
 
-## Voicing Silent Speech Models
+## Voicing Silent Speech Models — CC BY 4.0 deposit
 
-- Creator: **David Gaddy**
-- Title: **Voicing Silent Speech Models**
-- Official record/DOI: <https://doi.org/10.5281/zenodo.6747411>
-- Deposit license: **Creative Commons Attribution 4.0 International (CC BY 4.0)**, <https://creativecommons.org/licenses/by/4.0/>
-- Used file: released `pretrained_models/transduction_model.pt`, fetched and checksum-verified outside git.
+- Creator: David Gaddy
+- Title: *Voicing Silent Speech Models*
+- DOI: `10.5281/zenodo.6747411`
+- Deposit license: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- Executed member: `pretrained_models/transduction_model.pt`, checksum-verified outside git
 
-The checkpoint is not redistributed in this repository. The UI and documentation provide creator/title/source/license attribution. Changes: the checkpoint is loaded unchanged into a modern PyTorch 2.5 adapter matching its original architecture. Legacy speech-synthesis/DeepSpeech text evaluation is not run; the released phoneme head is decoded directly as documented.
+The checkpoint is not redistributed or downloadable. Its state tensors strict-load unchanged into the adapted architecture. Legacy synthesis/DeepSpeech evaluation and the archived HiFi-GAN artifact are **not executed here**. The UI attributes creator/title/DOI/license and labels modifications. CC BY 4.0 requires attribution and change indication and does not imply endorsement.
 
-## Silent Speech EMG v1.0
+## Silent Speech EMG v1.0 — CC BY 4.0 deposit
 
-- Creator: **David Gaddy, UC Berkeley**
-- Title: **Silent Speech EMG**
-- Version DOI: <https://doi.org/10.5281/zenodo.4064409>
-- Concept DOI: <https://doi.org/10.5281/zenodo.4064408>
-- Deposit license: **CC BY 4.0**
-- Description at source: facial electromyography recordings during silent and vocalized speech; one research speaker in this source line.
+- Creator: David Gaddy, UC Berkeley
+- Title: *Silent Speech EMG*
+- Version DOI: `10.5281/zenodo.4064409`; concept DOI: `10.5281/zenodo.4064408`
+- Deposit license: CC BY 4.0
+- Source scope: single-speaker facial-EMG research line
 
-Only selected silent-speech EMG arrays, their immediate recorded filter context and JSON prompt metadata are extracted locally. No audio is extracted, served or committed. Changes: arrays are replayed in chunks and processed through a source-faithful modern NumPy/SciPy implementation; raw sample values are not altered by acquisition replay.
+Only 11 selected silent-speech EMG arrays, their immediate recorded filter context, and selected JSON metadata are prepared locally. No audio, cleaned audio, or button array is extracted, served, or committed. Changes: native `float64` arrays are replayed read-only, context-filtered, resampled, converted at a documented runtime boundary, and transformed/quantized into bounded non-downloadable browser evidence. Public licensing does not itself resolve human-subject, privacy, patent, endorsement, intended-use, or redistribution questions; the project applies a stricter private-demo boundary.
 
-## CMU Pronouncing Dictionary
+## `cmudict==1.0.32` Python package — GPL-3.0-or-later
 
-The pinned `cmudict` Python package supplies pronunciations to the modern bounded phoneme decoder. CMUdict is distributed under a permissive 3-clause BSD-style license; package notice/source: <https://github.com/cmusphinx/cmudict>.
+The installed package metadata and packaged top-level `LICENSE` identify the **Python package/distribution** as **GPL-3.0-or-later**. It supplies the runtime wrapper used by the project bounded pronunciation/edit-distance algorithm. It must not be described as a permissive-only package. Broader distribution requires review of GPL obligations and all transitive dependencies.
+
+## CMU Pronouncing Dictionary data — separate CMU notice
+
+The packaged `cmudict/data/LICENSE` applies separately to the **dictionary data** and permits redistribution/use in source and binary forms subject to retaining its copyright, conditions, acknowledgements, and disclaimer. It begins:
+
+```text
+Copyright (C) 1993-2015 Carnegie Mellon University. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the stated conditions are met.
+```
+
+Do not conflate this data notice with the GPL-3.0-or-later Python package metadata. The repository does not vendor either package or dictionary payload.
 
 ## Runtime dependencies
 
-PyTorch, NumPy, SciPy, FastAPI, Uvicorn, HTTPX and their transitive dependencies retain their own licenses. They install into ignored `realtime/.venv` and are not vendored here. See pinned versions in `requirements.txt`.
+Pinned PyTorch, NumPy, SciPy, FastAPI, Uvicorn, HTTPX, and their transitive dependencies retain their own terms. They are installed only under ignored `realtime/.venv`; [`requirements.txt`](requirements.txt) is a version lock, not a complete license conclusion.
 
 ## Project-use boundary
 
-The captain has authorized these assets for a **non-commercial, local research demonstration only**. That internal limit does not replace or narrow the text of the upstream MIT or CC BY 4.0 licenses. There is no live capture, public asset serving, accuracy transfer, endorsement, medical/AAC use or identity/emotion use.
+The captain has authorized this path for a **private, non-commercial research demonstration**. That internal boundary does not rewrite MIT, CC BY 4.0, GPL, CMU data terms, or transitive licenses. There is no public asset serving, live capture, project accuracy transfer, medical/AAC use, identity/emotion use, or endorsement.

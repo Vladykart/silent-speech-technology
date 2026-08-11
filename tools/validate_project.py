@@ -16,8 +16,11 @@ REQUIRED=[
  "pitch/deck-4-slide.md","pitch/quiet-channel-4-slide-deck.pptx","pitch/build_4_slide_pptx.py","pitch/validate_4_slide_pptx.py","pitch/quiet-channel-4-slide-build.json","pitch/quiet-channel-4-slide-qa.md",
  "research/landscape.md","research/evidence-matrix.md","research/claim-boundary.md","research/claim-ledger.md",
  "research/references.md","research/presentation-review.md","research/scout-review.md",
- "provenance/source-record.md","provenance/decisions.md","provenance/media-catalogue.md",
- "realtime/README.md","realtime/OPERATOR.md","realtime/validate.py","realtime/run-local.sh","realtime/fetch_assets.py","realtime/assets-manifest.json","realtime/app/service.py","realtime/client/index.html"
+ "provenance/source-record.md","provenance/decisions.md","provenance/media-catalogue.md","provenance/realtime-assets.md",
+ "realtime/spec/INVESTOR_REAL_REPLAY_SPEC.md","realtime/README.md","realtime/OPERATOR.md","realtime/QA.md","realtime/validate.py","realtime/run-local.sh","realtime/fetch_assets.py",
+ "realtime/assets-manifest.json","realtime/sample-manifest.json","realtime/model-registry.json","realtime/release-manifest.json","realtime/generate_release_manifest.py",
+ "realtime/app/asset_registry.py","realtime/app/display_payload.py","realtime/app/service.py","realtime/client/index.html",
+ "realtime/deploy/README.md","realtime/deploy/firstmate-silent-speech-demo.service","realtime/deploy/preflight.sh","realtime/deploy/deploy.sh","realtime/deploy/rollback.sh","realtime/deploy/verify.sh","realtime/deploy/evidence/README.md"
 ]
 
 class Links(HTMLParser):
