@@ -9,3 +9,9 @@ lab/.venv/
 lab/data/
 lab/models/
 lab/runs/
+
+# Project-local runtime environment
+realtime/.venv/
+# Local service artifacts and fetched research assets
+realtime/*.log
+realtime/local_assets/

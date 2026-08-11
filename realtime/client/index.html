@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Local replay of real recorded silent-speech sEMG through David Gaddy's real released pretrained model.">
+  <title>Quiet Channel / real research replay</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#bench">Skip to replay bench</a>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Quiet Channel Real Research Replay">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span>QUIET CHANNEL <b>/ RESEARCH REPLAY</b></span>
+    </a>
+    <div class="truth-chip"><span></span> REAL RECORDED sEMG REPLAY <b>•</b> REAL RELEASED MODEL</div>
+    <div id="service-health" class="health">LOCAL SERVICE · CONNECTING</div>
+  </header>
+
+  <main id="bench">
+    <section class="intro">
+      <div>
+        <p class="eyebrow">LOCAL REPLAY · SINGLE-SPEAKER RESEARCH DATA · 54M PARAMETERS</p>
+        <h1>A real research recording.<br><em>A real released model.</em></h1>
+      </div>
+      <div class="intro-copy">
+        <p><strong>This is replay, not live capture.</strong> Official facial sEMG samples from David Gaddy's CC BY 4.0 Zenodo dataset pass through source-faithful filtering, resampling, the released pretrained residual/Transformer model, its trained phoneme head, a modern bounded decoder, abstention and confirmation.</p>
+        <p class="warning">No synthetic sample or synthetic-trained model is selected. This single-speaker research replay is not measured project accuracy, a live sensor demonstration or a product-performance claim. Non-commercial local demonstration only.</p>
+      </div>
+    </section>
+
+    <section class="boundary" aria-label="claim boundary">
+      <strong>BOUNDARY / ALWAYS ON</strong>
+      <span>No live microphone, camera or EMG capture</span>
+      <span>No new collection, accounts or telemetry</span>
+      <span>No mind reading, identity or emotion inference</span>
+      <span>Not medical, AAC, emergency or safety automation</span>
+    </section>
+
+    <div class="workspace">
+      <aside class="control panel">
+        <div class="panel-head">
+          <div><small>CONTROL / 01</small><h2>Recorded replay</h2></div>
+          <span id="capture-state" class="state ready">READY</span>
+        </div>
+
+        <fieldset id="scenario-list">
+          <legend>Choose an official recorded sample</legend>
+          <label class="scenario selected">
+            <input type="radio" name="scenario" value="clear" checked>
+            <span><b>Held-out research replay</b><small>Real silent sEMG · large dev split · confirm</small></span><em>01</em>
+          </label>
+          <label class="scenario">
+            <input type="radio" name="scenario" value="ambiguous">
+            <span><b>Abstain + second take</b><small>Two real recordings of one clock prompt</small></span><em>02</em>
+          </label>
+          <label class="scenario">
+            <input type="radio" name="scenario" value="safety">
+            <span><b>Safety-sensitive prompt</b><small>Real silent sEMG · mandatory acknowledgement</small></span><em>03</em>
+          </label>
+        </fieldset>
+
+        <div class="source-card">
+          <div><span class="pulse"></span><b>RecordedEMGReplaySource</b></div>
+          <dl><div><dt>Rate</dt><dd>1,000 Hz</dd></div><div><dt>Channels</dt><dd>8</dd></div><div><dt>Source</dt><dd>Zenodo 4064409</dd></div></dl>
+          <p>Read-only local replay of one participant's research data. A reviewed device driver can replace this source at the same <code>SignalSource</code> seam.</p>
+        </div>
+
+        <div class="actions">
+          <button id="start" class="primary" type="button">Start recorded replay <span>↗</span></button>
+          <button id="stop" type="button" disabled>Stop replay</button>
+        </div>
+        <p class="microcopy">REAL RECORDED sEMG · NOT LIVE CAPTURE · CC BY 4.0</p>
+      </aside>
+
+      <section class="pipeline panel" aria-labelledby="pipeline-title">
+        <div class="panel-head">
+          <div><small>PIPELINE / 02</small><h2 id="pipeline-title">Live local replay trace</h2></div>
+          <span id="elapsed">NO RUN</span>
+        </div>
+
+        <ol class="rail" aria-label="pipeline stages">
+          <li data-stage="raw_signal"><i>1</i><span>Raw signal<small>recorded research data</small></span></li>
+          <li data-stage="features"><i>2</i><span>Features<small>source-faithful preprocessing</small></span></li>
+          <li data-stage="model"><i>3</i><span>Released model<small>real pretrained weights</small></span></li>
+          <li data-stage="decision"><i>4</i><span>Human gate<small>abstain / confirm</small></span></li>
+        </ol>
+
+        <div class="visuals">
+          <article class="visual raw-card">
+            <header><div><small>RAW / DISPLAY SUBSAMPLE</small><b>4 of 8 recorded facial-sEMG channels</b></div><span id="sample-count">0 samples</span></header>
+            <canvas id="signal-canvas" width="960" height="230" aria-label="Replay display of recorded research sEMG channels"></canvas>
+            <footer><span>official recording</span><span>1 kHz</span><span>display-centered per channel</span><span>read-only replay</span></footer>
+          </article>
+
+          <article class="visual feature-card">
+            <header><div><small>UPSTREAM FEATURE TENSOR</small><b>112 values/frame · filters and rates match source code</b></div><span id="feature-shape">—</span></header>
+            <div id="feature-bars" class="feature-bars" aria-label="Extracted real-recording feature values"><p>Waiting for source-faithful preprocessing…</p></div>
+          </article>
+
+          <article class="visual model-card">
+            <header><div><small>RELEASED MODEL OUTPUT</small><b>Trained phoneme emissions → bounded prompt decoder</b></div><span id="latency">— ms</span></header>
+            <div class="model-grid">
+              <div id="candidates" class="candidates"><p>Start replay to run official weights.</p></div>
+              <dl class="metrics">
+                <div><dt>Free phoneme path</dt><dd id="raw-ctc">—</dd></div>
+                <div><dt>Decoder score</dt><dd id="confidence">—</dd></div>
+                <div><dt>Abstain threshold</dt><dd>0.60</dd></div>
+                <div><dt>Record metadata prompt</dt><dd id="record-reference">shown after inference</dd></div>
+              </dl>
+            </div>
+            <p class="score-note">Metadata is not passed to the model/decoder. Scores are uncalibrated diagnostics—not accuracy or probability of correctness.</p>
+          </article>
+        </div>
+      </section>
+
+      <aside class="decision panel">
+        <div class="panel-head"><div><small>HUMAN GATE / 03</small><h2>Commit control</h2></div></div>
+        <div id="decision-box" class="decision-box idle">
+          <span class="decision-icon">···</span>
+          <small id="decision-label">WAITING</small>
+          <h3 id="decision-title">No prompt staged</h3>
+          <p id="decision-reason">A model candidate never executes directly. A low score abstains; an accepted replay waits here.</p>
+        </div>
+        <div id="output-card" class="output-card">
+          <small>STAGED LOCAL REPLAY OUTPUT</small>
+          <strong id="staged-output">—</strong>
+          <span id="output-status">Nothing committed</span>
+        </div>
+        <label id="safety-row" class="safety-row hidden"><input id="safety-ack" type="checkbox"> I reviewed this safety-sensitive replay candidate. No actuation is connected.</label>
+        <div class="decision-actions">
+          <button id="confirm" class="confirm" type="button" disabled>Confirm output</button>
+          <button id="reject" type="button" disabled>Reject</button>
+          <button id="repair" class="repair hidden" type="button">Replay second real take</button>
+        </div>
+        <div class="privacy-log">
+          <header><b>Volatile local event log</b><button id="clear-log" type="button">Clear</button></header>
+          <ol id="event-log"><li><time>—</time><span>Ready. No live capture occurs.</span></li></ol>
+        </div>
+        <p class="no-egress"><span>↘</span><b>NO EGRESS</b> Recorded arrays and decoded output stay in this local process/browser session.</p>
+      </aside>
+    </div>
+
+    <section class="technical">
+      <div><small>TECHNICAL BASIS</small><h2>Real artifacts,<br>research bounded.</h2></div>
+      <dl>
+        <div><dt>Released architecture</dt><dd>8-channel raw sEMG → three residual CNN blocks → 6-layer 768-wide relative-position Transformer → 80 mel features + 48 trained phoneme emissions.</dd></div>
+        <div><dt>Released weights</dt><dd>54,187,136 trainable parameters from Zenodo 6747411, SHA-256 verified and loaded directly. CC BY 4.0; David Gaddy attribution.</dd></div>
+        <div><dt>Recorded data</dt><dd>Silent Speech EMG v1.0, one speaker, Zenodo 4064409 / concept DOI 4064408, CC BY 4.0. Samples are fetched locally and never committed.</dd></div>
+        <div><dt>Code / papers</dt><dd><a href="https://github.com/dgaddy/silent_speech/tree/a89357c2086609b432919b9d14ffc0be5d8983d5">dgaddy/silent_speech @ a89357c</a>, MIT; Gaddy &amp; Klein, EMNLP 2020 / ACL 2021. Source results do not become this project's results.</dd></div>
+        <div><dt>Decoder adaptation</dt><dd>Legacy DeepSpeech 0.7 is not available for Python 3.12. We decode the released model's real phoneme head with CMUdict and a bounded phoneme-edit grammar; no synthetic replacement model.</dd></div>
+        <div><dt>Real hardware prerequisite</dt><dd>Reviewed electrodes/device, electrical safety, placement, calibration and governed human-subject protocol. None is present; this page only replays existing records.</dd></div>
+      </dl>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <strong>REAL RECORDED sEMG REPLAY / REAL RELEASED PRETRAINED MODEL / NOT LIVE CAPTURE</strong>
+    <p>Non-commercial local research demonstration. CC BY 4.0 assets © David Gaddy. Not mind reading, identity/emotion inference, medical/AAC/emergency use or measured project accuracy. No physical hardware or new participant capture.</p>
+  </footer>
+</body>
+</html>
