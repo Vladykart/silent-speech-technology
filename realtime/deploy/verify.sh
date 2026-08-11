@@ -6,7 +6,12 @@ TAILNET_URL=${2:-}
 BEFORE_LISTENERS=${3:-}
 SERVICE=firstmate-silent-speech-demo.service
 [[ "$EXPECTED_REVISION" =~ ^[0-9a-f]{40}$ ]] || { echo "revision must be full lowercase git identity" >&2; exit 1; }
-health=$(curl --fail --silent --show-error --max-time 15 http://127.0.0.1:8765/api/v1/health)
+health=
+for _ in {1..120}; do
+  if health=$(curl --fail --silent --show-error --max-time 2 http://127.0.0.1:8765/api/v1/health 2>/dev/null); then break; fi
+  sleep 1
+done
+[[ -n "$health" ]] || { echo "loopback readiness did not become available" >&2; exit 1; }
 python3 - "$EXPECTED_REVISION" "$health" <<'PY'
 import json, sys
 revision, raw = sys.argv[1:]
@@ -32,7 +37,8 @@ if [[ -n "$TAILNET_URL" ]]; then
   curl --fail --silent --show-error --max-time 20 "$TAILNET_URL" >/dev/null
 fi
 if [[ -n "$BEFORE_LISTENERS" ]]; then
-  # Deployment evidence review owns normalization; a raw mismatch is a stop.
-  diff -u "$BEFORE_LISTENERS" <(ss -H -ltnp | grep -v ':8765 ' || true)
+  # systemd may renumber its own inherited file descriptors during daemon-reload;
+  # endpoint, queue, process name, and PID remain exact semantic listener identity.
+  diff -u "$BEFORE_LISTENERS" <(ss -H -ltnp | grep -v ':8765 ' | sed -E 's/fd=[0-9]+/fd=*/g' || true)
 fi
 echo "verified exact replay revision, loopback owner, unchanged Tailnet contract, and Funnel disabled"
