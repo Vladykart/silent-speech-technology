@@ -10,14 +10,14 @@ import numpy as np
 import torch
 
 from realtime.app.asset_registry import AssetRegistry
-from realtime.app.config import MODEL_PATH
+from realtime.app.config import ASSET_DIR, MODEL_PATH
 from realtime.app.display_payload import DisplayPayloadBuilder
 from realtime.app.pipeline import InferencePipeline
 from realtime.app.preprocessing import FEATURE_NAMES, preprocess
 from realtime.app.signal_source import RecordedEMGReplaySource
 
 ROOT = Path(__file__).resolve().parents[1]
-PREPARED = MODEL_PATH.is_file() and (ROOT / "local_assets/replays/QC-R10/89_emg.npy").is_file()
+PREPARED = MODEL_PATH.is_file() and (ASSET_DIR / "replays/QC-R10/89_emg.npy").is_file()
 
 
 def capture(sample):

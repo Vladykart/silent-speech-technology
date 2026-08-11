@@ -7,11 +7,11 @@ import unittest
 
 from fastapi.testclient import TestClient
 
-from realtime.app.config import MODEL_PATH
+from realtime.app.config import ASSET_DIR, MODEL_PATH
 from realtime.app.service import EVENT_ORDER, app
 
 ROOT = Path(__file__).resolve().parents[1]
-PREPARED = MODEL_PATH.is_file() and (ROOT / "local_assets/replays/QC-R10/89_emg.npy").is_file()
+PREPARED = MODEL_PATH.is_file() and (ASSET_DIR / "replays/QC-R10/89_emg.npy").is_file()
 PROMPTS = (
     "What news?", "09:48 AM", "Keep back!", "I myself heard nothing of that.", "I know I did.",
     "I could not credit it.", "I felt a tug at the reins.", "That was it!", "Are we far from Sunbury?",
