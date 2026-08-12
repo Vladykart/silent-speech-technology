@@ -40,16 +40,16 @@
     return elements.modeGuided?.checked ? "guided" : "challenge";
   }
 
-  function setModeMessaging() {
+  function setModeMessaging(presetPhrase = null) {
     const mode = selectedRunMode();
     if (mode === "guided") {
       elements.modeDifference.textContent = "GUIDED: Presenter-visible phrase appears before inference; strict boundary check still applies before any result is final.";
-      elements.guidedPhraseText.textContent = "Select a sample and run. Guided mode shows the official phrase before replay for rehearsal.";
+      setGuidedPhrase(presetPhrase);
     } else {
       elements.modeDifference.textContent = "CHALLENGE: Phrase is concealed and is not inferred from model output.";
       elements.guidedPhraseText.textContent = "Challenge mode keeps this sealed until inference and metadata are complete.";
+      elements.officialPhrase.textContent = "Sealed until metadata reveal.";
     }
-    setGuidedPhrase();
   }
 
   function setStatePill(element, kind, text) {
@@ -658,17 +658,13 @@
     elements.stop.disabled = false;
     setModeMessaging();
     setStatePill(elements.sourceState, "running", "STARTING");
-    setGuidedPhrase();
     const created = await fetchJson("/api/v1/runs", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({sample_id: activeCardId, mode: runMode}),
     });
     if (created.sample_id !== activeCardId) throw new Error("safe sample selection mismatch; run cancelled");
-    if (runMode === "guided" && typeof created.prompt_hint === "string" && created.prompt_hint) {
-      setGuidedPhrase(created.prompt_hint);
-    }
-    setModeMessaging();
+    setModeMessaging(runMode === "guided" && typeof created.prompt_hint === "string" ? created.prompt_hint : null);
     runId = created.id;
     runEventsPath = created.events;
     await consume(runEventsPath);
@@ -738,8 +734,7 @@
       const payload = await fetchJson(`/api/v1/runs/${runId}/second-take`, {method: "POST"});
       resetRunDisplay();
       activeSampleId = "QC-R02-T2";
-      setModeMessaging();
-      setGuidedPhrase(payload.prompt_hint);
+      setModeMessaging(payload.prompt_hint || null);
       elements.sourceId.textContent = activeSampleId;
       elements.sourceProgress.textContent = "Second official take selected";
       elements.sampleList.disabled = true; elements.start.disabled = true; elements.featured.disabled = true; elements.stop.disabled = false;
