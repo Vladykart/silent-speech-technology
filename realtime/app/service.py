@@ -140,7 +140,7 @@ def _cleanup(request: Request, *, prune_terminal: bool = False) -> None:
     with request.app.state.runs_lock:
         for run_id, run in list(request.app.state.runs.items()):
             repair_hold = run.original_sample_id == "QC-R02" and run.sample_id == "QC-R02" and run.state in {"abstain", "rejected"}
-            terminal = run.state in {"confirmed", "rejected", "stopped", "error"}
+            terminal = run.state in {"abstain", "confirmed", "rejected", "stopped", "error"}
             if run.expired() or (prune_terminal and terminal and not repair_hold):
                 if run.active_source:
                     run.active_source.stop()

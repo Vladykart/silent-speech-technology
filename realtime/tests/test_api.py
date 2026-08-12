@@ -153,6 +153,14 @@ class SafeApiContractTests(unittest.TestCase):
             self.assertEqual(blocked.status_code, 429)
             self.assertIn("bounded run capacity", blocked.json()["detail"])
 
+    def test_completed_abstentions_do_not_consume_run_capacity(self):
+        with TestClient(app) as client:
+            for sample_id in ("QC-R08", "QC-R09", "QC-R10", "QC-R08", "QC-R09"):
+                created = client.post("/api/v1/runs", json={"sample_id": sample_id})
+                self.assertEqual(created.status_code, 201)
+                events = read_events(client, created.json()["events"])
+                self.assertEqual(events[-1]["state"], "abstain")
+
     def test_static_client_has_no_prompt_leak_synthetic_fallback_external_request_or_persistence(self):
         html = (ROOT / "client/index.html").read_text()
         script = (ROOT / "client/app.js").read_text()
