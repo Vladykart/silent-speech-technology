@@ -1,0 +1,34 @@
+{
+  "schema": "silent-speech-software-profiles/v1",
+  "policy": {
+    "installByDefault": false,
+    "environment": "project-local lab/.venv only",
+    "constraints": "unresolved until compatibility is checked in an isolated environment",
+    "noGlobalMutation": true
+  },
+  "groups": {
+    "core": [
+      {"name": "python", "import": null, "role": "runtime", "versionConstraint": ">=3.10", "licenseField": "runtime terms; verify for target platform"}
+    ],
+    "acquisition": [
+      {"name": "brainflow", "import": "brainflow", "role": "proposed hardware-neutral board API", "versionConstraint": null, "licenseField": "code license to verify at selected release"},
+      {"name": "pylsl", "import": "pylsl", "role": "proposed synchronized event/stream transport", "versionConstraint": null, "licenseField": "code and bundled liblsl terms to verify separately"},
+      {"name": "OpenBCI GUI", "import": null, "role": "optional desktop signal sanity check; never a server dependency", "versionConstraint": null, "licenseField": "desktop tool terms to verify at download"}
+    ],
+    "signal": [
+      {"name": "numpy", "import": "numpy", "role": "array processing", "versionConstraint": null, "licenseField": "package license to verify at lock"},
+      {"name": "scipy", "import": "scipy", "role": "parameterized digital filters", "versionConstraint": null, "licenseField": "package license to verify at lock"},
+      {"name": "neurokit2", "import": "neurokit2", "role": "candidate biosignal utilities", "versionConstraint": null, "licenseField": "package license to verify at lock"},
+      {"name": "mne", "import": "mne", "role": "candidate epochs/metadata/evaluation tooling", "versionConstraint": null, "licenseField": "package license to verify at lock"}
+    ],
+    "model": [
+      {"name": "torch", "import": "torch", "role": "proposed CNN/Transformer/CTC training scaffold", "versionConstraint": null, "licenseField": "package and accelerator terms to verify at lock"}
+    ],
+    "edge": [
+      {"name": "TensorFlow Lite Micro", "import": null, "role": "future embedded export profile", "versionConstraint": null, "licenseField": "code/toolchain terms to verify"},
+      {"name": "ExecuTorch", "import": null, "role": "future PyTorch edge export profile", "versionConstraint": null, "licenseField": "code/toolchain terms to verify"},
+      {"name": "Edge Impulse", "import": null, "role": "future optional cloud/tool profile; account and terms required", "versionConstraint": null, "licenseField": "service, generated-code, and dataset terms separate"},
+      {"name": "GAP9/GAPflow", "import": null, "role": "future GAP9 deployment profile", "versionConstraint": null, "licenseField": "SDK/toolchain/hardware terms to verify"}
+    ]
+  }
+}

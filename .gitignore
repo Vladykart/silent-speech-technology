@@ -4,6 +4,12 @@ __pycache__/
 *.swp
 *.tmp
 
+# Project-local lab state: never commit environments, captures, biometrics, models, or runs.
+lab/.venv/
+lab/data/
+lab/models/
+lab/runs/
+
 # Project-local runtime environment
 realtime/.venv/
 # Local service artifacts and fetched research assets

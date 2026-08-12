@@ -1,0 +1,61 @@
+{
+  "schema": "silent-speech-dataset-registry/v1",
+  "reviewedAt": "2026-07-29",
+  "policy": {
+    "downloadByDefault": false,
+    "trackedDataAllowed": false,
+    "licenseAcceptanceRequired": true,
+    "primaryEvaluationGate": "held-out-session"
+  },
+  "datasets": [
+    {
+      "id": "gaddy-klein-silent-speech-emg-v1",
+      "title": "Silent Speech EMG",
+      "modality": "8-channel facial surface EMG with silent and vocalized material",
+      "participants": "single speaker",
+      "conceptDoi": "10.5281/zenodo.4064408",
+      "versionDoi": "10.5281/zenodo.4064409",
+      "version": "1.0",
+      "recordLicense": {"identifier": "cc-by-4.0", "label": "Creative Commons Attribution 4.0 International", "verifiedFrom": "Zenodo API record metadata"},
+      "codeLicense": {"identifier": "MIT", "source": "dgaddy/silent_speech LICENSE at a89357c2086609b432919b9d14ffc0be5d8983d5"},
+      "modelLicense": {"status": "separate artifact; not inferred from dataset or code"},
+      "access": {"kind": "public-record", "metadataOnlyDefault": true, "downloadEligible": true},
+      "files": [{"name": "emg_data.tar.gz", "bytes": 3919507637, "checksum": {"algorithm": "md5", "value": "7f97d2182b896652999b1b2d0c69fd7b"}}],
+      "verification": {"source": "https://zenodo.org/api/records/4064409", "verifiedAt": "2026-07-29", "recordUpdated": "2022-10-14T13:49:32.064812+00:00"},
+      "boundary": "Biometric research data. Dataset terms do not grant code/model/toolchain rights or remove consent, privacy, patent, ethics, or intended-use review."
+    },
+    {
+      "id": "silentwear",
+      "title": "SilentWear research dataset status",
+      "modality": "14-channel neck sEMG; eight commands plus rest",
+      "participants": "n=4 reported in preprint",
+      "recordLicense": {"status": "unverified; no dataset download authorized"},
+      "codeLicense": {"identifier": "Apache-2.0", "source": "pulp-bio/SilentWear code at b341c30b3a988e5ef871567f8a752084cefa1f7e"},
+      "modelLicense": {"status": "unverified separately"},
+      "access": {"kind": "unverified", "metadataOnlyDefault": true, "downloadEligible": false},
+      "externalResults": {"globalCrossValidationAccuracy": "77.5+/-6.6%", "heldOutSessionAccuracy": "59.3+/-2.2%", "boundary": "preprint values, not project performance or expectation"}
+    },
+    {
+      "id": "emg-uka",
+      "title": "EMG-UKA corpus",
+      "modality": "speech-related EMG corpus",
+      "recordLicense": {"status": "terms require direct confirmation"},
+      "codeLicense": {"status": "not applicable/unverified"},
+      "modelLicense": {"status": "not applicable/unverified"},
+      "access": {"kind": "request from KIT", "metadataOnlyDefault": true, "downloadEligible": false},
+      "boundary": "No request or download is authorized by this registry."
+    },
+    {
+      "id": "arabic-surface-emg-negative-search",
+      "title": "Arabic surface-EMG silent-speech corpus search",
+      "kind": "bounded-negative-search",
+      "finding": "not identified as of the source review date",
+      "reviewedAt": "2026-07-28",
+      "recordLicense": {"status": "not applicable"},
+      "codeLicense": {"status": "not applicable"},
+      "modelLicense": {"status": "not applicable"},
+      "access": {"downloadEligible": false},
+      "boundary": "This does not establish that no such corpus exists; refresh before any claim."
+    }
+  ]
+}

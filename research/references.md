@@ -18,7 +18,7 @@ Boundary: facial sEMG research and paper-specific ASR transcription WER; not a g
 Boundary: same research line; an absolute improvement is not an accuracy claim for this project.
 
 **R05 · REPO · Checked via `gh-axi`.** Gaddy, D. `dgaddy/silent_speech`, commit `a89357c2086609b432919b9d14ffc0be5d8983d5` (commit date 2023-12-11). https://github.com/dgaddy/silent_speech/tree/a89357c2086609b432919b9d14ffc0be5d8983d5
-Repository reports MIT for code. README points to separate data/models and legacy DeepSpeech 0.7 assets. Updated 2026-07-31: exact architecture/preprocessing code was adapted, official assets were fetched to ignored local storage, and strict released-weight forward passes were exercised in `realtime/`; the original vocoder/DeepSpeech evaluation was not reproduced.
+Repository reports MIT for code. README points to separate data/models and legacy DeepSpeech/CTC-language-model assets. Exact files, blob SHAs, commit metadata, architecture summary and retained notice: [`../provenance/upstream-reference.md`](../provenance/upstream-reference.md). No clone, submodule, data, model, sample, or dependency was downloaded; code reproducibility was not exercised.
 
 **R06 · PR · DOI metadata checked.** Hueber, T.; Benaroya, E.-L.; Chollet, G.; Denby, B.; Dreyfus, G.; Stone, M. “Development of a Silent Speech Interface Driven by Ultrasound and Optical Images of the Tongue and Lips.” *Speech Communication* 52(4), 288–300 (2010). https://doi.org/10.1016/j.specom.2009.11.004
 Boundary: laboratory UTI/lip imaging; does not support miniaturized or behind-ear sensing.
@@ -51,7 +51,7 @@ API showed Recruiting, Interventional, estimated enrollment 27, updated 2026-06-
 API showed Recruiting, Interventional, estimated enrollment 3, updated 2026-05-05. Registry status is not approval.
 
 **R16 · DATA · Checked (Zenodo metadata).** “Voicing Silent Speech Models.” Zenodo record/version DOI https://doi.org/10.5281/zenodo.6747411 (2022). Metadata labels CC BY 4.0; one `pretrained_models.zip`, 253,447,725 bytes, MD5 `2e172d2ff74126ca0e68d0f117d6466a`.
-Updated 2026-07-31: archive/checkpoint fetched outside git, checksums verified, and released `transduction_model.pt` loaded strictly for non-commercial local replay. Artifact license does not settle upstream dependency, training-data-subject, patent, privacy, endorsement, or intended-use rights.
+Not downloaded. Artifact license does not settle upstream dependency, training-data, patent, privacy, or intended-use rights.
 
 **R17 · REPO/DATA · Checked via `gh-axi`.** Meta/Facebook Research `emg2qwerty`, commit `3200d91eeb952cbed1f278e47d0cc56928334fd1` (2025-06-11). https://github.com/facebookresearch/emg2qwerty/tree/3200d91eeb952cbed1f278e47d0cc56928334fd1
 README describes wrist sEMG during QWERTY touch typing: 1,135 sessions, 108 users, 346 hours. Exact-commit LICENSE is CC BY-NC-SA 4.0; GitHub API reports `NOASSERTION`. Adjacent neuromotor HCI evidence only—not speech, silent speech, product availability, or a commercial-ready dependency. No data/model downloaded.
@@ -106,8 +106,8 @@ Confirms Federal Decree-Law No.45 of 2021 and in-force date 2022-01-02. Does not
 **R33 · LAW · Official Journal text checked.** Regulation (EU) 2024/1689 (AI Act), Article 5(1)(f). https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng
 Official text prohibits specified AI emotion inference in workplace/education except medical/safety reasons; prohibitions apply from 2025-02-02. Legal applicability still requires counsel.
 
-**R34 · DATA · Zenodo API metadata and local archive checked.** Gaddy, D. “Silent Speech EMG,” v1.0. https://doi.org/10.5281/zenodo.4064409 . Metadata: CC BY 4.0; archive 3,919,507,637 bytes; MD5 `7f97d2182b896652999b1b2d0c69fd7b`.
-Updated 2026-07-31: archive fetched outside git, checksum verified, and selected single-speaker silent-sEMG arrays replayed locally. Data license does not settle dependencies, data-subject rights, patents, endorsement, intended use, or this project.
+**R34 · DATA · Zenodo API metadata checked.** Gaddy, D. “Silent Speech EMG,” v1.0. https://doi.org/10.5281/zenodo.4064409 . Metadata: CC BY 4.0; archive 3,919,507,637 bytes; MD5 `7f97d2182b896652999b1b2d0c69fd7b`.
+Not downloaded. Data license does not settle dependencies, data-subject rights, patents, intended use, or this project.
 
 **R35 · REPO · Checked via `gh-axi`.** `pulp-bio/SilentWear`, commit `b341c30b3a988e5ef871567f8a752084cefa1f7e`, Apache-2.0 code. https://github.com/pulp-bio/SilentWear/tree/b341c30b3a988e5ef871567f8a752084cefa1f7e
 No clone/model/data download or reproduction. Images have a separate license file; no media reused.
