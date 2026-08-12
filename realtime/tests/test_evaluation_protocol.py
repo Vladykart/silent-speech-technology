@@ -32,12 +32,37 @@ class EvaluationProtocolTests(unittest.TestCase):
         first = deterministic_rank(synthetic_ids, "fixed-seed")
         second = deterministic_rank(reversed(synthetic_ids), "fixed-seed")
         self.assertEqual(first, second)
+        strata = {
+            record_id: ("train" if index < 6 else "dev", f"session-{index % 2}", "short")
+            for index, record_id in enumerate(synthetic_ids)
+        }
+        stratum_keys = set(strata.values())
         cohorts = plan_disjoint_cohorts(
-            synthetic_ids, seed="fixed-seed", development_count=4, evaluation_count=5
+            strata,
+            seed="fixed-seed",
+            development_counts={stratum: 1 for stratum in stratum_keys},
+            evaluation_counts={stratum: 1 for stratum in stratum_keys},
         )
         self.assertEqual(len(cohorts["development"]), 4)
-        self.assertEqual(len(cohorts["evaluation"]), 5)
+        self.assertEqual(len(cohorts["evaluation"]), 4)
         self.assertFalse(set(cohorts["development"]) & set(cohorts["evaluation"]))
+        for stratum in stratum_keys:
+            self.assertEqual(sum(strata[item] == stratum for item in cohorts["development"]), 1)
+            self.assertEqual(sum(strata[item] == stratum for item in cohorts["evaluation"]), 1)
+        reversed_cohorts = plan_disjoint_cohorts(
+            dict(reversed(tuple(strata.items()))),
+            seed="fixed-seed",
+            development_counts={stratum: 1 for stratum in stratum_keys},
+            evaluation_counts={stratum: 1 for stratum in stratum_keys},
+        )
+        self.assertEqual(cohorts, reversed_cohorts)
+        with self.assertRaises(ValueError):
+            plan_disjoint_cohorts(
+                strata,
+                seed="fixed-seed",
+                development_counts={stratum: 1 for stratum in stratum_keys},
+                evaluation_counts={},
+            )
         with self.assertRaises(ValueError):
             deterministic_rank(("duplicate", "duplicate"), "fixed-seed")
 

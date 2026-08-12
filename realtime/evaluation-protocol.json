@@ -12,7 +12,7 @@
     "unit_of_analysis": "one checksum-bound official recording"
   },
   "selection": {
-    "algorithm": "sha256_rank_v1",
+    "algorithm": "sha256_stratified_rank_v1",
     "seed": "quiet-channel-evaluation-v1",
     "freeze_before_execution": true,
     "replacement_after_freeze": "prohibited",

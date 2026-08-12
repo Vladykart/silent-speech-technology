@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections import Counter
 from hashlib import sha256
 from pathlib import Path
-from typing import Iterable, Mapping
+from typing import Iterable, Mapping, Sequence
 import json
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,8 +33,10 @@ def validate_protocol(value: Mapping) -> None:
     if "unknown" not in str(source.get("training_overlap", "")).lower():
         raise ValueError("training overlap must remain explicit until independently proved")
     selection = value.get("selection", {})
-    if selection.get("algorithm") != "sha256_rank_v1" or selection.get("freeze_before_execution") is not True:
+    if selection.get("algorithm") != "sha256_stratified_rank_v1" or selection.get("freeze_before_execution") is not True:
         raise ValueError("deterministic pre-execution freeze contract is missing")
+    if selection.get("stratification_fields") != ["declared source split", "source session", "duration bin"]:
+        raise ValueError("selection must retain the declared split, session, and duration strata")
     if selection.get("replacement_after_freeze") != "prohibited":
         raise ValueError("post-freeze replacement must be prohibited")
     cohorts = value.get("cohorts", {})
@@ -55,17 +57,36 @@ def deterministic_rank(record_ids: Iterable[str], seed: str) -> tuple[str, ...]:
 
 
 def plan_disjoint_cohorts(
-    record_ids: Iterable[str], *, seed: str, development_count: int, evaluation_count: int
+    record_strata: Mapping[str, Sequence[str]],
+    *,
+    seed: str,
+    development_counts: Mapping[tuple[str, ...], int],
+    evaluation_counts: Mapping[tuple[str, ...], int],
 ) -> dict[str, tuple[str, ...]]:
-    """Plan disjoint cohorts without inspecting a signal, label, prompt, or output."""
-    ranked = deterministic_rank(record_ids, seed)
-    if development_count < 1 or evaluation_count < 1 or development_count + evaluation_count > len(ranked):
-        raise ValueError("cohort counts must be positive and fit the frozen source universe")
-    development = ranked[:development_count]
-    evaluation = ranked[development_count : development_count + evaluation_count]
+    """Plan explicit per-stratum cohorts without inspecting signals, labels, prompts, or outputs."""
+    if not record_strata or any(len(stratum) != 3 or any(not value for value in stratum) for stratum in record_strata.values()):
+        raise ValueError("every record must declare split, session, and duration-bin strata")
+    normalized = {record_id: tuple(stratum) for record_id, stratum in record_strata.items()}
+    strata = set(normalized.values())
+    if set(development_counts) != strata or set(evaluation_counts) != strata:
+        raise ValueError("cohort counts must explicitly cover every stratum")
+    development: list[str] = []
+    evaluation: list[str] = []
+    for stratum in sorted(strata):
+        development_count = development_counts[stratum]
+        evaluation_count = evaluation_counts[stratum]
+        members = (record_id for record_id, member_stratum in normalized.items() if member_stratum == stratum)
+        stratum_seed = seed + "\0" + "\0".join(stratum)
+        ranked = deterministic_rank(members, stratum_seed)
+        if development_count < 0 or evaluation_count < 0 or development_count + evaluation_count > len(ranked):
+            raise ValueError("per-stratum cohort counts must be non-negative and fit the source universe")
+        development.extend(ranked[:development_count])
+        evaluation.extend(ranked[development_count : development_count + evaluation_count])
+    if not development or not evaluation:
+        raise ValueError("development and evaluation cohorts must both be non-empty")
     if set(development) & set(evaluation):
         raise RuntimeError("development and evaluation cohorts overlap")
-    return {"development": development, "evaluation": evaluation}
+    return {"development": tuple(development), "evaluation": tuple(evaluation)}
 
 
 def complete_outcome_counts(selected_ids: Iterable[str], outcomes: Mapping[str, str]) -> dict[str, int]:
