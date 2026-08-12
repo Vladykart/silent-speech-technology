@@ -1,5 +1,5 @@
 {
-  "application_revision": "2c200b9955b3748ca4204ff1abae5f25bad5d4a6",
+  "application_revision": "adb07a0ace35e019747c1d90b1f30390f85fae16",
   "asset_manifest_sha256": "dc3a38d2bc51ba118202c5baa65b53d581fe3b3de741023b1e3d743e2ba65549",
   "build_command": "python3 realtime/generate_release_manifest.py --revision <exact-clean-commit>",
   "dependency_lock_sha256": "0652261d36b4c2c9f4943d751f8de3615e90209f99822f0d18a39d4f762b8865",
@@ -9,12 +9,12 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "realtime/app/asset_registry.py": {
-      "bytes": 10268,
-      "sha256": "11dd431d17da2926182a61ffbf3b248736122f8798c7802b2c079c0db56948e0"
+      "bytes": 12295,
+      "sha256": "38ed2f6e673e6a59bbd367baf83bb898c66b87fd714756daacfeac9570d37558"
     },
     "realtime/app/config.py": {
-      "bytes": 1318,
-      "sha256": "7b85bbf5acec90ba10f6c540c2851e3d942be615bafee936b951133f0b1a8b3f"
+      "bytes": 1379,
+      "sha256": "3a27e6d57ce4492798e889fa7e56c32f094e1100a71cd78ef0ccde8468849874"
     },
     "realtime/app/decoder.py": {
       "bytes": 5472,
@@ -23,6 +23,10 @@
     "realtime/app/display_payload.py": {
       "bytes": 7722,
       "sha256": "41c579243f3743f749da11a6420f680e04d9fa2881942319335f44db15cc2e2b"
+    },
+    "realtime/app/evaluation_protocol.py": {
+      "bytes": 5031,
+      "sha256": "1e22319b8525534c334bd15773eb34e7b6f7792e0aa82f177350ebe11c6b4913"
     },
     "realtime/app/model.py": {
       "bytes": 4240,
@@ -53,28 +57,32 @@
       "sha256": "dc3a38d2bc51ba118202c5baa65b53d581fe3b3de741023b1e3d743e2ba65549"
     },
     "realtime/client/app.js": {
-      "bytes": 44438,
-      "sha256": "e64e867334ba65fdef43dc6fbd9a0fc71ac166e70d60370831f3f6e42ab702c6"
+      "bytes": 46754,
+      "sha256": "bc33100f2743f4a333491f135f922ae5487d144bfc0c92678e1c4af52e718b11"
     },
     "realtime/client/index.html": {
-      "bytes": 26510,
-      "sha256": "46adaa1bfe8187dfa45b6897d20a6783361136fe4f31bae1450ec03dc3652fe2"
+      "bytes": 27699,
+      "sha256": "7247457e6082817feea179b2fdde637753f28c6093cebd5a5acda9d557287b79"
     },
     "realtime/client/replay-contract.js": {
       "bytes": 3657,
       "sha256": "a1c9b2daf098a12c1e3b6defe133f747be2539ccf06f9ccc86f1188d97f35df6"
     },
     "realtime/client/styles.css": {
-      "bytes": 31775,
-      "sha256": "82eeeee3980af41b9be962f63a2a31414982d41331783fa8343b9674f68fee4c"
+      "bytes": 32403,
+      "sha256": "ff872bfe3218d7cc7d9178ca28ad4e9f7f14ebb4fd7c6e708b429096e3d13c81"
+    },
+    "realtime/evaluation-protocol.json": {
+      "bytes": 2541,
+      "sha256": "04b5416e977e76be0fe8991caff86cd61b2aa16d07870d98d38b42ba56c98763"
     },
     "realtime/fetch_assets.py": {
       "bytes": 10850,
       "sha256": "3188fb8d76f3363a981942724b0ce1b7163d3303b6a31f85be73342e2c159648"
     },
     "realtime/model-registry.json": {
-      "bytes": 2475,
-      "sha256": "bf51625d0b03d515db7240933b313bf2b28b568b14f3489b9a91ff94d58b3fa8"
+      "bytes": 8918,
+      "sha256": "45402ef428dc2abc15e27a2899d8d0d315b5fc9c907a4304c6a09cea6fde18c7"
     },
     "realtime/requirements.txt": {
       "bytes": 172,
