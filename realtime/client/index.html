@@ -24,7 +24,7 @@
       <div class="hero-copy">
         <p class="eyebrow">OFFICIAL RESEARCH ARTIFACT REPLAY / PRIVATE</p>
         <h1 id="page-title">One real recording.<br>One released model.<br><em>Every boundary visible.</em></h1>
-        <p>Select an official recording and inspect its source-derived trace, preprocessing, released output tensors, project decoder, and human decision gate. No person or device is being sensed.</p>
+        <p>Select a replay mode, choose an official recording, and inspect its source-derived trace, preprocessing, released output tensors, project decoder, and human decision gate. No person or device is being sensed.</p>
         <div class="hero-actions">
           <button id="run-featured" class="button primary" type="button">Run featured official recording</button>
           <a class="button secondary" href="#sample-library">Browse 10 official recordings</a>
@@ -46,22 +46,32 @@
         <span id="catalogue-state" class="status-chip">10 CARDS · PROMPTS SEALED</span>
       </div>
       <p id="selection-disclosure" class="selection-disclosure">Curated official-recording examples chosen for a short demonstration and interaction coverage. Outcomes may be success, mismatch, or abstention. This set is not representative and must not be counted as accuracy, WER, validation, or generalization evidence.</p>
+      <fieldset class="mode-switch" id="mode-switch" aria-label="Presenter mode">
+        <legend>Presenter-facing sample mode</legend>
+        <label><input type="radio" name="mode" id="mode-challenge" value="challenge" checked> <strong>Challenge mode</strong> — selected prompt is sealed until model + decoder complete.</label>
+        <label><input type="radio" name="mode" id="mode-guided" value="guided"> <strong>Guided mode</strong> — presenter-visible phrase shown as an official rehearsal script before run.</label>
+        <p id="mode-difference" class="mode-difference">CHALLENGE: Phrase is concealed and is not inferred from model output.</p>
+      </fieldset>
+      <div id="guided-phrase-card" class="guided-phrase-card" role="status" aria-live="polite">
+        <small>OFFICIAL PRESENTATION PHRASE</small>
+        <p id="guided-phrase-text">Challenge mode keeps this sealed until inference completes.</p>
+      </div>
       <fieldset id="sample-list">
         <legend>Official recorded example</legend>
         <div class="sample-grid">
-          <label class="sample-card selected" data-sample-id="QC-R01"><input type="radio" name="sample" value="QC-R01" checked><span><b>QC-R01</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Question / confirmation</strong><small>largedev dev · 1.752 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
-          <label class="sample-card" data-sample-id="QC-R02"><input type="radio" name="sample" value="QC-R02"><span><b>QC-R02</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Abstention / repair path</strong><small>closed-vocabulary research set · 2.514 s · 1 kHz × 8</small><i>Second official take available · prompt sealed</i></span></label>
-          <label class="sample-card" data-sample-id="QC-R03"><input type="radio" name="sample" value="QC-R03"><span><b>QC-R03</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Safety hold</strong><small>largedev dev · 1.830 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
-          <label class="sample-card" data-sample-id="QC-R04"><input type="radio" name="sample" value="QC-R04"><span><b>QC-R04</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Longer declarative phrase</strong><small>largedev test · 3.210 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
-          <label class="sample-card" data-sample-id="QC-R05"><input type="radio" name="sample" value="QC-R05"><span><b>QC-R05</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Short statement</strong><small>largedev test · 2.448 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
-          <label class="sample-card" data-sample-id="QC-R06"><input type="radio" name="sample" value="QC-R06"><span><b>QC-R06</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Negation / medium phrase</strong><small>largedev test · 2.922 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
-          <label class="sample-card" data-sample-id="QC-R07"><input type="radio" name="sample" value="QC-R07"><span><b>QC-R07</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Longer phrase</strong><small>largedev test · 3.108 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
-          <label class="sample-card" data-sample-id="QC-R08"><input type="radio" name="sample" value="QC-R08"><span><b>QC-R08</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Compact exclamation</strong><small>largedev test · 1.878 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
-          <label class="sample-card" data-sample-id="QC-R09"><input type="radio" name="sample" value="QC-R09"><span><b>QC-R09</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Longer question</strong><small>largedev dev · 2.808 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
-          <label class="sample-card" data-sample-id="QC-R10"><input type="radio" name="sample" value="QC-R10"><span><b>QC-R10</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Question / source coverage</strong><small>largedev dev · 2.712 s · 1 kHz × 8</small><i>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card selected" data-sample-id="QC-R01"><input type="radio" name="sample" value="QC-R01" checked><span><b>QC-R01</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Question / confirmation</strong><small>largedev dev · 1.752 s · 1 kHz × 8</small><i data-prompt-state>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R02"><input type="radio" name="sample" value="QC-R02"><span><b>QC-R02</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Abstention / repair path</strong><small>closed-vocabulary research set · 2.514 s · 1 kHz × 8</small><i data-prompt-state>Second official take available · prompt sealed</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R03"><input type="radio" name="sample" value="QC-R03"><span><b>QC-R03</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Safety hold</strong><small>largedev dev · 1.830 s · 1 kHz × 8</small><i data-prompt-state>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R04"><input type="radio" name="sample" value="QC-R04"><span><b>QC-R04</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Longer declarative phrase</strong><small>largedev test · 3.210 s · 1 kHz × 8</small><i data-prompt-state>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R05"><input type="radio" name="sample" value="QC-R05"><span><b>QC-R05</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Short statement</strong><small>largedev test · 2.448 s · 1 kHz × 8</small><i data-prompt-state>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R06"><input type="radio" name="sample" value="QC-R06"><span><b>QC-R06</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Negation / medium phrase</strong><small>largedev test · 2.922 s · 1 kHz × 8</small><i data-prompt-state>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R07"><input type="radio" name="sample" value="QC-R07"><span><b>QC-R07</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Longer phrase</strong><small>largedev test · 3.108 s · 1 kHz × 8</small><i data-prompt-state>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R08"><input type="radio" name="sample" value="QC-R08"><span><b>QC-R08</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Compact exclamation</strong><small>largedev test · 1.878 s · 1 kHz × 8</small><i data-prompt-state>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R09"><input type="radio" name="sample" value="QC-R09"><span><b>QC-R09</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Longer question</strong><small>largedev dev · 2.808 s · 1 kHz × 8</small><i data-prompt-state>Dataset prompt: sealed until inference</i></span></label>
+          <label class="sample-card" data-sample-id="QC-R10"><input type="radio" name="sample" value="QC-R10"><span><b>QC-R10</b><em>OFFICIAL RECORDED EXAMPLE</em><strong>Question / source coverage</strong><small>largedev dev · 2.712 s · 1 kHz × 8</small><i data-prompt-state>Dataset prompt: sealed until inference</i></span></label>
         </div>
       </fieldset>
-      <div class="library-actions"><p><strong id="selected-id">QC-R01</strong><span>Selected safe public ID · no prompt text enters selection</span></p><button id="start" class="button primary" type="button">Run selected official recording</button><button id="stop" class="button danger" type="button" disabled>Stop · no result</button></div>
+      <div class="library-actions"><p><strong id="selected-id">QC-R01</strong><span>Selected safe public ID · no prompt text enters model selection</span></p><button id="start" class="button primary" type="button">Run selected official recording</button><button id="stop" class="button danger" type="button" disabled>Stop · no result</button></div>
     </section>
 
     <nav class="stage-rail" aria-label="Run workspace stages">
@@ -94,6 +104,18 @@
           <table class="channel-table"><caption>Text alternative for source trace</caption><thead><tr><th>Channels</th><th>Display</th><th>Meaning</th></tr></thead><tbody><tr><td>1–8</td><td id="channel-summary">Waiting for bounded transformed evidence</td><td>Official recorded source; no sensor is connected</td></tr></tbody></table>
         </article>
       </div>
+      <article class="noise-sandbox evidence-card" aria-labelledby="noise-title">
+        <header><div><p class="eyebrow">SYNTHETIC NOISE SANDBOX</p><h3 id="noise-title">Deterministic augmentation preview (official data unchanged)</h3></div><span id="noise-state">OFFICIAL SOURCE TRACE ONLY</span></header>
+        <label for="noise-slider">Sandbox noise level<br><small>applies only to this bounded preview canvas; never to the real replay path</small></label>
+        <div class="noise-controls">
+          <input id="noise-slider" type="range" min="0" max="100" value="0" step="1" aria-describedby="noise-status">
+          <output id="noise-level" for="noise-slider">0%</output>
+          <button id="noise-reset" class="button secondary" type="button">Reset baseline</button>
+        </div>
+        <p id="noise-status">Unmistakable zero-noise baseline: move the slider to preview deterministic synthetic jitter.</p>
+        <canvas id="noise-canvas" width="1280" height="360" role="img" aria-describedby="noise-description">Synthetic sandbox preview envelope.</canvas>
+        <p id="noise-description">This preview is synthetic and is never shown as official evidence, never scored, and never forwarded to official runs.</p>
+      </article>
     </section>
 
     <section id="stage-model" class="stage-panel" data-stage-panel="released-model" aria-labelledby="stage-model-title">
@@ -155,15 +177,43 @@
           <div class="diagnostic"><div><label for="score-meter">Phoneme-alignment diagnostic</label><strong id="diagnostic-score">—</strong></div><meter id="score-meter" min="0" max="1" low="0.6" optimum="1" value="0">0</meter><p><b>ABSTAIN BOUNDARY 0.60</b> · Uncalibrated diagnostic; not accuracy, confidence, or probability of correctness.</p></div>
           <div class="metadata-audit"><small>OFFICIAL DATASET METADATA</small><strong id="record-reference">Sealed until model and decoder complete</strong><span id="reference-status">Audit only · never model or per-sample decoder input</span></div>
         </article>
+
+        <article class="comparison-card-large">
+          <header><p class="eyebrow">POST-INFERENCE COMPARISON</p><h3>Model candidate vs official phrase</h3></header>
+          <div class="comparison-rows">
+            <div>
+              <small>MODEL CANDIDATE HELD</small>
+              <strong id="held-candidate-comparison">—</strong>
+            </div>
+            <div>
+              <small>OFFICIAL PHRASE</small>
+              <strong id="official-phrase">Sealed until inference (challenge) / shown before run in guided mode.</strong>
+            </div>
+          </div>
+          <p id="comparison-note">In challenge mode, only browser-side evidence in the candidate card is available after model and decoder complete. In guided mode, the selected phrase is shown as a presenter script label and is not inferred from output.</p>
+        </article>
+
         <aside class="gate-card" aria-labelledby="gate-title">
           <div id="decision-box" class="decision-box idle" role="status" aria-live="polite"><span aria-hidden="true">◇</span><small id="decision-label">WAITING</small><h3 id="gate-title"><span id="decision-title">No candidate staged</span></h3><p id="decision-reason">Nothing becomes a final result without confirmation. No action is connected.</p></div>
           <div class="held"><small>CANDIDATE HELD / NEVER AN ACTION</small><strong id="held-candidate">—</strong><span id="held-status">No candidate</span></div>
           <label id="safety-row" class="safety-row" hidden><input id="safety-ack" type="checkbox"><span>I acknowledge this safety-sensitive replay candidate. No actuation is connected, and this is not an emergency or safety system.</span></label>
-          <div class="decision-actions"><button id="confirm" class="button primary" type="button" disabled>Confirm final local result</button><button id="reject" class="button secondary" type="button" disabled>Reject · no result</button><button id="second-take" class="button repair" type="button" hidden>Run second official take</button></div>
+          <div class="decision-actions">
+            <button id="confirm" class="button primary" type="button" disabled>Confirm final local result</button>
+            <button id="safety-confirm" class="button secondary" type="button" hidden>Acknowledge + confirm</button>
+            <button id="reject" class="button secondary" type="button" disabled>Reject · no result</button>
+            <button id="second-take" class="button repair" type="button" hidden>Run second official take</button>
+          </div>
           <div id="final-card" class="final-card" tabindex="-1"><small>FINAL LOCAL RESULT / NO ACTUATION</small><strong id="final-output">—</strong><span id="output-status">No result committed</span></div>
         </aside>
       </div>
       <p class="browser-transfer"><strong>DISCLOSED BROWSER TRANSFER</strong> Bounded transformed evidence is sent to this authorized browser; no third-party telemetry, persistence, raw archive, or actuation.</p>
+      <article class="closing-proof-card">
+        <h3>What this proves / does not prove</h3>
+        <div>
+          <p><strong>Proves:</strong> offline proof of one checksum-bound official recording passing source-faithful preprocessing, strict-load one released checkpoint forward-pass, bounded project decoder, and explicit human confirmation/safety gate.</p>
+          <p><strong>Does not prove:</strong> project accuracy/WER, live hardware, deployment fitness, user outcomes, medical/AAC use, cross-speaker/session transfer, comfort, privacy-by-default, or commercial performance.</p>
+        </div>
+      </article>
     </section>
   </main>
 

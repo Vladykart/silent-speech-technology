@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-11
 
-**Candidate surface:** exact runtime revision `4c0cb3d283ac5582181d83bfcb7bf75e9f9a85d0` on temporary loopback-only `127.0.0.1:8879`; no installed/shared service, Tailscale route, listener, or public endpoint was changed. A later evidence-record commit may differ only in release binding/QA records, per the no-self-reference release procedure.
+**Candidate surface:** temporary loopback-only `127.0.0.1:8879`; no installed/shared service, Tailscale route, listener, or public endpoint was changed. Rendered evidence is from the maintained branch with browser-only updates and a verified offline asset set (no new installer/tooling). A later evidence-record commit may differ only in release binding/QA records, per the no-self-reference release procedure.
 **Product authority:** [`spec/INVESTOR_REAL_REPLAY_SPEC.md`](spec/INVESTOR_REAL_REPLAY_SPEC.md)
 
 ## Approved-tool attempt and fallback
@@ -28,13 +28,13 @@ The durable harness is [`tests/rendered_browser_qa.mjs`](tests/rendered_browser_
 
 | Requested viewport | Layout client width* | Initial overflow / clipped text | Visible enabled controls | Dynamic path |
 |---:|---:|---:|---:|---|
-| 320×568 | 305 | 0 / 0 | 17 | initial/truth/library geometry |
-| 375×812 | 360 | 0 / 0 | 17 | initial/truth/library geometry |
-| 768×1024 | 753 | 0 / 0 | 17 initial / 19 dynamic | all featured interaction paths |
-| 1024×768 | 1009 | 0 / 0 | 17 | fully stacked initial geometry |
-| 1366×768 | 1351 | 0 / 0 | 17 initial / 19 dynamic | all featured interaction paths |
-| 1920×1080 | 1905 | 0 / 0 | 17 initial / 19 dynamic | all featured interaction paths |
-| 3840×2160 | 3825 | 0 / 0 | 17 | capped projector initial geometry |
+| 320×568 | 305 | 0 / 0 | 22 | initial/truth/library geometry |
+| 375×812 | 360 | 0 / 0 | 22 | initial/truth/library geometry |
+| 768×1024 | 753 | 0 / 0 | 22 initial / 24 dynamic | all featured interaction paths |
+| 1024×768 | 1009 | 0 / 0 | 22 | fully stacked initial geometry |
+| 1366×768 | 1351 | 0 / 0 | 22 initial / 24 dynamic | all featured interaction paths |
+| 1920×1080 | 1905 | 0 / 0 | 22 initial / 24 dynamic | all featured interaction paths |
+| 3840×2160 | 3825 | 0 / 0 | 22 | capped projector initial geometry |
 
 \* Headless Chromium reserved a 15 px vertical scrollbar. At every size, document and body scroll width equalled the actual layout client width exactly; there was no horizontal overflow. The audit checked every visible element boundary, text leaf clipping, one H1, named controls, control dimensions, external anchors, and sticky truth/limitation visibility after scrolling to the document end.
 
@@ -63,8 +63,8 @@ Dynamic geometry repeated with zero overflow/clipping and all visible enabled co
 - 0 cookies; 0 local/session storage entries; 0 IndexedDB databases; 0 Cache API entries; 0 service-worker registrations.
 - 0 page console errors/warnings and 0 unexpected browser log errors/warnings.
 - Accessibility tree: 0 unnamed exposed buttons.
-- The pinned browser emitted one known security warning per reload because it does not recognize the still-present deny-only `bluetooth=()` Permissions-Policy directive (7 warnings total). Camera, microphone, geolocation, payment, USB, and serial deny directives were accepted. The Bluetooth declaration remains fail-closed in the header as required; the client contains no Bluetooth/capture API path. This runtime-specific warning is disclosed rather than suppressed or worked around.
+- The pinned browser emitted seven known security warnings per run because it does not recognize the still-present deny-only `bluetooth=()` Permissions-Policy directive. Camera, microphone, geolocation, payment, USB, and serial deny directives were accepted. The Bluetooth declaration remains fail-closed in the header as required; the client contains no Bluetooth/capture API path. This runtime-specific warning is disclosed rather than suppressed or worked around.
 
 ## Release disposition
 
-**Rendered/network QA passed** for exact runtime revision `4c0cb3d283ac5582181d83bfcb7bf75e9f9a85d0`. No source-only substitution is claimed. Re-run this matrix against the exact staged immutable release and authorized Tailnet client before any later owner-approved cutover. Any different request, overflow, clipping, inaccessible control, prompt-order failure, persistence, or warning beyond the one disclosed unsupported deny directive is a release block.
+**Rendered/browser QA passed** for the current branch shape with challenge/guided mode and local noise-sandbox controls. No source-only substitution is claimed. Re-run this matrix against the exact staged immutable release and authorized Tailnet client before any later owner-approved cutover. Any different request, overflow, clipping, inaccessible control, prompt-order failure, persistence, or warning beyond the disclosed unsupported deny directive is a release block.

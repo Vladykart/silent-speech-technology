@@ -2,7 +2,7 @@
 
 > **Permanent truth:** **Replay of official single-speaker recorded sEMG through David Gaddy’s official released pretrained model; not live capture.**
 
-This private, non-commercial research experience executes one official checksum-bound recording through one official checksum-bound 54,187,136-parameter checkpoint. It exposes real bounded source/preprocessing/output evidence and a mandatory human gate. It is not a device, live capture, project accuracy/WER, representative evaluation, open-vocabulary/generalization claim, customer/product deployment, or medical/AAC/safety system.
+This private, non-commercial research experience executes one official checksum-bound recording through one official checksum-bound 54,187,136-parameter checkpoint. It exposes real bounded source/preprocessing/output evidence and a mandatory human gate. Operators run in **challenge mode** (prompt sealed until inference and metadata) or **guided mode** (prompt shown for presenter rehearsal before start). It is not a device, live capture, project accuracy/WER, representative evaluation, open-vocabulary/generalization claim, customer/product deployment, or medical/AAC/safety system.
 
 Product authority: [`spec/INVESTOR_REAL_REPLAY_SPEC.md`](spec/INVESTOR_REAL_REPLAY_SPEC.md). Claim authority remains [`../research/claim-boundary.md`](../research/claim-boundary.md) and [`../research/claim-ledger.md`](../research/claim-ledger.md).
 
@@ -72,7 +72,7 @@ The project decoder is typed `algorithm`, not model. HiFi-GAN, upstream recognit
 | QC-R09 | largedev dev | 2.808 s | mismatch + abstain; retained |
 | QC-R10 | largedev dev | 2.712 s | abstain; retained |
 
-These are selected behavior regressions, not semantic success requirements or a metric. Prompts are never embedded in client assets or pre-run API payloads, never passed as per-sample model/decoder input, and appear only after the model and complete-grammar decoder finish. A future catalogue change requires a new version and selection rationale; weak outcomes cannot be swapped out.
+These are selected behavior regressions, not semantic success requirements or a metric. In guided mode, the official prompt is presented as a rehearsal cue before run start; prompts are never embedded in client assets or pre-run API payloads, never passed as per-sample model/decoder input, and appear only in the official audit path after metadata reveal in challenge mode. A future catalogue change requires a new version and selection rationale; weak outcomes cannot be swapped out.
 
 ## Bounded browser evidence
 
@@ -84,6 +84,7 @@ These are selected behavior regressions, not semantic success requirements or a 
 - mel: ≤64 × 80 transformed signed-8-bit model-output values;
 - phoneme head: exact top class/token and rounded top softmax diagnostic per bounded frame, plus collapsed path; no full logits;
 - decoder: at most three candidates.
+- synthetic-noise sandbox: local deterministic preview only; no synthetic signal is replayed or used as official evidence.
 
 The browser receives no participant/session/date identity, source/member/local path, full digest, archive inventory, full arrays/tensors/logits/weights, audio/buttons, download, credential, prompt before inference, telemetry, service worker, persistent storage, or external URL. It receives only explicit client files and `/api/v1/...` responses with `no-store` and hardened CSP/Permissions Policy. OpenAPI/docs and old/generic routes are disabled.
 

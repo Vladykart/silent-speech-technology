@@ -49,6 +49,7 @@ EVENT_ORDER = (
 class CreateRun(BaseModel):
     model_config = ConfigDict(extra="forbid")
     sample_id: str
+    mode: Literal["challenge", "guided"] = "challenge"
 
 
 class DecisionRequest(BaseModel):
@@ -62,6 +63,8 @@ class Run:
     id: str
     sample_id: str
     original_sample_id: str
+    mode: Literal["challenge", "guided"] = "challenge"
+    prompt_hint: str | None = None
     created_at: float = field(default_factory=time.monotonic)
     state: str = "ready"
     streamed: bool = False
@@ -200,12 +203,17 @@ def create_run(payload: CreateRun, request: Request):
         if len(request.app.state.runs) >= MAX_ACTIVE_RUNS:
             raise HTTPException(429, "bounded run capacity reached; reload after prior runs expire")
         run_id = secrets.token_urlsafe(18)
-        run = Run(run_id, payload.sample_id, payload.sample_id)
+        run = Run(run_id, payload.sample_id, payload.sample_id, mode=payload.mode)
+        sample = request.app.state.registry.get(payload.sample_id)
+        if payload.mode == "guided":
+            run.prompt_hint = sample.prompt
         request.app.state.runs[run_id] = run
     return {
         "id": run.id,
         "sample_id": run.sample_id,
+        "mode": run.mode,
         "state": run.state,
+        "prompt_hint": run.prompt_hint,
         "events": f"/api/v1/runs/{run.id}/events",
         "truth": TRUTH,
     }
@@ -434,6 +442,8 @@ def second_take(run_id: str, request: Request):
         run.safety_sensitive = False
     return {
         "state": run.state,
+        "mode": run.mode,
+        "prompt_hint": run.prompt_hint,
         "sample_id": "QC-R02-T2",
         "events": f"/api/v1/runs/{run.id}/events",
         "repair": "second official recorded take; no synthetic signal and the downstream pipeline is unchanged",

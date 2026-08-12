@@ -52,7 +52,7 @@ class ResponsiveAccessibilityContractTests(unittest.TestCase):
         self.assertTrue(any(tag == "fieldset" and values.get("id") == "sample-list" for tag, values in self.parser.tags))
         self.assertTrue(any(tag == "legend" for tag, _ in self.parser.tags))
         canvases = [values for tag, values in self.parser.tags if tag == "canvas"]
-        self.assertEqual(len(canvases), 4)
+        self.assertEqual(len(canvases), 5)
         self.assertTrue(all(value.get("role") == "img" and value.get("aria-describedby") in self.parser.ids for value in canvases))
         self.assertGreaterEqual(len([1 for tag, _ in self.parser.tags if tag == "caption"]), 2)
         self.assertIn(":focus-visible", self.css)

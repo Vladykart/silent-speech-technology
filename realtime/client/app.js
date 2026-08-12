@@ -10,9 +10,12 @@
     errorBanner: $("#error-banner"), errorMessage: $("#error-message"), catalogueState: $("#catalogue-state"), selectionDisclosure: $("#selection-disclosure"), sampleList: $("#sample-list"), selectedId: $("#selected-id"),
     featured: $("#run-featured"), start: $("#start"), stop: $("#stop"), sourceProgress: $("#source-progress"), modelProgress: $("#model-progress"), decisionProgress: $("#decision-progress"), announcer: $("#stage-announcer"),
     sourceState: $("#source-state"), sourceId: $("#source-id"), sourceShape: $("#source-shape"), sourceRateDuration: $("#source-rate-duration"), sourceCanvas: $("#source-canvas"), traceBins: $("#trace-bins"), channelSummary: $("#channel-summary"),
+    modeChallenge: $("#mode-challenge"), modeGuided: $("#mode-guided"), modeDifference: $("#mode-difference"), guidedPhraseText: $("#guided-phrase-text"),
     modelState: $("#model-state"), comparisonCanvas: $("#comparison-canvas"), provenanceBody: $("#provenance-body"), featureCanvas: $("#feature-canvas"), featureShape: $("#feature-shape"), featureDescription: $("#feature-description"),
     modelFingerprint: $("#model-fingerprint"), melCanvas: $("#mel-canvas"), melShape: $("#mel-shape"), melDescription: $("#mel-description"), phonemeShape: $("#phoneme-shape"), phonemeFrames: $("#phoneme-frames"), phonemeSequence: $("#phoneme-sequence"), collapsedPath: $("#collapsed-path"), modelTime: $("#model-time"), decoderTime: $("#decoder-time"), timeline: $("#event-timeline"),
     decisionState: $("#decision-state"), candidates: $("#candidates"), diagnosticScore: $("#diagnostic-score"), scoreMeter: $("#score-meter"), recordReference: $("#record-reference"), referenceStatus: $("#reference-status"), decisionBox: $("#decision-box"), decisionLabel: $("#decision-label"), decisionTitle: $("#decision-title"), decisionReason: $("#decision-reason"), heldCandidate: $("#held-candidate"), heldStatus: $("#held-status"), safetyRow: $("#safety-row"), safetyAck: $("#safety-ack"), confirm: $("#confirm"), reject: $("#reject"), secondTake: $("#second-take"), finalCard: $("#final-card"), finalOutput: $("#final-output"), outputStatus: $("#output-status"),
+    heldCandidateComparison: $("#held-candidate-comparison"), officialPhrase: $("#official-phrase"),
+    noiseCanvas: $("#noise-canvas"), noiseSlider: $("#noise-slider"), noiseLevel: $("#noise-level"), noiseStatus: $("#noise-status"), noiseState: $("#noise-state"), noiseReset: $("#noise-reset"),
     modelRegistry: $("#model-registry"), activeProvenance: $("#active-provenance"),
   };
 
@@ -26,10 +29,27 @@
   let safetySensitive = false;
   let streamController = null;
   let animationFrame = 0;
+  let lastSourceDisplay = null;
   const reducedMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
 
   function selectedSampleId() {
     return $('input[name="sample"]:checked', elements.sampleList)?.value || "QC-R01";
+  }
+
+  function selectedRunMode() {
+    return elements.modeGuided?.checked ? "guided" : "challenge";
+  }
+
+  function setModeMessaging() {
+    const mode = selectedRunMode();
+    if (mode === "guided") {
+      elements.modeDifference.textContent = "GUIDED: Presenter-visible phrase appears before inference; strict boundary check still applies before any result is final.";
+      elements.guidedPhraseText.textContent = "Select a sample and run. Guided mode shows the official phrase before replay for rehearsal.";
+    } else {
+      elements.modeDifference.textContent = "CHALLENGE: Phrase is concealed and is not inferred from model output.";
+      elements.guidedPhraseText.textContent = "Challenge mode keeps this sealed until inference and metadata are complete.";
+    }
+    setGuidedPhrase();
   }
 
   function setStatePill(element, kind, text) {
@@ -92,6 +112,8 @@
       elements.sourceShape.textContent = `${Number(card.sample_count).toLocaleString()} × 8 · native float64`;
       elements.sourceRateDuration.textContent = `1 kHz · ${Number(card.duration_seconds).toFixed(3)} s`;
     }
+    setGuidedPhrase();
+    setModeMessaging();
   }
 
   function resetRunDisplay() {
@@ -101,6 +123,7 @@
     renderStage("recorded-source", false);
     currentCandidate = "";
     safetySensitive = false;
+    lastSourceDisplay = null;
     $$("li", elements.timeline).forEach((item) => { item.classList.remove("complete"); item.removeAttribute("title"); });
     elements.sourceProgress.textContent = "Awaiting recorded replay";
     elements.modelProgress.textContent = "Not started";
@@ -120,6 +143,8 @@
     elements.modelTime.textContent = "—";
     elements.decoderTime.textContent = "—";
     elements.candidates.innerHTML = "<p>Run an official recording to produce model output and then decoder candidates.</p>";
+    elements.heldCandidateComparison.textContent = "—";
+    elements.officialPhrase.textContent = "Sealed until model and metadata reveal";
     elements.diagnosticScore.textContent = "—";
     elements.scoreMeter.value = 0;
     elements.scoreMeter.textContent = "0";
@@ -139,6 +164,12 @@
     elements.finalCard.classList.remove("accepted");
     elements.finalOutput.textContent = "—";
     elements.outputStatus.textContent = "No result committed";
+    setModeMessaging();
+    elements.noiseSlider.value = "0";
+    elements.noiseLevel.textContent = "0%";
+    elements.noiseState.textContent = "OFFICIAL SOURCE TRACE ONLY";
+    elements.noiseStatus.textContent = "Unmistakable zero-noise baseline: move the slider to preview deterministic synthetic jitter.";
+    blankCanvas(elements.noiseCanvas, "#15211b");
     blankCanvas(elements.sourceCanvas, "#0e1511");
     blankCanvas(elements.comparisonCanvas, "#14201a");
     blankCanvas(elements.featureCanvas, "#15211b");
@@ -161,6 +192,94 @@
     const {context, width, height} = canvasSize(canvas);
     context.fillStyle = color;
     context.fillRect(0, 0, width, height);
+  }
+
+  function drawNoiseCanvas(canvas, payload) {
+    const {context, width, height, ratio} = canvasSize(canvas);
+    context.fillStyle = "#15211b";
+    context.fillRect(0, 0, width, height);
+    const channels = payload?.channels || [];
+    const colors = ["#baf13f", "#55cfb5", "#67a8ef", "#f2aa55", "#c982e8", "#e57878", "#7bd77b", "#e6d36d"];
+    context.font = `${10 * ratio}px ui-monospace, monospace`;
+    const binCount = payload.display_bins || 1;
+    const maxBin = Math.max(1, binCount - 1);
+    for (let channel = 0; channel < 8; channel += 1) {
+      const center = (channel + .5) * height / 8;
+      context.strokeStyle = "#2f3c36";
+      context.lineWidth = ratio;
+      context.beginPath(); context.moveTo(0, center); context.lineTo(width, center); context.stroke();
+      context.fillStyle = "#9aa79f";
+      context.fillText(`CH ${channel + 1}`, 8 * ratio, center - 6 * ratio);
+      const rows = (channels[channel] || []).slice(0, binCount);
+      context.strokeStyle = colors[channel];
+      context.lineWidth = Math.max(ratio, width / 1200);
+      rows.forEach((range, index) => {
+        if (!Array.isArray(range) || range.length < 2) return;
+        const x = index / maxBin * width;
+        const y1 = center - Number(range[0]) / 127 * height * .045;
+        const y2 = center - Number(range[1]) / 127 * height * .045;
+        context.beginPath(); context.moveTo(x, y1); context.lineTo(x, y2); context.stroke();
+      });
+    }
+  }
+
+  function seededRandom(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state += 0x6D2B79F5;
+      let t = Math.imul(state ^ (state >>> 15), 1 | state);
+      t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function cloneWithNoise(sourceDisplay, noiseAmount) {
+    if (!sourceDisplay?.channels) return sourceDisplay;
+    const amount = Math.max(0, Math.min(100, Number(noiseAmount || 0))) / 100;
+    const seed = Math.round(sourceDisplay.display_bins || 0) * 97 + (sourceDisplay.channels?.[0]?.length || 0) * 13;
+    const rand = seededRandom(seed + 73);
+    const noisy = [];
+    const jitterScale = amount * 24;
+    const bins = sourceDisplay.display_bins || 0;
+    for (const channel of sourceDisplay.channels) {
+      const channelRows = [];
+      for (let index = 0; index < bins; index += 1) {
+        const row = channel?.[index] || [0, 0];
+        const baseMin = Number(row?.[0] || 0);
+        const baseMax = Number(row?.[1] || baseMin);
+        const jitter = (rand() - 0.5) * 2 * jitterScale;
+        const jitter2 = (rand() - 0.5) * 2 * jitterScale;
+        channelRows.push([
+          Math.max(-127, Math.min(127, baseMin + jitter)),
+          Math.max(-127, Math.min(127, baseMax + jitter2)),
+        ]);
+      }
+      noisy.push(channelRows);
+    }
+    return {
+      channels: noisy,
+      display_bins: bins,
+      source_samples_per_bin: sourceDisplay.source_samples_per_bin || 1,
+      display_transform: "synthetic_noise_preview",
+      not_untouched_raw: false,
+    };
+  }
+
+  function updateNoisePreview(level) {
+    if (!lastSourceDisplay) {
+      blankCanvas(elements.noiseCanvas, "#15211b");
+      return;
+    }
+    const synthetic = cloneWithNoise(lastSourceDisplay, Number(level || 0));
+    drawNoiseCanvas(elements.noiseCanvas, synthetic);
+    const percent = Math.max(0, Math.min(100, Number(level || 0)));
+    if (percent === 0) {
+      elements.noiseState.textContent = "OFFICIAL SOURCE TRACE ONLY";
+      elements.noiseStatus.textContent = "No synthetic noise applied. This preview remains separate from official evidence.";
+      return;
+    }
+    elements.noiseState.textContent = "NOISE PREVIEW MODE";
+    elements.noiseStatus.textContent = `Deterministic sandbox noise preview set to ${percent}% amplitude. Not used for official evidence.`;
   }
 
   function drawEnvelope(canvas, payload, progress = 1) {
@@ -325,6 +444,7 @@
     if (!(event.candidates || []).length) elements.candidates.innerHTML = "<p>No candidates were returned. No result is available.</p>";
     currentCandidate = String(event.candidates?.[0]?.text || "");
     elements.heldCandidate.textContent = currentCandidate || "—";
+    elements.heldCandidateComparison.textContent = currentCandidate || "—";
     elements.heldStatus.textContent = currentCandidate ? "Project decoder candidate · not a final result" : "No candidate";
     const score = Number(event.phoneme_alignment_score);
     elements.diagnosticScore.textContent = Number.isFinite(score) ? score.toFixed(3) : "—";
@@ -339,7 +459,9 @@
       streamController?.abort();
       return;
     }
-    elements.recordReference.textContent = String(event.prompt || "Unavailable");
+    const prompt = String(event.prompt || "Unavailable");
+    elements.recordReference.textContent = prompt;
+    elements.officialPhrase.textContent = prompt;
     elements.referenceStatus.textContent = `${event.matches_top_candidate ? "Matches" : "Does not match"} top candidate · audit observation, not an accuracy score`;
   }
 
@@ -410,26 +532,28 @@
         elements.sourceProgress.textContent = `${activeSampleId} official source opened`;
         break;
       case "replay_started":
+        lastSourceDisplay = event.source_display;
         animateEnvelope(event.source_display, event.visualization_duration_seconds);
+        updateNoisePreview(elements.noiseSlider.value);
         elements.traceBins.textContent = `${event.source_display.display_bins} BINS · ${event.source_display.source_samples_per_bin}:1`;
         elements.channelSummary.textContent = `Channels 1–8 present; ${event.source_display.display_bins} chronological min/max bins each; signed 8-bit transformed display`;
-        setStatePill(elements.sourceState, "running", "RECORDED DISPLAY");
+        setStatePill(elements.sourceState, "running", "RECORDED SOURCE TRACE");
         break;
       case "source_complete":
         elements.sourceProgress.textContent = "Recorded source replay complete";
-        elements.modelProgress.textContent = "Preprocessing official source";
+        elements.modelProgress.textContent = "Source replay complete · entering filtering";
         break;
       case "preprocessing_complete":
         renderProvenance(event.provenance || []);
         drawComparison(event.comparison_display);
         setStatePill(elements.modelState, "running", "PREPROCESSING COMPLETE");
-        elements.modelProgress.textContent = "Filtering complete";
+        elements.modelProgress.textContent = "Filtering complete · model-ready preprocessing generated";
         break;
       case "branches_aligned":
         drawHeatmap(elements.featureCanvas, event.feature_display);
         heatmapInteraction(elements.featureCanvas, event.feature_display, elements.featureDescription, event.feature_display.names, "feature");
         elements.featureShape.textContent = `${event.feature_shape.join(" × ")} · ≤${event.feature_display.display_bins} display bins`;
-        elements.modelProgress.textContent = "Feature and model branches aligned";
+        elements.modelProgress.textContent = "Feature and model branches aligned for inference";
         break;
       case "model_forward_complete":
         drawHeatmap(elements.melCanvas, event.mel_display);
@@ -443,7 +567,7 @@
         break;
       case "decoder_complete":
         renderCandidates(event);
-        elements.modelProgress.textContent = "Project decoder complete";
+        elements.modelProgress.textContent = "Project decoder complete · candidate ranking ready";
         break;
       case "metadata_revealed":
         revealMetadata(event);
@@ -492,23 +616,59 @@
     safeError(String(error?.message || "The real replay could not continue. No result is available."), true);
   }
 
+  function configureNoisePreview() {
+    if (!elements.noiseSlider || !elements.noiseLevel) return;
+    elements.noiseSlider.addEventListener("input", () => {
+      const amount = Number(elements.noiseSlider.value || 0);
+      elements.noiseLevel.textContent = `${Math.max(0, Math.min(100, amount))}%`;
+      updateNoisePreview(amount);
+    });
+    elements.noiseReset.addEventListener("click", () => {
+      elements.noiseSlider.value = "0";
+      elements.noiseLevel.textContent = "0%";
+      updateNoisePreview(0);
+    });
+  }
+
+  function setGuidedPhrase(state) {
+    if (elements.modeGuided?.checked) {
+      if (state) {
+        elements.guidedPhraseText.textContent = `Official rehearsal script: ${state}`;
+        elements.officialPhrase.textContent = state;
+      } else {
+        elements.guidedPhraseText.textContent = "Select a sample and run. Guided mode will show the official phrase before inference.";
+        elements.officialPhrase.textContent = "Sealed until inference / metadata reveal.";
+      }
+    } else {
+      elements.guidedPhraseText.textContent = "Challenge mode keeps this sealed until inference completes.";
+      elements.officialPhrase.textContent = "Sealed until metadata reveal.";
+    }
+  }
+
   async function runSelected(forcedId = null) {
     resetRunDisplay();
     activeCardId = forcedId || selectedSampleId();
     activeSampleId = activeCardId;
     const radio = $(`input[value="${activeCardId}"]`, elements.sampleList);
     if (radio) { radio.checked = true; updateSelection(); }
+    const runMode = selectedRunMode();
     elements.sampleList.disabled = true;
     elements.start.disabled = true;
     elements.featured.disabled = true;
     elements.stop.disabled = false;
+    setModeMessaging();
     setStatePill(elements.sourceState, "running", "STARTING");
+    setGuidedPhrase();
     const created = await fetchJson("/api/v1/runs", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({sample_id: activeCardId}),
+      body: JSON.stringify({sample_id: activeCardId, mode: runMode}),
     });
-    if (created.sample_id !== activeCardId) throw new Error("safe sample binding mismatch; run cancelled");
+    if (created.sample_id !== activeCardId) throw new Error("safe sample selection mismatch; run cancelled");
+    if (runMode === "guided" && typeof created.prompt_hint === "string" && created.prompt_hint) {
+      setGuidedPhrase(created.prompt_hint);
+    }
+    setModeMessaging();
     runId = created.id;
     runEventsPath = created.events;
     await consume(runEventsPath);
@@ -578,6 +738,8 @@
       const payload = await fetchJson(`/api/v1/runs/${runId}/second-take`, {method: "POST"});
       resetRunDisplay();
       activeSampleId = "QC-R02-T2";
+      setModeMessaging();
+      setGuidedPhrase(payload.prompt_hint);
       elements.sourceId.textContent = activeSampleId;
       elements.sourceProgress.textContent = "Second official take selected";
       elements.sampleList.disabled = true; elements.start.disabled = true; elements.featured.disabled = true; elements.stop.disabled = false;
@@ -628,6 +790,9 @@
   }
 
   elements.sampleList.addEventListener("change", updateSelection);
+  elements.modeChallenge?.addEventListener("change", setModeMessaging);
+  elements.modeGuided?.addEventListener("change", setModeMessaging);
+  configureNoisePreview();
   elements.start.addEventListener("click", () => runSelected().catch(runError));
   elements.featured.addEventListener("click", () => runSelected("QC-R01").catch(runError));
   elements.stop.addEventListener("click", stopRun);
@@ -643,7 +808,7 @@
   document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !elements.drawer.hidden) closeDrawer(); });
   globalThis.addEventListener("resize", () => {
     if (state.expectedEventIndex === 0) {
-      blankCanvas(elements.sourceCanvas, "#0e1511"); blankCanvas(elements.comparisonCanvas, "#14201a"); blankCanvas(elements.featureCanvas, "#15211b"); blankCanvas(elements.melCanvas, "#15211b");
+      blankCanvas(elements.sourceCanvas, "#0e1511"); blankCanvas(elements.comparisonCanvas, "#14201a"); blankCanvas(elements.featureCanvas, "#15211b"); blankCanvas(elements.melCanvas, "#15211b"); blankCanvas(elements.noiseCanvas, "#15211b");
     }
   });
 

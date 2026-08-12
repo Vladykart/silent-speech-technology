@@ -5,8 +5,10 @@ Use only after approved assets and all checks in [`QA.md`](QA.md) pass. Presenta
 ## Preflight and reset
 
 1. Confirm the service reports ready, **one executed model**, the expected short revision, and ten sealed cards. If any check fails, stop.
-2. Confirm the browser is authorized and the page says: **REAL RECORDED sEMG REPLAY · ONE REAL RELEASED PRETRAINED MODEL · NOT LIVE CAPTURE**.
-3. Reload to clear volatile state. No prompt should appear on a card or before decoder completion.
+2. Confirm the browser is authorized and the page shows: **REAL RECORDED sEMG REPLAY · ONE REAL RELEASED PRETRAINED MODEL · NOT LIVE CAPTURE**.
+   - If you choose **guided mode**, confirm the rehearsal phrase is visible before starting.
+   - If you choose **challenge mode** (default), confirm no phrase text is visible until metadata reveal after candidate generation.
+3. Reload to clear volatile state. No prompt should appear on cards; a guided rehearsal phrase may appear only in the dedicated mode card in guided mode, and only before start.
 4. Do not open developer tools, external addresses, downloads, media, or another demo during the pitch.
 
 ## 3–5 minute flow
@@ -17,7 +19,7 @@ Say:
 
 > This is a replay of an official single-speaker recorded sEMG array through David Gaddy’s official released pretrained model. It is not live capture. No person or device is being sensed.
 
-Point to the proof stack: official source, **executed model 1 of 1**, human gate. Read the amber curation boundary. Selected behavior is not project accuracy or representative evaluation.
+Point to the proof stack: official source, **executed model 1 of 1**, human gate. Select a mode (guided or challenge), then read the amber curation boundary. Selected behavior is not project accuracy or representative evaluation.
 
 ### 0:30–1:45 — Featured real execution
 
@@ -35,7 +37,7 @@ If timing is discussed, read its complete this-run local-software scope. Model f
 
 ### 1:45–2:20 — Decoder and human control
 
-The metadata prompt appears only after model and decoder completion. Say:
+The metadata prompt appears only after model and decoder completion in challenge mode. In guided mode, a rehearsal phrase is visible before start and remains only presenter guidance. Say:
 
 > A project-built bounded phoneme-edit decoder postprocesses the released model’s real 48-class output. It is not another released or trained model. Its phoneme-alignment score is an uncalibrated diagnostic—not accuracy, confidence, or probability of correctness.
 
@@ -43,7 +45,7 @@ Reject once or confirm the held local result. Nothing actuates or calls another 
 
 ### 2:20–3:15 — Failure is evidence
 
-Run `QC-R02`. Show abstention and the empty final-result state. Select **Run second official take**. Say it is `QC-R02-T2`, a second checksum-bound official recording of the same source prompt—not added noise, simulation, or signal repair. The downstream pipeline is unchanged. Confirm or reject what actually occurs.
+Run `QC-R02`. Show abstention and the empty final-result state. In guided mode, you may use the visible phrase as rehearsal context before each run, but state that this is not source repair. Select **Run second official take**. Say it is `QC-R02-T2`, a second checksum-bound official recording of the same source prompt—not added noise, simulation, or signal repair. The downstream pipeline is unchanged. Confirm or reject what actually occurs.
 
 ### 3:15–3:50 — Safety boundary
 

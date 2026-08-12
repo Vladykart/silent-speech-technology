@@ -52,7 +52,15 @@ Production has no simulator import, constructor, fallback, or configuration rout
 One original, responsive, same-origin page has a sticky truth bar and five anchored regions:
 
 1. **Hero / proof contract.** Headline: “One real recording. One released model. Every boundary visible.” Proof cards identify recorded source, executed model 1 of 1, and human gate. Primary action runs `QC-R01`; secondary action moves to the library.
-2. **Official sample library.** Ten selectable cards with prompt sealed. No outcome is pre-badged. In-memory last-run state may appear and clears on reload.
+
+Replay mode is operator-selectable:
+- **Challenge mode** (default): official phrase sealed until model + decoder complete.
+- **Guided mode**: official phrase is visible as presenter-only rehearsal guidance before run start.
+
+The mode is metadata-only and never fed into the released model or bounded decoder input.
+2. **Official sample library.** Ten selectable cards with prompt sealed until execution controls expose metadata. No outcome is pre-badged. In-memory last-run state may appear and clears on reload.
+
+In guided mode, the selected official phrase is revealed as a rehearsal cue before starting, and it is explicitly never treated as model input.
 3. **Three-stage workspace.** Exactly `Recorded source → Released model → Human decision`, preserving the sealed reducer and no-output invariants.
 4. **Evidence and limitations drawer.** What executed; evidence-only registry; claims/limitations; text-only sources/rights.
 5. **Attribution / deployment status.** Private Tailnet-only research demo delivery, not public or customer/product deployment.
@@ -74,6 +82,8 @@ Canvas is supplementary to a concise text/table alternative. Animation follows r
 ### Stage 2 — Preprocessing and released model
 
 Show the rail `checksum-bound source → context-aware filter → dual resample → model raw branch → released CNN/Transformer → real output heads`, plus:
+
+- optional deterministic **synthetic-noise sandbox preview** for presenter-only practice before a run; this preview canvas is not official replay input and does not alter any claim or evidence chain.
 
 - aligned 8-channel source/filtered envelopes with independent display scaling and filter labels;
 - stage provenance with input/output rates, shapes, dtypes, lineage, and model-input status;
@@ -143,6 +153,8 @@ A prompt, candidate, decision, or reference before its permitted predecessor is 
 | Decoder | at most 3 rows | Candidate text and rounded diagnostics only |
 
 The browser may receive approved truth/source facts, safe IDs, short 8–12 hex fingerprint/revision prefixes, architecture/output shapes, current-run times, post-decoder prompt, and human state.
+
+Synthetic-noise sandbox previews are local UI-only illustrations and are explicitly excluded from official replay evidence, boundary contracts, and event ordering.
 
 It must never receive identity/demographics/session/date, member/local/archive path, full digest, archive inventory, full arrays/tensors/logits/weights, audio/buttons, downloads, credentials, Tailnet inventory, prompt before inference, clickable external URL, analytics, beacon, service worker, cache, or persisted storage.
 
