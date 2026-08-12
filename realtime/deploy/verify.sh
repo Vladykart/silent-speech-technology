@@ -31,7 +31,10 @@ funnel_status=$(tailscale funnel status)
 grep -F 'https://srv1834218.tail8a7378.ts.net:8449' <<<"$serve_status" >/dev/null
 grep -F 'http://127.0.0.1:8765' <<<"$serve_status" >/dev/null
 grep -qi 'tailnet only' <<<"$serve_status$funnel_status"
-! grep -Eqi 'funnel[[:space:]]+(on|enabled)|available on the internet' <<<"$serve_status$funnel_status"
+if grep -Eqi 'funnel[[:space:]]+(on|enabled)|available on the internet' <<<"$serve_status$funnel_status"; then
+  echo "public funnel exposure detected" >&2
+  exit 1
+fi
 if [[ -n "$TAILNET_URL" ]]; then
   [[ "$TAILNET_URL" == 'https://srv1834218.tail8a7378.ts.net:8449/' ]] || { echo "unexpected authorized URL" >&2; exit 1; }
   curl --fail --silent --show-error --max-time 20 "$TAILNET_URL" >/dev/null
