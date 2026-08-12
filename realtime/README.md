@@ -72,7 +72,7 @@ The project decoder is typed `algorithm`, not model. HiFi-GAN, upstream recognit
 | QC-R09 | largedev dev | 2.808 s | mismatch + abstain; retained |
 | QC-R10 | largedev dev | 2.712 s | abstain; retained |
 
-These are selected behavior regressions, not semantic success requirements or a metric. In guided mode, the official prompt is presented as a rehearsal cue before run start; prompts are never embedded in client assets or pre-run API payloads, never passed as per-sample model/decoder input, and appear only in the official audit path after metadata reveal in challenge mode. A future catalogue change requires a new version and selection rationale; weak outcomes cannot be swapped out.
+These are selected behavior regressions, not semantic success requirements or a metric. In guided mode, `POST /api/v1/runs` returns the official prompt only as `prompt_hint` rehearsal metadata before run start. Prompts are never embedded in client assets or passed as per-sample model/decoder input; in challenge mode they appear only in the official audit path after metadata reveal. A future catalogue change requires a new version and selection rationale; weak outcomes cannot be swapped out.
 
 ## Bounded browser evidence
 
@@ -86,7 +86,7 @@ These are selected behavior regressions, not semantic success requirements or a 
 - decoder: at most three candidates.
 - synthetic-noise sandbox: local deterministic preview only; no synthetic signal is replayed or used as official evidence.
 
-The browser receives no participant/session/date identity, source/member/local path, full digest, archive inventory, full arrays/tensors/logits/weights, audio/buttons, download, credential, prompt before inference, telemetry, service worker, persistent storage, or external URL. It receives only explicit client files and `/api/v1/...` responses with `no-store` and hardened CSP/Permissions Policy. OpenAPI/docs and old/generic routes are disabled.
+The browser receives no participant/session/date identity, source/member/local path, full digest, archive inventory, full arrays/tensors/logits/weights, audio/buttons, download, credential, challenge-mode prompt before inference, telemetry, service worker, persistent storage, or external URL. Guided mode's sole exception is the selected phrase in the explicit pre-run `prompt_hint` rehearsal field. It receives only explicit client files and `/api/v1/...` responses with `no-store` and hardened CSP/Permissions Policy. OpenAPI/docs and old/generic routes are disabled.
 
 Disclosure: **Bounded transformed evidence is sent to this authorized browser; no third-party telemetry, persistence, raw archive, or actuation.** Do not call this “no egress.”
 

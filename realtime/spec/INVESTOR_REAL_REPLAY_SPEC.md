@@ -19,6 +19,8 @@ This experience proves local artifact execution only. It does not prove a device
 
 Exactly one model executes: David Gaddy’s checksum-bound `transduction_model.pt`, DOI `10.5281/zenodo.6747411`, CC BY 4.0, with 54,187,136 parameters. Startup verifies size and SHA-256, strict-loads all state tensors, and checks the parameter count. Its three residual temporal CNN blocks, six 768-wide relative-position Transformer layers, 80-bin mel head, and 48-class phoneme head execute on the selected official recording.
 
+This checkpoint is the best currently executable local artifact under the approved rights, checksum, and runtime constraints. That selection is not a claim that it is the field’s best model. All other registry entries remain evidence-only and **NOT EXECUTED HERE**.
+
 The project bounded phoneme-edit decoder executes after the model but is an **algorithm, not another model**. It receives the released 48-class output and the same complete frozen grammar for every run. It never receives the selected reference.
 
 `model-registry.json` is authoritative. HiFi-GAN, upstream recognition weights, DeepSpeech/KenLM, SilentWear, MONA/LISA, papers, and repositories occupy a visually separate evidence registry. Every row is marked **NOT EXECUTED HERE**, has no run control, and states why.
@@ -137,7 +139,7 @@ Monotonic event order:
 10. `decision_required`
 11. terminal human state through a decision/stop response
 
-A prompt, candidate, decision, or reference before its permitted predecessor is a hard client/server boundary error. Browser errors are generic and contain no hash/path/prompt/array.
+In challenge mode, a prompt, candidate, decision, or reference before its permitted predecessor is a hard client/server boundary error. In guided mode, `POST /api/v1/runs` may return the selected official phrase only as `prompt_hint` rehearsal metadata; it does not change event order or enter the model or decoder. Browser errors are generic and contain no hash/path/prompt/array.
 
 ## 7. Browser payload contract
 
@@ -152,11 +154,11 @@ A prompt, candidate, decision, or reference before its permitted predecessor is 
 | Phonemes | top index/token + top softmax rounded to 3 decimals for each bounded frame; collapsed path | Real released auxiliary-head output; top-class diagnostic, not text confidence |
 | Decoder | at most 3 rows | Candidate text and rounded diagnostics only |
 
-The browser may receive approved truth/source facts, safe IDs, short 8–12 hex fingerprint/revision prefixes, architecture/output shapes, current-run times, post-decoder prompt, and human state.
+The browser may receive approved truth/source facts, safe IDs, short 8–12 hex fingerprint/revision prefixes, architecture/output shapes, current-run times, human state, the post-decoder audit prompt, and—in guided mode only—the selected phrase as pre-run `prompt_hint` rehearsal metadata.
 
 Synthetic-noise sandbox previews are local UI-only illustrations and are explicitly excluded from official replay evidence, boundary contracts, and event ordering.
 
-It must never receive identity/demographics/session/date, member/local/archive path, full digest, archive inventory, full arrays/tensors/logits/weights, audio/buttons, downloads, credentials, Tailnet inventory, prompt before inference, clickable external URL, analytics, beacon, service worker, cache, or persisted storage.
+It must never receive identity/demographics/session/date, member/local/archive path, full digest, archive inventory, full arrays/tensors/logits/weights, audio/buttons, downloads, credentials, Tailnet inventory, a prompt before inference in challenge mode, any guided phrase outside the explicit `prompt_hint` rehearsal field, clickable external URL, analytics, beacon, service worker, cache, or persisted storage.
 
 Disclosure:
 
