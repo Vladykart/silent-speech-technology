@@ -1,5 +1,5 @@
 {
-  "application_revision": "0c31a86f9a304b17a37cd584511395a08297fd4e",
+  "application_revision": "2c200b9955b3748ca4204ff1abae5f25bad5d4a6",
   "asset_manifest_sha256": "dc3a38d2bc51ba118202c5baa65b53d581fe3b3de741023b1e3d743e2ba65549",
   "build_command": "python3 realtime/generate_release_manifest.py --revision <exact-clean-commit>",
   "dependency_lock_sha256": "0652261d36b4c2c9f4943d751f8de3615e90209f99822f0d18a39d4f762b8865",
@@ -37,8 +37,8 @@
       "sha256": "dd187084beaf5e9d26603ca8428858d23395fa5d8d44b77f25a957b3e9eae54b"
     },
     "realtime/app/service.py": {
-      "bytes": 18308,
-      "sha256": "11639c704d9f028245f47a8cf12b233916be42bd706ce2ed5c63ae9c5936327b"
+      "bytes": 18319,
+      "sha256": "24405621e0208f06011c73c32ec18ba4054c8a5518b693335a2fa3e0943fd002"
     },
     "realtime/app/signal_source.py": {
       "bytes": 3933,
