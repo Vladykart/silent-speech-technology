@@ -1,7 +1,6 @@
-"""Configuration and bounded replay policy for the local research service."""
+"""Safe public configuration and bounded policy for the investor replay."""
 from __future__ import annotations
 
-from dataclasses import dataclass
 from pathlib import Path
 import os
 
@@ -10,72 +9,21 @@ ASSET_DIR = Path(os.getenv("SILENT_SPEECH_ASSET_DIR", ROOT / "local_assets"))
 MODEL_PATH = ASSET_DIR / "model" / "pretrained_models" / "transduction_model.pt"
 REPLAY_ROOT = ASSET_DIR / "replays"
 ASSET_MANIFEST_PATH = ROOT / "assets-manifest.json"
+SAMPLE_MANIFEST_PATH = ROOT / "sample-manifest.json"
+MODEL_REGISTRY_PATH = ROOT / "model-registry.json"
+RELEASE_MANIFEST_PATH = ROOT / "release-manifest.json"
 SAMPLE_RATE = 1_000
 CHANNELS = 8
 CHUNK_SAMPLES = 128
-CONFIDENCE_THRESHOLD = 0.60
-
-
-@dataclass(frozen=True)
-class Scenario:
-    id: str
-    title: str
-    description: str
-    sample_group: str
-    sample_index: int
-    reference_prompt: str
-    decoder_text: str
-    evaluation_split: str
-    safety_sensitive: bool = False
-    repair_group: str | None = None
-    repair_index: int | None = None
-
-
-SCENARIOS = {
-    "clear": Scenario(
-        "clear",
-        "Held-out research replay",
-        "Real silent facial-sEMG recording from the source's large development split.",
-        "clear",
-        314,
-        "What news?",
-        "what news",
-        "largedev/dev",
-    ),
-    "ambiguous": Scenario(
-        "ambiguous",
-        "Recorded replay → abstain → repair",
-        "A real closed-vocabulary recording; repair replays a second real take of the same prompt.",
-        "ambiguous",
-        379,
-        "09:48 AM",
-        "nine forty eight a m",
-        "closed-vocabulary research set",
-        repair_group="repair",
-        repair_index=310,
-    ),
-    "safety": Scenario(
-        "safety",
-        "Safety-sensitive prompt replay",
-        "Real silent facial-sEMG for “Keep back!”; no actuation is connected.",
-        "safety",
-        91,
-        "Keep back!",
-        "keep back",
-        "largedev/dev",
-        safety_sensitive=True,
-    ),
-}
-
-# Every grammar entry is a prompt that occurs in the official dataset. The
-# reference prompt is never passed into model.forward; all entries compete in
-# the phoneme alignment decoder.
-REPLAY_GRAMMAR = (
-    ("What news?", "what news"),
-    ("09:48 AM", "nine forty eight a m"),
-    ("Keep back!", "keep back"),
-    ("That was it!", "that was it"),
-    ("I know I did.", "i know i did"),
-    ("To get under water!", "to get under water"),
+DIAGNOSTIC_THRESHOLD = 0.60
+PUBLIC_SAMPLE_IDS = tuple(f"QC-R{index:02d}" for index in range(1, 11))
+SECOND_TAKE_ID = "QC-R02-T2"
+MAX_ACTIVE_RUNS = 4
+RUN_TTL_SECONDS = 15 * 60
+APP_REVISION = os.getenv("QUIET_CHANNEL_REVISION", "unbound")[:12]
+TRUTH = "Replay of official single-speaker recorded sEMG through David Gaddy’s official released pretrained model; not live capture."
+LIMITATION = (
+    "No live hardware; no project accuracy/WER; no open-vocabulary, cross-speaker/session, customer, "
+    "medical/AAC, safety-system, comfort, privacy, production, or deployment-performance evidence. "
+    "Official source scope is single-speaker English research data."
 )
-SAFETY_SENSITIVE = frozenset({"Keep back!"})

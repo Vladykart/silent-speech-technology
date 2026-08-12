@@ -1,21 +1,21 @@
 # Claim boundary
 
-**Release status:** local research and tomorrow-demo package, 2026-07-28.
+**Release status:** local research package, locked static concept, and separate official-model/recorded-data replay with a private Tailnet-only research-demo delivery path, updated 2026-08-11.
 **Authority:** this file governs README, demo, deck, scripts, and spoken narrative. When wording conflicts, use the more conservative statement.
 
 ## One-sentence safe claim
 
-> We have built an offline **concept / simulated pipeline** that makes a proposed silent-speech command interaction inspectable; we have not built or validated a silent-speech sensor, decoder, wearable, clinical system, or product.
+> We have a locked authored-fixture **concept / simulated pipeline** and a separate local bench that replays official CC BY 4.0 single-speaker sEMG through David Gaddy's official released pretrained model; we have not built or validated a physical silent-speech sensor, live/generalizable decoder, wearable, clinical system, or product.
 
 ## Current capability ledger
 
 | Status | Supportable statement |
 |---|---|
-| Exercised locally | Authored fixture signals deterministically produce scripted candidate/uncertainty behavior; a user can confirm or reject; static validators and pure pipeline tests run without installs. |
+| Exercised locally | The locked static demo deterministically replays authored candidate/uncertainty fixtures. Separately, `realtime/` verifies a frozen ten-card official-recording catalogue plus one second take, preserves native `float64` through acquisition, runs source-faithful preprocessing and strict forward passes through one 54,187,136-parameter official released checkpoint, exposes bounded real 80-bin/48-class output evidence, runs a separately labelled project decoder, and enforces abstention/second-take/confirmation/safety gates. This establishes faithful artifact replay only. |
 | Design decision | The captain-selected beachhead is e& frontline retail advisors and field technicians. A first research track would evaluate opt-in multi-channel surface EMG for one low-consequence workflow, with a fixed command grammar, calibration, abstention, repair and confirmation. |
 | Research support | Peer-reviewed work shows several articulatory/neuromuscular and implanted-neural approaches can decode or synthesize speech under specific study conditions. Those results do not transfer to this project. |
 | Unknown | User demand, electrode placement, signal quality, calibration burden, vocabulary, within/cross-session performance, subject transfer, latency, comfort, power, compute, cost, security, regulatory status, pricing, team, partners, and funding. |
-| Not present | Hardware, model, weights, collected data, raw biometrics, prototype enclosure, customer discovery, users, trial, approval, certification, patent opinion, production integration, remote service, or deployment. |
+| Not present | Physical hardware/live capture, newly collected project human/biometric data, project-trained weights, measured project silent-speech performance, cross-speaker/session validation, prototype enclosure, customer discovery, users, trial, approval, certification, patent opinion, production integration, **public or product/customer deployment**. A private Tailnet-only research demo delivery path exists under owner control; that access fact is not a security, privacy, reliability, customer, or production claim. Official single-speaker records/weights remain outside git under CC BY 4.0. |
 
 ## Approved wording
 
@@ -26,7 +26,10 @@ Use these phrases with their qualifiers intact:
 - “small command vocabulary **to be defined with users**” — not open vocabulary;
 - “local processing **design target**” — not an implemented security guarantee;
 - “confirmation-first **interaction prototype**” — what the demo actually supports;
-- “confidence **fixture value**” or “scripted candidate score” — never accuracy or calibrated probability;
+- static demo: “confidence **fixture value**” or “scripted candidate score”; recorded-replay bench: “**uncalibrated phoneme-alignment score**”—neither is accuracy or a calibrated probability;
+- “**replay of official single-speaker recorded sEMG through David Gaddy’s official released pretrained model; not live capture**” — keep every qualifier and do not shorten this to a hardware/generalization capability;
+- “**source array loaded from the checksum-bound recording, then explicitly converted at documented runtime processing boundaries**” — browser views are bounded transformed evidence, never untouched raw data;
+- “**private Tailnet-only research demo delivery; not public or a product/customer deployment**” — access status only, not privacy/security/reliability evidence;
 - “assistive AAC **future participatory research track**” — not an indicated use;
 - “e& frontline retail advisors and field technicians” — captain-selected beachhead, not traction or validated demand;
 - “AED 1,000,000 fixed-fee 90-day pilot” — captain-approved ask only; per-seat annual pricing, strategic funding and acquisition/exit amounts remain **TBD**.
@@ -37,9 +40,9 @@ Do not state or imply:
 
 - reads thoughts, hears inner speech, telepathy, mind reading, or imagined-speech capability;
 - “works,” “reads words,” “decodes speech,” “real time,” “open vocabulary,” “speaker independent,” or “on device” about this project;
-- measured accuracy, WER, CER, information-transfer rate, latency, words/minute, confidence calibration, or transfer performance for this project;
+- measured accuracy, WER, CER, information-transfer rate, end-to-end hardware latency, words/minute, confidence calibration, or transfer performance for this project; backend forward-pass timing may be shown only as a per-run local software diagnostic and not a hardware/product guarantee;
 - behind-the-ear, invisible, wireless, bone-conduction-only, safe, comfortable, all-day, or manufacturable form factor;
-- no audio means anonymous/private; “only text leaves”; compliant, secure, encrypted, certified, or privacy-preserving by default;
+- no audio means anonymous/private; “only text leaves”; “no egress”; compliant, secure, encrypted, certified, or privacy-preserving by default; the authorized browser necessarily receives bounded transformed evidence;
 - laryngectomy, ALS, dysarthria, dysphonia, aphasia, stroke, locked-in syndrome, or other diagnosis as a supported user indication;
 - FDA cleared/approved, CE-marked, exempt, non-medical, or outside regulation without intended-use and jurisdiction review;
 - customer, design partner, sponsor, cohort, agreed pilot, integration, traction, revenue, market size, moat, owned dataset, team credentials, partnership, patent, acquisition likelihood, or regional leadership;
@@ -49,13 +52,19 @@ Do not state or imply:
 
 ## Demo labels
 
-The following must be visible before the traces or candidate values:
+The locked static `demo/` must show before traces or candidate values:
 
-> **CONCEPT / SIMULATED — authored synthetic fixture data; no sensor, recording, biometric input, model, live inference, or measured accuracy.**
+> **CONCEPT / SIMULATED PIPELINE — authored fixture data; no sensor, recording, model, or measured accuracy.**
 
-Start locked. The eight synthetic traces, explanatory architecture labels, token stream, candidates, egress counters, scores, threshold, timing, abstention and manual repair are all authored interaction behavior. Every result state retains the concept/simulated label.
+Its illustrative 12-command grammar, egress counters, scores, threshold, delay, miss and manual repair remain authored interaction behavior.
 
-If the demo fails, use the static six-stage rail and presenter script. Never describe a broken interaction as live sensing.
+The separate `realtime/` client must keep this visible throughout:
+
+> **REAL RECORDED sEMG REPLAY / ONE REAL RELEASED PRETRAINED MODEL / NOT LIVE CAPTURE.**
+
+It must name David Gaddy, both official Zenodo model/data records, CC BY 4.0, single-speaker scope, decoder adaptation and non-commercial local-demo boundary. Model/decoder scores are uncalibrated; selected replay behavior is neither measured project accuracy nor a representative source evaluation. “Live” describes browser-to-local-service execution, never live sensing.
+
+If the real replay fails, stop in its no-output error/limitations state. Never substitute the static authored-fixture demo, cached output, or another recording as if the real run succeeded. The locked concept is a separate experience only.
 
 ## Research-performance citation rule
 
