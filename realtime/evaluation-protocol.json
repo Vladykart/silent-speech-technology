@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "protocol_version": "1.0-draft",
+  "status": "protocol_only_no_results",
+  "execution_authorized": false,
+  "question": "Can a frozen, mechanically selected source catalogue be replayed reproducibly with every execution, abstention, and error retained?",
+  "claim_boundary": "This protocol may strengthen artifact-reliability and anti-cherry-picking evidence only. It does not establish project accuracy, WER, speaker/session transfer, hardware, user, or product performance.",
+  "source_scope": {
+    "dataset": "Silent Speech EMG v1.0",
+    "speaker_scope": "official single-speaker research source",
+    "training_overlap": "unknown; no cohort may be called held out until checkpoint training membership is proved",
+    "unit_of_analysis": "one checksum-bound official recording"
+  },
+  "selection": {
+    "algorithm": "sha256_rank_v1",
+    "seed": "quiet-channel-evaluation-v1",
+    "freeze_before_execution": true,
+    "replacement_after_freeze": "prohibited",
+    "stratification_fields": ["declared source split", "source session", "duration bin"],
+    "output_observation_during_selection": "prohibited"
+  },
+  "cohorts": {
+    "presentation": {
+      "status": "existing curated catalogue",
+      "purpose": "interaction demonstration only",
+      "representative": false
+    },
+    "development": {
+      "status": "planned_not_selected",
+      "purpose": "future decoder or threshold development only",
+      "must_be_disjoint_from": ["evaluation"]
+    },
+    "evaluation": {
+      "status": "planned_not_selected",
+      "purpose": "future sealed source-catalogue replay evaluation",
+      "must_be_disjoint_from": ["development"]
+    }
+  },
+  "outcome_states": ["executed", "abstained", "error", "asset_failure"],
+  "denominator_policy": "Every frozen selection remains in the denominator, including abstentions, errors, and failed executions.",
+  "allowed_reporting": [
+    "asset verification and strict-load pass/fail counts",
+    "finite-output and deterministic-repeatability counts",
+    "descriptive candidate-held, mismatch, abstention, error, and asset-failure counts",
+    "failure taxonomy with exact denominators"
+  ],
+  "prohibited_reporting_without_new_approval": [
+    "project accuracy, WER, CER, command accuracy, or confidence",
+    "held-out performance while training overlap is unknown",
+    "comparative ranking across incompatible modalities, tasks, decoders, or metrics",
+    "cross-speaker, cross-session, wearable, hardware, user, or product claims"
+  ],
+  "results": null
+}

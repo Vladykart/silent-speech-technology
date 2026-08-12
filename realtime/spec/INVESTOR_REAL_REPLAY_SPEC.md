@@ -1,6 +1,6 @@
 # Investor real-replay product specification
 
-**Version:** 1.0 — frozen 2026-08-11
+**Version:** 1.1 — frozen 2026-08-12
 
 **Authority:** product, evidence, payload, claim, QA, and private-deployment preparation contract for `realtime/`
 **Change control:** the frozen catalogue, executed artifact, payload bounds, event order, and claim language may change only in a reviewed manifest/spec version with rationale. A weak, mismatched, errored, or abstained selected result is retained; it is never replaced after execution to improve the demonstration.
@@ -19,11 +19,11 @@ This experience proves local artifact execution only. It does not prove a device
 
 Exactly one model executes: David Gaddy’s checksum-bound `transduction_model.pt`, DOI `10.5281/zenodo.6747411`, CC BY 4.0, with 54,187,136 parameters. Startup verifies size and SHA-256, strict-loads all state tensors, and checks the parameter count. Its three residual temporal CNN blocks, six 768-wide relative-position Transformer layers, 80-bin mel head, and 48-class phoneme head execute on the selected official recording.
 
-This checkpoint is the best currently executable local artifact under the approved rights, checksum, and runtime constraints. That selection is not a claim that it is the field’s best model. All other registry entries remain evidence-only and **NOT EXECUTED HERE**.
+This is the **only currently approved, checksum-bound, and executable checkpoint**. That selection is artifact readiness—not a claim that it is the field’s best, most accurate, state-of-the-art, most wearable, or most transferable model. All other registry entries remain evidence-only and **NOT EXECUTED HERE**.
 
 The project bounded phoneme-edit decoder executes after the model but is an **algorithm, not another model**. It receives the released 48-class output and the same complete frozen grammar for every run. It never receives the selected reference.
 
-`model-registry.json` is authoritative. HiFi-GAN, upstream recognition weights, DeepSpeech/KenLM, SilentWear, MONA/LISA, papers, and repositories occupy a visually separate evidence registry. Every row is marked **NOT EXECUTED HERE**, has no run control, and states why.
+`model-registry.json` is authoritative. HiFi-GAN, upstream recognition weights, DeepSpeech/KenLM, SilentWear, MONA/LISA, papers, and repositories occupy a visually separate evidence registry. Every row is marked **NOT EXECUTED HERE**, has no run control, and states its pipeline role, input modality/channel geometry, task/output, metric family, complete-path readiness gates, and comparability boundary. A vocoder, direct recognizer, language model, evaluation stack, classifier, project algorithm, and full research system must never be aggregated into a misleading model count.
 
 ## 3. Frozen official-recording catalogue
 
@@ -36,6 +36,8 @@ The UI must show this disclosure verbatim:
 > Curated official-recording examples chosen for a short demonstration and interaction coverage. Outcomes may be success, mismatch, or abstention. This set is not representative and must not be counted as accuracy, WER, validation, or generalization evidence.
 
 All frozen examples run after freeze. Their output shape, finiteness, ordering, and retained outcome are tested; the catalogue is not used to compute a metric.
+
+A separate [`../evaluation-protocol.json`](../evaluation-protocol.json) governs any future sample expansion. It remains **protocol only / no results / no execution authority** in this release. Future development and evaluation cohorts must be selected mechanically and frozen before output observation, remain disjoint, prohibit replacement, retain abstentions/errors/asset failures in the denominator, and state that checkpoint training overlap is unknown. The curated presentation cards must never be relabelled as that evaluation cohort.
 
 ## 4. Source and transformation contract
 

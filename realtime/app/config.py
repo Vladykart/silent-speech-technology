@@ -11,6 +11,7 @@ REPLAY_ROOT = ASSET_DIR / "replays"
 ASSET_MANIFEST_PATH = ROOT / "assets-manifest.json"
 SAMPLE_MANIFEST_PATH = ROOT / "sample-manifest.json"
 MODEL_REGISTRY_PATH = ROOT / "model-registry.json"
+EVALUATION_PROTOCOL_PATH = ROOT / "evaluation-protocol.json"
 RELEASE_MANIFEST_PATH = ROOT / "release-manifest.json"
 SAMPLE_RATE = 1_000
 CHANNELS = 8

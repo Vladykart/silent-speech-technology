@@ -50,9 +50,9 @@ The official `.npy` source remains native `float64` through acquisition. Browser
 
 ## One model, separate registry
 
-[`model-registry.json`](model-registry.json) contains exactly one `executed` checkpoint: David Gaddy, *Voicing Silent Speech Models*, DOI `10.5281/zenodo.6747411`, CC BY 4.0. `load_state_dict(..., strict=True)` checks every released tensor and the exact parameter count. The 48-class head is part of that checkpoint.
+[`model-registry.json`](model-registry.json) contains exactly one `executed` checkpoint: David Gaddy, *Voicing Silent Speech Models*, DOI `10.5281/zenodo.6747411`, CC BY 4.0. `load_state_dict(..., strict=True)` checks every released tensor and the exact parameter count. The 48-class head is part of that checkpoint. It is the **only currently approved, checksum-bound, and executable checkpoint**—an artifact-readiness fact, not a best-model, accuracy, state-of-the-art, transfer, or product claim.
 
-The project decoder is typed `algorithm`, not model. HiFi-GAN, upstream recognition DOI 7183877, DeepSpeech/KenLM, SilentWear, and MONA/LISA are evidence-only. The UI marks each **NOT EXECUTED HERE** and provides no run control. Papers, architecture cards, datasets, and authored fixtures are never counted as executed models.
+The project decoder is typed `algorithm`, not model. HiFi-GAN, upstream recognition DOI 7183877, DeepSpeech/KenLM, SilentWear, and MONA/LISA are evidence-only. The UI marks each **NOT EXECUTED HERE** and provides no run control. Each row names its pipeline role, modality/channels, task/output, metric family, complete-path readiness gates, and comparability boundary. Papers, architecture cards, datasets, algorithms, vocoders, language models, and authored fixtures are never aggregated into an executed-model count.
 
 ## Frozen official sample catalogue
 
@@ -73,6 +73,10 @@ The project decoder is typed `algorithm`, not model. HiFi-GAN, upstream recognit
 | QC-R10 | largedev dev | 2.712 s | abstain; retained |
 
 These are selected behavior regressions, not semantic success requirements or a metric. In guided mode, `POST /api/v1/runs` returns the official prompt only as `prompt_hint` rehearsal metadata before run start. Prompts are never embedded in client assets or passed as per-sample model/decoder input; in challenge mode they appear only in the official audit path after metadata reveal. A future catalogue change requires a new version and selection rationale; weak outcomes cannot be swapped out.
+
+## Protocol-only next sample proof
+
+[`evaluation-protocol.json`](evaluation-protocol.json) defines a future output-blind, deterministic selection and complete-denominator contract. It contains **no results**, selects no new cohort, and grants **no execution authority**. [`app/evaluation_protocol.py`](app/evaluation_protocol.py) tests seeded ranking, disjoint development/evaluation cohorts, prohibited replacement, and retention of executions, abstentions, errors, and asset failures using synthetic IDs only. Training overlap remains unknown, so no cohort is called held out. See the independent [`software expansion review`](../research/software-expansion-review.md).
 
 ## Bounded browser evidence
 

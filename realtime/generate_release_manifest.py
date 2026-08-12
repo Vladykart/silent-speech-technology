@@ -25,6 +25,7 @@ def runtime_files() -> list[Path]:
         ROOT / "assets-manifest.json",
         ROOT / "sample-manifest.json",
         ROOT / "model-registry.json",
+        ROOT / "evaluation-protocol.json",
         ROOT / "requirements.txt",
         ROOT / "fetch_assets.py",
         ROOT / "run-local.sh",

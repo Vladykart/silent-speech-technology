@@ -10,9 +10,11 @@ import json
 
 import numpy as np
 
+from .evaluation_protocol import public_plan, validate_protocol
 from .config import (
     ASSET_DIR,
     ASSET_MANIFEST_PATH,
+    EVALUATION_PROTOCOL_PATH,
     MODEL_REGISTRY_PATH,
     PUBLIC_SAMPLE_IDS,
     REPLAY_ROOT,
@@ -99,12 +101,14 @@ class AssetRegistry:
         self.assets = _json(ASSET_MANIFEST_PATH)
         self.catalogue = _json(SAMPLE_MANIFEST_PATH)
         self.models = _json(MODEL_REGISTRY_PATH)
+        self.evaluation_protocol = _json(EVALUATION_PROTOCOL_PATH)
         if self.assets.get("schema_version") != 2:
             raise RuntimeError("unsupported assets manifest")
         if self.catalogue.get("schema_version") != 1:
             raise RuntimeError("unsupported sample manifest")
-        if self.models.get("schema_version") != 1:
+        if self.models.get("schema_version") != 2:
             raise RuntimeError("unsupported model registry")
+        validate_protocol(self.evaluation_protocol)
         raw_samples = self.catalogue.get("samples")
         if not isinstance(raw_samples, dict):
             raise RuntimeError("sample registry is missing samples")
@@ -119,9 +123,18 @@ class AssetRegistry:
             raise RuntimeError("second-take policy differs from the frozen contract")
         if self.samples["QC-R02-T2"].spec.get("second_take_of") != "QC-R02":
             raise RuntimeError("repair sample is not bound to QC-R02")
-        executed = [item for item in self.models.get("entries", []) if item.get("status") == "executed"]
+        readiness_fields = set(self.models.get("required_readiness_fields", ()))
+        entries = self.models.get("entries", [])
+        if not readiness_fields or any(not readiness_fields.issubset(item) for item in entries):
+            raise RuntimeError("model registry readiness matrix is incomplete")
+        executed = [item for item in entries if item.get("status") == "executed"]
         if len(executed) != 1 or executed[0].get("id") != "gaddy-transduction-6747411":
             raise RuntimeError("model registry must contain exactly one executed checkpoint")
+        gate_fields = ("weights_available", "rights_verified", "checksum_verified", "runtime_approved")
+        if executed[0].get("type") != "checkpoint" or not all(executed[0].get(field) is True for field in gate_fields):
+            raise RuntimeError("executed checkpoint has not passed every readiness gate")
+        if any(item.get("status") == "evidence_only" and item.get("runtime_approved") is not False for item in entries):
+            raise RuntimeError("evidence-only registry entry cannot be runtime approved")
 
     def get(self, public_id: str, *, allow_second_take: bool = False) -> SampleRecord:
         if public_id not in PUBLIC_SAMPLE_IDS and not (allow_second_take and public_id == "QC-R02-T2"):
@@ -186,6 +199,20 @@ class AssetRegistry:
                 "type": item["type"],
                 "status": "NOT EXECUTED HERE",
                 "reason": item["not_executed_reason"],
+                "pipeline_role": item["pipeline_role"],
+                "input_modality": item["input_modality"],
+                "channel_geometry": item["channel_geometry"],
+                "task": item["task"],
+                "output_type": item["output_type"],
+                "metric_family": item["metric_family"],
+                "readiness": {
+                    "weights": bool(item["weights_available"]),
+                    "rights": bool(item["rights_verified"]),
+                    "checksum": bool(item["checksum_verified"]),
+                    "runtime": bool(item["runtime_approved"]),
+                    "evaluation_protocol": item["evaluation_protocol_status"],
+                },
+                "comparability": item["comparability_notes"],
             })
         return {
             "schema_version": 1,
@@ -204,6 +231,7 @@ class AssetRegistry:
                 "license": "CC BY 4.0",
                 "parameters": parameter_count,
                 "strict_load": True,
+                "selection_boundary": "Only currently approved, checksum-bound, and executable checkpoint; artifact readiness, not best-model or performance evidence.",
                 "fingerprint_prefix": checkpoint["sha256"][:10],
                 "architecture": {"residual_blocks": 3, "transformer_layers": 6, "width": 768, "heads": 8},
                 "outputs": {"mel_bins": 80, "phoneme_classes": 48},
@@ -217,6 +245,7 @@ class AssetRegistry:
                 "fingerprint_prefix": archive["sha256"][:10],
             },
             "evidence_only_registry": evidence,
+            "evaluation_plan": public_plan(self.evaluation_protocol),
             "telemetry": False,
             "persistence": False,
         }
