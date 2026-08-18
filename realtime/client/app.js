@@ -12,11 +12,11 @@
     sourceState: $("#source-state"), sourceId: $("#source-id"), sourceShape: $("#source-shape"), sourceRateDuration: $("#source-rate-duration"), sourceCanvas: $("#source-canvas"), traceBins: $("#trace-bins"), channelSummary: $("#channel-summary"),
     modeChallenge: $("#mode-challenge"), modeGuided: $("#mode-guided"), modeDifference: $("#mode-difference"), guidedPhraseText: $("#guided-phrase-text"),
     modelState: $("#model-state"), comparisonCanvas: $("#comparison-canvas"), provenanceBody: $("#provenance-body"), featureCanvas: $("#feature-canvas"), featureShape: $("#feature-shape"), featureDescription: $("#feature-description"),
-    modelFingerprint: $("#model-fingerprint"), melCanvas: $("#mel-canvas"), melShape: $("#mel-shape"), melDescription: $("#mel-description"), phonemeShape: $("#phoneme-shape"), phonemeFrames: $("#phoneme-frames"), phonemeSequence: $("#phoneme-sequence"), collapsedPath: $("#collapsed-path"), modelTime: $("#model-time"), decoderTime: $("#decoder-time"), timeline: $("#event-timeline"),
+    modelFingerprint: $("#model-fingerprint"), modelSelectionBoundary: $("#model-selection-boundary"), melCanvas: $("#mel-canvas"), melShape: $("#mel-shape"), melDescription: $("#mel-description"), phonemeShape: $("#phoneme-shape"), phonemeFrames: $("#phoneme-frames"), phonemeSequence: $("#phoneme-sequence"), collapsedPath: $("#collapsed-path"), modelTime: $("#model-time"), decoderTime: $("#decoder-time"), timeline: $("#event-timeline"),
     decisionState: $("#decision-state"), candidates: $("#candidates"), diagnosticScore: $("#diagnostic-score"), scoreMeter: $("#score-meter"), recordReference: $("#record-reference"), referenceStatus: $("#reference-status"), decisionBox: $("#decision-box"), decisionLabel: $("#decision-label"), decisionTitle: $("#decision-title"), decisionReason: $("#decision-reason"), heldCandidate: $("#held-candidate"), heldStatus: $("#held-status"), safetyRow: $("#safety-row"), safetyAck: $("#safety-ack"), confirm: $("#confirm"), reject: $("#reject"), secondTake: $("#second-take"), finalCard: $("#final-card"), finalOutput: $("#final-output"), outputStatus: $("#output-status"),
     heldCandidateComparison: $("#held-candidate-comparison"), officialPhrase: $("#official-phrase"),
     noiseCanvas: $("#noise-canvas"), noiseSlider: $("#noise-slider"), noiseLevel: $("#noise-level"), noiseStatus: $("#noise-status"), noiseState: $("#noise-state"), noiseReset: $("#noise-reset"),
-    modelRegistry: $("#model-registry"), activeProvenance: $("#active-provenance"),
+    modelRegistry: $("#model-registry"), activeProvenance: $("#active-provenance"), evaluationPlan: $("#evaluation-plan"), evaluationPlanStatus: $("#evaluation-plan-status"),
   };
 
   let state = contract.initialState();
@@ -744,6 +744,17 @@
     } catch (error) { runError(error); }
   }
 
+  function definitionList(rows) {
+    const list = document.createElement("dl");
+    rows.forEach(([label, value]) => {
+      const row = document.createElement("div");
+      const term = document.createElement("dt"); term.textContent = label;
+      const description = document.createElement("dd"); description.textContent = String(value);
+      row.append(term, description); list.append(row);
+    });
+    return list;
+  }
+
   function renderRegistry(items) {
     const fragment = document.createDocumentFragment();
     items.forEach((item) => {
@@ -751,9 +762,38 @@
       const name = document.createElement("b"); name.textContent = item.name;
       const status = document.createElement("span"); status.textContent = "NOT EXECUTED HERE";
       const reason = document.createElement("p"); reason.textContent = item.reason;
-      article.append(name, status, reason); fragment.append(article);
+      const readiness = item.readiness || {};
+      const gate = document.createElement("p");
+      gate.className = "registry-readiness";
+      gate.textContent = `READINESS · weights ${readiness.weights ? "YES" : "NO"} · rights ${readiness.rights ? "YES" : "NO"} · checksum ${readiness.checksum ? "YES" : "NO"} · runtime ${readiness.runtime ? "YES" : "NO"}`;
+      const details = definitionList([
+        ["Pipeline role", item.pipeline_role],
+        ["Input / channels", `${item.input_modality} · ${item.channel_geometry}`],
+        ["Task / output", `${item.task} · ${item.output_type}`],
+        ["Metric family", item.metric_family],
+        ["Evaluation gate", readiness.evaluation_protocol],
+        ["Why not comparable", item.comparability],
+      ]);
+      article.append(name, status, reason, gate, details); fragment.append(article);
     });
     elements.modelRegistry.replaceChildren(fragment);
+  }
+
+  function renderEvaluationPlan(plan) {
+    if (!plan || plan.execution_authorized !== false || plan.status !== "PROTOCOL ONLY · NO RESULTS") throw new Error("evaluation plan crossed its no-result boundary");
+    elements.evaluationPlanStatus.textContent = plan.status;
+    const reporting = Array.isArray(plan.allowed_reporting) ? plan.allowed_reporting.join("; ") : "Unavailable";
+    const list = definitionList([
+      ["Question", plan.question],
+      ["Selection", plan.selection],
+      ["Training overlap", plan.training_overlap],
+      ["Complete denominator", plan.denominator_policy],
+      ["Allowed reporting", reporting],
+      ["Claim boundary", plan.claim_boundary],
+    ]);
+    elements.evaluationPlan.replaceWith(list);
+    list.id = "evaluation-plan";
+    elements.evaluationPlan = list;
   }
 
   function validateManifest(payload) {
@@ -765,7 +805,9 @@
     elements.selectionDisclosure.textContent = payload.selection_disclosure;
     elements.catalogueState.textContent = "10 VERIFIED CARDS · PROMPTS SEALED";
     elements.modelFingerprint.textContent = `${payload.executed_model.fingerprint_prefix}… · short identifier, not integrity proof`;
+    elements.modelSelectionBoundary.textContent = payload.executed_model.selection_boundary;
     renderRegistry(payload.evidence_only_registry || []);
+    renderEvaluationPlan(payload.evaluation_plan);
     updateSelection();
   }
 

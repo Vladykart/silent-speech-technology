@@ -32,10 +32,10 @@ The demo’s labels—eight synthetic channels, filter/window, sequence encoder,
 
 The exact-commit README reports approximately **36% WER** on an ASR-based open-vocabulary evaluation for the upstream latest model. This is an upstream historical research result. It is not reproduced, independently verified, transferred to this project, converted to accuracy, or used as a demo score. The demo’s `0.84`, `0.54`, `0.91`, `0.72`, and timing values are authored interaction fixtures only.
 
-## Required real-world assets absent here
+## Upstream requirements outside the approved replay path
 
-Upstream instructions point to external EMG/audio data, pretrained models, phoneme-alignment and HiFi-GAN submodules, DeepSpeech/KenLM assets, `ctcdecode`, and a Python/PyTorch/CUDA/audio toolchain. A responsible project would additionally require consented capture hardware and placement protocol, governance, calibration, participant/session splits, failure analysis, complete-latency measurement, and safety review. None is present in this repository.
+Upstream instructions point to external EMG/audio data, pretrained models, phoneme-alignment and HiFi-GAN submodules, DeepSpeech/KenLM assets, `ctcdecode`, and a Python/PyTorch/CUDA/audio toolchain. The separately governed replay approves only the checksum-bound transduction checkpoint and selected official sEMG records documented in [`realtime-assets.md`](realtime-assets.md); HiFi-GAN, DeepSpeech/KenLM, audio, and the remaining legacy path are not executed. A responsible physical system would additionally require consented capture hardware and placement protocol, governance, calibration, participant/session splits, failure analysis, complete-latency measurement, and safety review; those capabilities are absent.
 
 ## Rights and retention
 
-GitHub and the exact file report MIT. The upstream notice—`Copyright (c) 2021 David Gaddy`—is preserved in [`../demo/THIRD_PARTY_NOTICES.md`](../demo/THIRD_PARTY_NOTICES.md) and surfaced in the demo. No upstream repository, submodule, dependency, paper PDF, data, checkpoint, model, audio, EMG/biometric sample, screenshot, logo, figure, or media was downloaded or committed.
+GitHub and the exact file report MIT. The upstream notice—`Copyright (c) 2021 David Gaddy`—is preserved in [`../demo/THIRD_PARTY_NOTICES.md`](../demo/THIRD_PARTY_NOTICES.md) and surfaced in the demo. The upstream repository, submodules, dependencies, paper PDFs, audio, screenshots, logos, figures, and media were not downloaded or committed. Approved model/data assets are fetched only into ignored local storage under [`realtime-assets.md`](realtime-assets.md); they are not committed or redistributed.
