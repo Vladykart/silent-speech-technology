@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "rule": "Only status=executed is part of the run. Every other entry is evidence-only and must display NOT EXECUTED HERE.",
+  "entries": [
+    {
+      "id": "gaddy-transduction-6747411",
+      "type": "checkpoint",
+      "name": "Gaddy released transduction checkpoint",
+      "status": "executed",
+      "creator": "David Gaddy",
+      "doi": "10.5281/zenodo.6747411",
+      "license": "CC BY 4.0",
+      "parameters": 54187136,
+      "outputs": ["80-bin normalized predicted mel features", "48-class phoneme logits"],
+      "strict_load": true
+    },
+    {
+      "id": "project-phoneme-edit-decoder",
+      "type": "algorithm",
+      "name": "Project bounded phoneme-edit decoder",
+      "status": "executed_algorithm",
+      "not_a_model": true,
+      "description": "CMUdict pronunciation lookup and edit distance over one sample-independent bounded grammar."
+    },
+    {
+      "id": "gaddy-hifigan",
+      "type": "checkpoint",
+      "name": "HiFi-GAN checkpoint in model deposit",
+      "status": "evidence_only",
+      "badge": "NOT EXECUTED HERE",
+      "not_executed_reason": "Present only inside the official ZIP; not extracted or strict-loaded, required code is unavailable, and audio output is prohibited."
+    },
+    {
+      "id": "gaddy-recognition-7183877",
+      "type": "checkpoint",
+      "name": "Upstream recognition model DOI 7183877",
+      "status": "evidence_only",
+      "badge": "NOT EXECUTED HERE",
+      "not_executed_reason": "Checkpoint, checksum, and approved runtime are absent."
+    },
+    {
+      "id": "deepspeech-kenlm",
+      "type": "evaluation_stack",
+      "name": "Legacy DeepSpeech 0.7 + KenLM evaluation",
+      "status": "evidence_only",
+      "badge": "NOT EXECUTED HERE",
+      "not_executed_reason": "External legacy assets are absent and source ASR evaluation was not reproduced."
+    },
+    {
+      "id": "silentwear-speechnet",
+      "type": "research_model",
+      "name": "SilentWear SpeechNet",
+      "status": "evidence_only",
+      "badge": "NOT EXECUTED HERE",
+      "not_executed_reason": "No approved released checkpoint executes; the source study uses a different 14-channel, four-participant task."
+    },
+    {
+      "id": "mona-lisa",
+      "type": "research_system",
+      "name": "MONA/LISA",
+      "status": "evidence_only",
+      "badge": "NOT EXECUTED HERE",
+      "not_executed_reason": "External preprint/repository evidence only; no approved local model execution."
+    }
+  ]
+}
