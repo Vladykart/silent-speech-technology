@@ -51,7 +51,15 @@ class SafeApiContractTests(unittest.TestCase):
             self.assertEqual([item["id"] for item in manifest["samples"]], [f"QC-R{i:02d}" for i in range(1, 11)])
             self.assertEqual(len(manifest["samples"]), 10)
             self.assertEqual(manifest["executed_model"]["label"], "Executed model 1 of 1")
+            self.assertIn("artifact readiness", manifest["executed_model"]["selection_boundary"].lower())
+            self.assertIn("not best-model", manifest["executed_model"]["selection_boundary"].lower())
             self.assertTrue(all(item["status"] == "NOT EXECUTED HERE" for item in manifest["evidence_only_registry"]))
+            for item in manifest["evidence_only_registry"]:
+                self.assertTrue(all(item[field] for field in ("pipeline_role", "input_modality", "channel_geometry", "task", "output_type", "metric_family", "comparability")))
+                self.assertEqual({key: item["readiness"][key] for key in ("weights", "rights", "checksum", "runtime")}, {"weights": False, "rights": False, "checksum": False, "runtime": False})
+            self.assertEqual(manifest["evaluation_plan"]["status"], "PROTOCOL ONLY · NO RESULTS")
+            self.assertFalse(manifest["evaluation_plan"]["execution_authorized"])
+            self.assertIn("Unknown", manifest["evaluation_plan"]["training_overlap"])
             serialized_manifest = json.dumps(manifest)
             for prompt in PROMPTS:
                 self.assertNotIn(prompt, serialized_manifest)

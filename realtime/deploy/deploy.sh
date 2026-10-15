@@ -62,7 +62,10 @@ restore_legacy() {
 }
 
 "$CANDIDATE_DIR/realtime/deploy/preflight.sh"
-[[ "$CANDIDATE_PORT" =~ ^[0-9]+$ ]] && (( CANDIDATE_PORT > 1024 && CANDIDATE_PORT < 65536 && CANDIDATE_PORT != 8765 )) || { echo "invalid alternate candidate port" >&2; exit 1; }
+if ! [[ "$CANDIDATE_PORT" =~ ^[0-9]+$ ]] || ! (( CANDIDATE_PORT > 1024 && CANDIDATE_PORT < 65536 && CANDIDATE_PORT != 8765 )); then
+  echo "invalid alternate candidate port" >&2
+  exit 1
+fi
 ! ss -H -ltn "sport = :$CANDIDATE_PORT" | grep -q . || { echo "candidate port is already owned" >&2; exit 1; }
 source_revision=$(git -C "$CANDIDATE_DIR" rev-parse HEAD)
 [[ "$source_revision" =~ ^[0-9a-f]{40}$ ]] || exit 1

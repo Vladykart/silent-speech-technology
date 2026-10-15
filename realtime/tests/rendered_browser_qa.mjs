@@ -138,7 +138,15 @@ async function waitDecision(text) {
   await waitFor(`document.querySelector('#decision-state')?.textContent.includes(${JSON.stringify(text)})`, 20000);
 }
 async function paths(width) {
-  await click("#run-featured"); await waitDecision("CONFIRMATION REQUIRED"); await click("#reject"); await waitDecision("REJECTED");
+  const challengeDefault = await evaluate("document.querySelector('#mode-challenge').checked && document.querySelector('#guided-phrase-text').textContent.includes('sealed')");
+  if (!challengeDefault) throw new Error("challenge mode did not remain the sealed default");
+  await click("#run-featured"); await waitDecision("CONFIRMATION REQUIRED");
+  await evaluate("(() => { const slider=document.querySelector('#noise-slider'); slider.value='35'; slider.dispatchEvent(new Event('input',{bubbles:true})); })()");
+  const noiseBoundary = await evaluate("document.querySelector('#noise-state').textContent === 'NOISE PREVIEW MODE' && document.querySelector('#noise-status').textContent.includes('Not used for official evidence')");
+  if (!noiseBoundary) throw new Error("synthetic noise sandbox boundary was not explicit");
+  await click("#noise-reset");
+  if (!(await evaluate("document.querySelector('#noise-level').textContent === '0%'"))) throw new Error("noise sandbox did not restore its baseline");
+  await click("#reject"); await waitDecision("REJECTED");
   await selectSample("QC-R02"); await click("#start"); await waitDecision("ABSTAIN"); await click("#second-take"); await waitDecision("CONFIRMATION REQUIRED"); await click("#confirm"); await waitDecision("CONFIRMED");
   await selectSample("QC-R03"); await click("#start"); await waitDecision("SAFETY HOLD");
   const safetyBefore = await evaluate("document.querySelector('#confirm').disabled && !document.querySelector('#safety-row').hidden");
@@ -148,6 +156,12 @@ async function paths(width) {
   await click("#confirm"); await waitDecision("CONFIRMED");
   await click("#open-evidence");
   if (await evaluate("document.querySelector('#evidence-drawer').hidden")) throw new Error("evidence drawer did not open");
+  await click("#tab-registry");
+  const readiness = await evaluate("(() => { const panel=document.querySelector('#drawer-registry'); return !panel.hidden && panel.querySelectorAll('.registry article').length===5 && panel.textContent.includes('READINESS · weights') && panel.textContent.includes('Why not comparable'); })()");
+  if (!readiness) throw new Error("model-readiness matrix did not expose five bounded evidence-only roles");
+  await click("#tab-plan");
+  const plan = await evaluate("(() => { const panel=document.querySelector('#drawer-plan'); return !panel.hidden && panel.textContent.includes('PROTOCOL ONLY · NO RESULTS') && panel.textContent.includes('Unknown; no cohort is labelled held out') && panel.textContent.includes('Every frozen selection remains in the denominator'); })()");
+  if (!plan) throw new Error("protocol-only next-proof plan crossed or omitted its boundary");
   await evaluate("document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))");
   if (!(await evaluate("document.querySelector('#evidence-drawer').hidden"))) throw new Error("Escape did not close evidence drawer");
   await evaluate("(() => { document.documentElement.style.scrollBehavior='auto'; const top=document.querySelector('#stage-model').offsetTop-document.querySelector('.truth-bar').offsetHeight; scrollTo(0,Math.max(0,top)); })()");
@@ -183,7 +197,7 @@ try {
   const ax = await cdp.send("Accessibility.getFullAXTree");
   const unnamedButtons = ax.nodes.filter((node) => node.role?.value === "button" && !node.ignored && !node.name?.value);
   if (unnamedButtons.length) throw new Error(`accessible tree has ${unnamedButtons.length} unnamed buttons`);
-  const report = {schema_version: 1, chromium: "Playwright-cache Chromium 139.0.7258.5", origin: "loopback-only", viewports: results, interaction_matrix: ["featured QC-R01", "QC-R02 abstain + QC-R02-T2", "QC-R03 acknowledgement + confirmation"], interaction_widths: [...interactionWidths], network: {request_count: requests.length, external_requests: 0}, console_errors: 0, known_permissions_policy_warnings: {count: knownPolicyWarnings.length, reason: "Pinned Chromium does not recognize the mandated deny-only bluetooth directive; header remains fail-closed."}, persistence: storage, cookies: 0, unnamed_accessible_buttons: 0};
+  const report = {schema_version: 1, chromium: "Playwright-cache Chromium 139.0.7258.5", origin: "loopback-only", viewports: results, interaction_matrix: ["featured QC-R01", "QC-R02 abstain + QC-R02-T2", "QC-R03 acknowledgement + confirmation", "noise sandbox enters preview mode and resets without changing official evidence", "five-row model readiness plus protocol-only no-result plan"], interaction_widths: [...interactionWidths], network: {request_count: requests.length, external_requests: 0}, console_errors: 0, known_permissions_policy_warnings: {count: knownPolicyWarnings.length, reason: "Pinned Chromium does not recognize the mandated deny-only bluetooth directive; header remains fail-closed."}, persistence: storage, cookies: 0, unnamed_accessible_buttons: 0};
   await writeFile(path.join(outputRoot, "result.json"), JSON.stringify(report, null, 2) + "\n");
   console.log(JSON.stringify(report, null, 2));
 } finally {

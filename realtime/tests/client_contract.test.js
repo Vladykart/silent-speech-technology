@@ -68,6 +68,11 @@ assert.match(html, /Bounded transformed evidence is sent to this authorized brow
 assert.match(html, /POST-INFERENCE COMPARISON/);
 assert.match(html, /SYNTHETIC NOISE SANDBOX/);
 assert.match(html, /name="mode"/);
+assert.match(html, /only currently approved, checksum-bound, and executable checkpoint/);
+assert.match(html, /PROTOCOL ONLY · NO RESULTS/);
+assert.match(html, /More components or replay cards do not widen these claims/);
+assert.match(app, /READINESS · weights/);
+assert.match(app, /evaluation plan crossed its no-result boundary/);
 assert.match(css, /:focus-visible/);
 assert.match(css, /prefers-reduced-motion:\s*reduce/);
 assert.match(css, /@media \(max-width: 1100px\)/);

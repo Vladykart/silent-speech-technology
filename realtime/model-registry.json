@@ -1,6 +1,21 @@
 {
-  "schema_version": 1,
-  "rule": "Only status=executed is part of the run. Every other entry is evidence-only and must display NOT EXECUTED HERE.",
+  "schema_version": 2,
+  "rule": "Only a checkpoint with status=executed and every readiness gate true is an executed model. Algorithms, vocoders, language models, evaluation stacks, datasets, papers, and research systems are not interchangeable model-count evidence.",
+  "readiness_semantics": "Readiness fields apply to the complete runnable path, not merely a paper, source-code licence, compressed member, or reported external result.",
+  "required_readiness_fields": [
+    "pipeline_role",
+    "input_modality",
+    "channel_geometry",
+    "task",
+    "output_type",
+    "metric_family",
+    "weights_available",
+    "rights_verified",
+    "checksum_verified",
+    "runtime_approved",
+    "evaluation_protocol_status",
+    "comparability_notes"
+  ],
   "entries": [
     {
       "id": "gaddy-transduction-6747411",
@@ -12,7 +27,19 @@
       "license": "CC BY 4.0",
       "parameters": 54187136,
       "outputs": ["80-bin normalized predicted mel features", "48-class phoneme logits"],
-      "strict_load": true
+      "strict_load": true,
+      "pipeline_role": "sEMG-to-acoustic-and-phoneme transduction checkpoint",
+      "input_modality": "official recorded facial sEMG",
+      "channel_geometry": "8 recorded facial/neck sEMG channels at 1 kHz",
+      "task": "single-speaker open-vocabulary transduction research",
+      "output_type": "80-bin mel prediction and 48-class phoneme logits",
+      "metric_family": "artifact execution and deterministic interaction regression only",
+      "weights_available": true,
+      "rights_verified": true,
+      "checksum_verified": true,
+      "runtime_approved": true,
+      "evaluation_protocol_status": "artifact-execution protocol implemented; no project performance protocol executed",
+      "comparability_notes": "Only currently approved, checksum-bound, and executable checkpoint. This is artifact readiness, not superiority, accuracy, state-of-the-art, transfer, or product evidence."
     },
     {
       "id": "project-phoneme-edit-decoder",
@@ -20,7 +47,19 @@
       "name": "Project bounded phoneme-edit decoder",
       "status": "executed_algorithm",
       "not_a_model": true,
-      "description": "CMUdict pronunciation lookup and edit distance over one sample-independent bounded grammar."
+      "description": "CMUdict pronunciation lookup and edit distance over one sample-independent bounded grammar.",
+      "pipeline_role": "project postprocessing and abstention algorithm",
+      "input_modality": "released checkpoint 48-class phoneme-head output",
+      "channel_geometry": "not applicable",
+      "task": "rank one fixed ten-phrase demonstration grammar and abstain",
+      "output_type": "up to three text candidates and an uncalibrated alignment diagnostic",
+      "metric_family": "interaction regression; never counted as model performance",
+      "weights_available": false,
+      "rights_verified": true,
+      "checksum_verified": true,
+      "runtime_approved": true,
+      "evaluation_protocol_status": "interaction policy tests only",
+      "comparability_notes": "Executed project algorithm, not another trained or released model and not comparable to WER or command accuracy."
     },
     {
       "id": "gaddy-hifigan",
@@ -28,7 +67,19 @@
       "name": "HiFi-GAN checkpoint in model deposit",
       "status": "evidence_only",
       "badge": "NOT EXECUTED HERE",
-      "not_executed_reason": "Present only inside the official ZIP; not extracted or strict-loaded, required code is unavailable, and audio output is prohibited."
+      "not_executed_reason": "Present only inside the official ZIP; not extracted or strict-loaded, required code is unavailable, and audio output is prohibited.",
+      "pipeline_role": "downstream vocoder",
+      "input_modality": "predicted mel features",
+      "channel_geometry": "not applicable",
+      "task": "waveform synthesis, not sEMG recognition",
+      "output_type": "audio waveform",
+      "metric_family": "synthesis intelligibility or quality; not recognition accuracy",
+      "weights_available": false,
+      "rights_verified": false,
+      "checksum_verified": false,
+      "runtime_approved": false,
+      "evaluation_protocol_status": "prohibited by the no-audio product boundary",
+      "comparability_notes": "A vocoder is a downstream component, not an alternative sEMG recognizer or an independent model-quality comparison."
     },
     {
       "id": "gaddy-recognition-7183877",
@@ -36,7 +87,19 @@
       "name": "Upstream recognition model DOI 7183877",
       "status": "evidence_only",
       "badge": "NOT EXECUTED HERE",
-      "not_executed_reason": "Checkpoint, checksum, and approved runtime are absent."
+      "not_executed_reason": "Checkpoint, checksum, complete rights review, and approved runtime are absent.",
+      "pipeline_role": "direct character-level sEMG recognizer",
+      "input_modality": "Gaddy facial sEMG research path",
+      "channel_geometry": "expected 8-channel Gaddy facial sEMG; exact checkpoint contract unverified",
+      "task": "character CTC recognition",
+      "output_type": "character sequence logits and decoded text",
+      "metric_family": "WER/CER only under its exact normalization, decoder, and split protocol",
+      "weights_available": false,
+      "rights_verified": false,
+      "checksum_verified": false,
+      "runtime_approved": false,
+      "evaluation_protocol_status": "separate acquisition, dependency, overlap, and evaluation protocol required",
+      "comparability_notes": "Closest meaningful next checkpoint candidate, but its CTC output is incompatible with the current 48-class phoneme decoder and its training overlap is unproved."
     },
     {
       "id": "deepspeech-kenlm",
@@ -44,7 +107,19 @@
       "name": "Legacy DeepSpeech 0.7 + KenLM evaluation",
       "status": "evidence_only",
       "badge": "NOT EXECUTED HERE",
-      "not_executed_reason": "External legacy assets are absent and source ASR evaluation was not reproduced."
+      "not_executed_reason": "External legacy assets are absent and source ASR evaluation was not reproduced.",
+      "pipeline_role": "legacy synthesized-audio ASR evaluation stack",
+      "input_modality": "synthesized audio",
+      "channel_geometry": "not applicable",
+      "task": "automatic speech recognition evaluation, not direct sEMG decoding",
+      "output_type": "language-model-assisted text",
+      "metric_family": "ASR WER for the complete synthesis-plus-ASR protocol",
+      "weights_available": false,
+      "rights_verified": false,
+      "checksum_verified": false,
+      "runtime_approved": false,
+      "evaluation_protocol_status": "legacy reproduction protocol and dependencies absent",
+      "comparability_notes": "An ASR/LM evaluation stack is not another sEMG model; its WER is incomparable with command accuracy or phoneme alignment."
     },
     {
       "id": "silentwear-speechnet",
@@ -52,7 +127,19 @@
       "name": "SilentWear SpeechNet",
       "status": "evidence_only",
       "badge": "NOT EXECUTED HERE",
-      "not_executed_reason": "No approved released checkpoint executes; the source study uses a different 14-channel, four-participant task."
+      "not_executed_reason": "No approved released checkpoint executes; the source study uses a different 14-channel, four-participant task.",
+      "pipeline_role": "fixed-command neck-sEMG classifier",
+      "input_modality": "differential textile neck sEMG",
+      "channel_geometry": "14 differential neck channels in the source study",
+      "task": "eight commands plus rest across source-study participants and sessions",
+      "output_type": "fixed-command class",
+      "metric_family": "command accuracy, macro recall, and cross-session error under the source protocol",
+      "weights_available": false,
+      "rights_verified": false,
+      "checksum_verified": false,
+      "runtime_approved": false,
+      "evaluation_protocol_status": "external-system reproduction requires a separate approved cycle",
+      "comparability_notes": "Different channels, placement, participants, windows, labels, and metric. It cannot run on or be compared directly with the current sentence replay samples."
     },
     {
       "id": "mona-lisa",
@@ -60,7 +147,19 @@
       "name": "MONA/LISA",
       "status": "evidence_only",
       "badge": "NOT EXECUTED HERE",
-      "not_executed_reason": "External preprint/repository evidence only; no approved local model execution."
+      "not_executed_reason": "External preprint/repository evidence only; exact approved weights, language-model assets, checksums, and runtime are absent.",
+      "pipeline_role": "cross-modal recognition system with language-model rescoring",
+      "input_modality": "Gaddy single-speaker benchmark modalities under the source protocol",
+      "channel_geometry": "source-system contract requires independent verification",
+      "task": "open-vocabulary recognition with LLM-enhanced rescoring",
+      "output_type": "rescored text sequence",
+      "metric_family": "WER under the complete source-system decoding protocol",
+      "weights_available": false,
+      "rights_verified": false,
+      "checksum_verified": false,
+      "runtime_approved": false,
+      "evaluation_protocol_status": "external-system reproduction requires a separate approved cycle",
+      "comparability_notes": "A complete research system, not a drop-in checkpoint. Reported WER includes rescoring and is incomparable with the current bounded grammar diagnostic."
     }
   ]
 }

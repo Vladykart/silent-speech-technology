@@ -252,7 +252,7 @@ table { border-collapse: collapse; }
 .drawer-head { display: flex; align-items: start; justify-content: space-between; gap: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
 .drawer-head h2 { margin: 5px 0 0; font-size: 34px; line-height: 1; letter-spacing: -.04em; }
 .drawer-head button, .drawer-tabs button, footer button { min-height: 40px; padding: 8px 12px; color: var(--ink); background: transparent; border: 1px solid var(--line); font-size: 10px; font-weight: 800; }
-.drawer-tabs { display: grid; grid-template-columns: repeat(4, 1fr); margin: 20px 0; }
+.drawer-tabs { display: grid; grid-template-columns: repeat(5, 1fr); margin: 20px 0; }
 .drawer-tabs button[aria-selected="true"] { color: white; background: var(--ink); }
 .drawer [role="tabpanel"] { padding: 20px; background: #f2f3ec; border: 1px solid var(--line); }
 .drawer [role="tabpanel"] > p, .drawer [role="tabpanel"] li { color: #465149; font-size: 12px; line-height: 1.6; }
@@ -262,6 +262,12 @@ table { border-collapse: collapse; }
 .registry article b, .registry article span, .registry article p { display: block; }
 .registry article span { margin-top: 5px; color: var(--amber); font: 850 9px ui-monospace, SFMono-Regular, Consolas, monospace; }
 .registry article p { margin: 7px 0 0; color: var(--muted); font-size: 10px; }
+.registry article dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px 14px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+.registry article dl div { padding: 0; border: 0; }
+.registry article dt { color: var(--muted); font: 800 8px/1.35 ui-monospace, SFMono-Regular, Consolas, monospace; text-transform: uppercase; }
+.registry article dd { margin-top: 3px; font-size: 10px; }
+.registry-readiness { color: var(--evidence) !important; font-weight: 800; }
+.plan-boundary { margin-top: 16px; padding: 11px; background: var(--amber-soft); border-left: 3px solid var(--amber); }
 footer { display: grid; grid-template-columns: .7fr 1.3fr auto; align-items: center; gap: 30px; padding: 30px max(24px, calc((100vw - 1580px) / 2)); color: white; background: var(--ink); }
 footer div strong, footer div span { display: block; }
 footer strong { color: var(--signal); font: 800 10px ui-monospace, SFMono-Regular, Consolas, monospace; }

@@ -1,8 +1,8 @@
 # Rendered browser and network QA
 
-**Date:** 2026-08-11
+**Date:** 2026-08-12
 
-**Candidate surface:** temporary loopback-only `127.0.0.1:8879`; no installed/shared service, Tailscale route, listener, or public endpoint was changed. Rendered evidence is from the maintained branch with browser-only updates and a verified offline asset set (no new installer/tooling). A later evidence-record commit may differ only in release binding/QA records, per the no-self-reference release procedure.
+**Candidate surface:** exact runtime-content revision `adb07a0ace35e019747c1d90b1f30390f85fae16` on temporary loopback-only `127.0.0.1:8879`; no installed/shared service, Tailscale route, listener, or public endpoint was changed. A later release-binding/QA record commit may differ only in excluded records, per the no-self-reference release procedure. The existing live private service remained on its previously authorized runtime throughout this implementation QA.
 **Product authority:** [`spec/INVESTOR_REAL_REPLAY_SPEC.md`](spec/INVESTOR_REAL_REPLAY_SPEC.md)
 
 ## Approved-tool attempt and fallback
@@ -53,7 +53,8 @@ At each of tablet (768), desktop (1366), and projector (1920), the harness execu
 1. `QC-R01`: exact ordered events, real output views, metadata only after model/decoder, candidate held, human reject → no result;
 2. `QC-R02`: abstention → no result; `QC-R02-T2`: second official take through the same path, then human confirmation;
 3. `QC-R03`: safety hold; confirmation disabled before acknowledgement; acknowledgement remained additional to confirmation; confirmed result stated no actuation;
-4. evidence drawer open and Escape close without a focus trap.
+4. challenge mode remained the sealed default; the deterministic synthetic-noise preview visibly entered sandbox mode at 35%, stated it was excluded from official evidence, and reset to the zero-noise baseline;
+5. the evidence drawer rendered five evidence-only readiness rows with role/modality/task/metric/comparability details, then rendered the protocol-only/no-results next-proof plan with unknown training overlap and a complete denominator; Escape closed the drawer without a focus trap.
 
 Dynamic geometry repeated with zero overflow/clipping and all visible enabled controls named/sized. Reduced-motion, arrow-key heatmap inspection, skip/focus semantics, Space-confirm prevention, and exact event reducer are additionally deterministic contract tests.
 
@@ -67,4 +68,4 @@ Dynamic geometry repeated with zero overflow/clipping and all visible enabled co
 
 ## Release disposition
 
-**Rendered/browser QA passed** for the current branch shape with challenge/guided mode and local noise-sandbox controls. No source-only substitution is claimed. Re-run this matrix against the exact staged immutable release and authorized Tailnet client before any later owner-approved cutover. Any different request, overflow, clipping, inaccessible control, prompt-order failure, persistence, or warning beyond the disclosed unsupported deny directive is a release block.
+**Rendered/browser QA passed** for exact runtime-content revision `adb07a0ace35e019747c1d90b1f30390f85fae16`, including the model-readiness matrix, protocol-only next-proof plan, challenge boundary, and local noise-sandbox controls. No source-only substitution is claimed. This is implementation acceptance, not deployment authority or a new performance result. Re-run this matrix against an exact staged immutable release and authorized Tailnet client before any separately authorized cutover. Any different request, overflow, clipping, inaccessible control, prompt-order failure, persistence, warning beyond the disclosed unsupported deny directive, or evaluation-plan result/execution authority is a release block.

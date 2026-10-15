@@ -19,7 +19,7 @@ Say:
 
 > This is a replay of an official single-speaker recorded sEMG array through David Gaddy’s official released pretrained model. It is not live capture. No person or device is being sensed.
 
-Point to the proof stack: official source, **executed model 1 of 1**, human gate. Select a mode (guided or challenge), then read the amber curation boundary. Selected behavior is not project accuracy or representative evaluation.
+Point to the proof stack: official source, **executed model 1 of 1**, human gate. Describe it as the **only currently approved, checksum-bound, and executable checkpoint**, never the best or most accurate model. Select a mode (guided or challenge), then read the amber curation boundary. Selected behavior is not project accuracy or representative evaluation.
 
 ### 0:30–1:45 — Featured real execution
 
@@ -55,14 +55,15 @@ Run `QC-R03`. Show that confirmation remains disabled until the safety acknowled
 
 Open **Evidence & limits**:
 
-- one checkpoint executed;
-- every other checkpoint/model/paper row says **NOT EXECUTED HERE**;
+- one checkpoint executed because its complete rights/checksum/runtime gates pass;
+- every other component says **NOT EXECUTED HERE** and names its different role, modality, task, metric, and missing gates;
+- the next proof plan is **protocol only / no results**: deterministic pre-execution freeze, disjoint cohorts, no replacement, complete failure denominator, and unknown training overlap;
 - source scope is single-speaker English research data;
 - no live hardware, project metric, open vocabulary, transfer, customer, medical/AAC, privacy, comfort, production, or deployment-performance evidence.
 
 Close with:
 
-> This proves a released artifact path can execute locally. A pilot still has to prove hardware, users, transfer, task value, and governance.
+> This proves a released artifact path can execute locally, including honest failure and human control. More model names or replay cards do not widen that claim. The next software proof is a pre-registered complete-denominator evaluation; a pilot still has to prove hardware, users, transfer, task value, and governance.
 
 If commercial scope is asked, the only approved number is **AED 1,000,000 fixed-fee 90-day pilot**. Annual pricing, strategic funding, valuation, and exit amounts are TBD.
 
